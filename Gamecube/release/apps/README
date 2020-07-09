@@ -3,7 +3,7 @@ Beta 2.2
 
 LICENSE:
     This software is licensed under the GNU General Public License v2
-      which is available at: http://www.gnu.org/licenses/gpl-2.0.txt
+      which is available at: https://www.gnu.org/licenses/gpl-3.0.html
     This requires any released modifications to be licensed similarly,
       and to have the source available.
 
@@ -121,7 +121,7 @@ Beta 2.1:
      * Fixed inverted Y-axis on analog input
      * Fixed rumble
      * Fixed button presses on unused input port
-     + Added ìHomeî button as a menu combo for CC
+     + Added ‚ÄúHome‚Äù button as a menu combo for CC
      + Added disable rumble setting
    * Network improvements
      * SMB correction to allow anonymous user and password
