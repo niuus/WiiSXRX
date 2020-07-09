@@ -123,11 +123,11 @@ void Graphics::init()
 	GX_SetDispCopyDst(vmode->fbWidth,xfbHeight);
 	GX_SetCopyFilter(vmode->aa,vmode->sample_pattern,GX_TRUE,vmode->vfilter);
 	GX_SetFieldMode(vmode->field_rendering,((vmode->viHeight==2*vmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
- 
+
 	if (vmode->aa)
-        GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
-    else
-        GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
+			GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
+		else
+			GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
 
 	GX_SetCullMode(GX_CULL_NONE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
@@ -156,8 +156,8 @@ void Graphics::init()
 void Graphics::drawInit()
 {
 	// Reset various parameters from gfx plugin
-	GX_SetZTexture(GX_ZT_DISABLE,GX_TF_Z16,0);	//GX_ZT_DISABLE or GX_ZT_REPLACE; set in gDP.cpp
-	GX_SetZCompLoc(GX_TRUE);	// Do Z-compare before texturing.
+	GX_SetZTexture(GX_ZT_DISABLE,GX_TF_Z16,0); //GX_ZT_DISABLE or GX_ZT_REPLACE; set in gDP.cpp
+	GX_SetZCompLoc(GX_TRUE); // Do Z-compare before texturing.
 	GX_SetFog(GX_FOG_NONE,0,1,0,1,(GXColor){0,0,0,255});
 	GX_SetViewport(0,0,vmode->fbWidth,vmode->efbHeight,0,1);
 	GX_SetCoPlanar(GX_DISABLE);
