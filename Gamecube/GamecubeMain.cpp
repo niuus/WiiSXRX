@@ -75,7 +75,7 @@ void SysRunGui();
 void SysMessage(char *fmt, ...);
 }
 
-u32* xfb[2] = { NULL, NULL };	/*** Framebuffers ***/
+unsigned int* xfb[2] = { NULL, NULL };	/*** Framebuffers ***/
 int whichfb = 0;        /*** Frame buffer toggle ***/
 GXRModeObj *vmode;				/*** Graphics Mode Object ***/
 #define DEFAULT_FIFO_SIZE ( 256 * 1024 )

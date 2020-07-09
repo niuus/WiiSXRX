@@ -6589,7 +6589,7 @@ void DrawSoftwareSpriteMirror(unsigned char * baseAddr,long w,long h)
        tC = psxVub[((textY0+(sprCY*lYDir))<<11)+(GlobalTextAddrX<<1) + textX0 + (sprCX*lXDir)] & 0xff;
        GetTextureTransColG_SPR(&psxVuw[((sprtY+sprCY)<<10)+sprtX + sprCX],GETLE16(&psxVuw[clutP+tC]));
       }
-     return;
+    return;
 
    case 2:
 
@@ -6599,7 +6599,7 @@ void DrawSoftwareSpriteMirror(unsigned char * baseAddr,long w,long h)
        GetTextureTransColG_SPR(&psxVuw[((sprtY+sprCY)<<10)+sprtX+sprCX],
            GETLE16(&psxVuw[((textY0+(sprCY*lYDir))<<10)+GlobalTextAddrX + textX0 +(sprCX*lXDir)]));
       }
-     return;
+    return;
   }
 }
 

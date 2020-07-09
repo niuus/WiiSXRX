@@ -79,7 +79,7 @@ int fileBrowser_CARD_readFile(fileBrowser_file* file, void* buffer, unsigned int
 	card_file CardFile;
 	int slot = file->discoffset;
 	unsigned int SectorSize = 0;
-  CARD_GetSectorSize (slot, &SectorSize);
+	CARD_GetSectorSize (slot, &SectorSize);
     
 	if(CARD_Open(slot, (const char*)file->name, &CardFile) != CARD_ERROR_NOFILE){
 	  /* Allocate a temporary buffer */
