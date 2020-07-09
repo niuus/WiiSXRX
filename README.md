@@ -49,4 +49,4 @@ Original WiiSXR coder:
 Mystro256
 
 Mods & updates:
-Matguitarist, daxtsu, Mystro256
+Matguitarist, daxtsu, Mystro256, FIX94
