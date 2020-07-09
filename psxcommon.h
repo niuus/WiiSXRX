@@ -37,6 +37,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/param.h>
 #include <zlib.h>
 //#include <glib.h>
 
