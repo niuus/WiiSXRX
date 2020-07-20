@@ -333,6 +333,7 @@ void ReadConfig(void)
  dwCfgFixes=0;
  iUseFixes=0;
  iUseNoStretchBlt=1;
+ iUseDither=0;
  iShowFPS=0;
  bSSSPSXLimit=FALSE;
 

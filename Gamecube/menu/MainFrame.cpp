@@ -177,6 +177,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"tehpola - audio\n");
 	strcat(CreditsInfo,"\n");
 #ifdef HW_RVL
+	strcat(CreditsInfo,"FIX94 - Wii U gamepad support\n");
 	strcat(CreditsInfo,"matguitarist - USB 2.0 Support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
 	strcat(CreditsInfo,"NiuuS - WiiSXRX logo\n");

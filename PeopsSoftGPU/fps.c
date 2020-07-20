@@ -221,7 +221,7 @@ void FrameSkip(void)
   }
  else                                                  // ok, no additional skipping has to be done...
   {                                                    // we check now, if some limitation is needed, or a new skipping has to get started
-   DWORD      dwWaitTime;
+   DWORD dwWaitTime;
    static DWORD curticks, lastticks, _ticks_since_last_update;
 
    if(bInitCap || bSkipNextFrame)                      // first time or we skipped before?

@@ -100,24 +100,7 @@ void BuildDispMenu(int iInc)
  if(iMPos<0) iMPos=3;                                  // wrap around
  if(iMPos>3) iMPos=0;
 
- strcpy(szMenuBuf,"   FL   FS   DI   GF        ");     // main menu items
-
- if(UseFrameLimit)                                     // set marks
-  {
-   if(iFrameLimit==1) szMenuBuf[2]  = '+';
-   else               szMenuBuf[2]  = '*';
-  }
- if(iFastFwd)       szMenuBuf[7]  = '~';
- else
- if(UseFrameSkip)   szMenuBuf[7]  = '*';
-
- if(iUseDither)                                        // set marks
-  {
-   if(iUseDither==1) szMenuBuf[12]  = '+';
-   else              szMenuBuf[12]  = '*';
-  }
-
- if(dwActFixes)     szMenuBuf[17] = '*';
+ strcpy(szMenuBuf,"        ");     // main menu items
 
  if(dwCoreFlags&1)  szMenuBuf[23]  = 'A';
  if(dwCoreFlags&2)  szMenuBuf[23]  = 'M';
@@ -139,10 +122,6 @@ void BuildDispMenu(int iInc)
    szMenuBuf[24]='0'+(char)((dwCoreFlags&0xf000)>>12);                         // number
   }
 
-
- if(lSelectedSlot)  szMenuBuf[26]  = '0'+(char)lSelectedSlot;   
-
- szMenuBuf[(iMPos+1)*5]='<';                           // set arrow
 
 }
 
