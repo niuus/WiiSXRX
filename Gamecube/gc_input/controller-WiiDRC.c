@@ -11,7 +11,7 @@ static unsigned int convertToPSRange(const int raw)
 {
 	// Convert raw from a value between [-1, 1].
 	// It's easier to convert to another analog range this way.
-	float converted = (float)(raw / 80.0f);
+	float converted = (float)(raw / 75.0f);
 
 	if(converted > DRC_DEADZONE)
 		converted = (converted-DRC_DEADZONE)*1.08f;
