@@ -6,7 +6,7 @@
 #include "controller.h"
 #include "../wiiSXconfig.h"
 
-#define DRC_DEADZONE 0.075f
+#define DRC_DEADZONE 0.133f
 static unsigned int convertToPSRange(const int raw)
 {
 	// Convert raw from a value between [-1, 1].
@@ -14,9 +14,9 @@ static unsigned int convertToPSRange(const int raw)
 	float converted = (float)(raw / 75.0f);
 
 	if(converted > DRC_DEADZONE)
-		converted = (converted-DRC_DEADZONE)*1.08f;
+		converted = (converted-DRC_DEADZONE)*1.15f;
 	else if(converted < -DRC_DEADZONE)
-		converted = (converted+DRC_DEADZONE)*1.08f;
+		converted = (converted+DRC_DEADZONE)*1.15f;
 	else
 		converted = 0;
 
