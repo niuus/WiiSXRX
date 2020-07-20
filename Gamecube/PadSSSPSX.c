@@ -109,7 +109,8 @@ static void UpdateState (const int pad) //Note: pad = 0 or 1
 	//Need to switch between Classic and WiimoteNunchuck if user swapped extensions
 	if (padType[virtualControllers[Control].number] == PADTYPE_WII)
 	{
-		if (virtualControllers[Control].control != &controller_WiiUPro)
+		if (virtualControllers[Control].control != &controller_WiiUPro &&
+			virtualControllers[Control].control != &controller_WiiUGamepad)
 		{
 			if (virtualControllers[Control].control == &controller_Classic &&
 				!controller_Classic.available[virtualControllers[Control].number] &&

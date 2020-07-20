@@ -65,6 +65,7 @@ private:
 	u32 previousButtonsWii[4];
 	u16 previousButtonsGC[4];
 	u32 previousButtonsWiiUPro[4];
+	u16 previousButtonsWiiUGamepad[4];
 	ComponentList focusList;
 	Component *primaryFocusOwner, *secondaryFocusOwner;
 	Frame *currentFrame;

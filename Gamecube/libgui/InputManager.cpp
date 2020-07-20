@@ -35,6 +35,7 @@ Input::Input()
 #ifdef HW_RVL
 	CONF_Init();
 	WUPC_Init();
+	WiiDRC_Init();
 	WPAD_Init();
 	WPAD_SetIdleTimeout(120);
 	WPAD_SetVRes(WPAD_CHAN_ALL, 640, 480);
@@ -60,10 +61,11 @@ void Input::refreshInput()
 	PAD_Read(gcPad);
 	PAD_Clamp(gcPad);
 #ifdef HW_RVL
-	if (wpadNeedScan){ WUPC_UpdateButtonStats(); WPAD_ScanPads(); wpadNeedScan = 0; }
+	if (wpadNeedScan){ WUPC_UpdateButtonStats(); WiiDRC_ScanPads(); WPAD_ScanPads(); wpadNeedScan = 0; }
 //	WPAD_ScanPads();
 	wiiPad = WPAD_Data(0);
 	wupcData = WUPC_Data(0);
+	wiidrcData = WiiDRC_Data();
 #endif
 }
 
@@ -76,6 +78,11 @@ WPADData* Input::getWpad()
 WUPCData* Input::getWupc()
 {
 	return wupcData;
+}
+
+const WiiDRCData* Input::getWiiDRC()
+{
+	return wiidrcData;
 }
 #endif
 

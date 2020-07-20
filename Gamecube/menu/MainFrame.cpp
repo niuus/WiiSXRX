@@ -176,7 +176,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"sepp256 - graphics & menu\n");
 	strcat(CreditsInfo,"tehpola - audio\n");
 	strcat(CreditsInfo,"\n");
-	#ifdef HW_RVL
+#ifdef HW_RVL
 	strcat(CreditsInfo,"matguitarist - USB 2.0 Support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
 	strcat(CreditsInfo,"NiuuS - WiiSXRX logo\n");
@@ -238,6 +238,12 @@ void Func_PlayGame()
 
 			WUPCData* data = WUPC_Data(i);
 			if (data != NULL && data->button & WPAD_CLASSIC_BUTTON_A) buttonHeld++;
+
+			if(i == 0)
+			{
+				const WiiDRCData* data = WiiDRC_Data();
+				if (data != NULL && data->button & WIIDRC_BUTTON_A) buttonHeld++;
+			}
 #endif
 		}
 	}

@@ -1,16 +1,24 @@
 #ifdef HW_RVL
 
+#include <gccore.h>
 #include <string.h>
-#include <wiiuse/wpad.h>
-#include <wupc/wupc.h>
+#include <wiidrc/wiidrc.h>
 #include "controller.h"
 #include "../wiiSXconfig.h"
 
+#define DRC_DEADZONE 0.075f
 static unsigned int convertToPSRange(const int raw)
 {
 	// Convert raw from a value between [-1, 1].
 	// It's easier to convert to another analog range this way.
-	float converted = (float)(raw / 1024.0f);
+	float converted = (float)(raw / 80.0f);
+
+	if(converted > DRC_DEADZONE)
+		converted = (converted-DRC_DEADZONE)*1.08f;
+	else if(converted < -DRC_DEADZONE)
+		converted = (converted+DRC_DEADZONE)*1.08f;
+	else
+		converted = 0;
 
 	if (converted < -1.0f)
 		converted = -1.0f;
@@ -31,35 +39,35 @@ enum {
 };
 
 enum {
-	L_STICK_L = 0x01 << 8,
-	L_STICK_R = 0x02 << 8,
-	L_STICK_U = 0x04 << 8,
-	L_STICK_D = 0x08 << 8,
-	R_STICK_L = 0x10 << 8,
-	R_STICK_R = 0x20 << 8,
-	R_STICK_U = 0x40 << 8,
-	R_STICK_D = 0x80 << 8,
+	L_STICK_L = 0x01 << 16,
+	L_STICK_R = 0x02 << 16,
+	L_STICK_U = 0x04 << 16,
+	L_STICK_D = 0x08 << 16,
+	R_STICK_L = 0x10 << 16,
+	R_STICK_R = 0x20 << 16,
+	R_STICK_U = 0x40 << 16,
+	R_STICK_D = 0x80 << 16,
 };
 
 static button_t buttons[] = {
 	{ 0, ~0, "None" },
-	{ 1, WPAD_CLASSIC_BUTTON_UP, "D-Up" },
-	{ 2, WPAD_CLASSIC_BUTTON_LEFT, "D-Left" },
-	{ 3, WPAD_CLASSIC_BUTTON_RIGHT, "D-Right" },
-	{ 4, WPAD_CLASSIC_BUTTON_DOWN, "D-Down" },
-	{ 5, WPAD_CLASSIC_BUTTON_FULL_L, "L" },
-	{ 6, WPAD_CLASSIC_BUTTON_FULL_R, "R" },
-	{ 7, WPAD_CLASSIC_BUTTON_ZL, "Left Z" },
-	{ 8, WPAD_CLASSIC_BUTTON_ZR, "Right Z" },
-	{ 9, WPAD_CLASSIC_BUTTON_A, "A" },
-	{ 10, WPAD_CLASSIC_BUTTON_B, "B" },
-	{ 11, WPAD_CLASSIC_BUTTON_X, "X" },
-	{ 12, WPAD_CLASSIC_BUTTON_Y, "Y" },
-	{ 13, WPAD_CLASSIC_BUTTON_PLUS, "+" },
-	{ 14, WPAD_CLASSIC_BUTTON_MINUS, "-" },
-	{ 15, WPAD_CLASSIC_BUTTON_HOME, "Home" },
-	{ 16, WUPC_EXTRA_BUTTON_RSTICK, "RS-Button" },
-	{ 17, WUPC_EXTRA_BUTTON_LSTICK, "LS-Button" },
+	{ 1, WIIDRC_BUTTON_UP, "D-Up" },
+	{ 2, WIIDRC_BUTTON_LEFT, "D-Left" },
+	{ 3, WIIDRC_BUTTON_RIGHT, "D-Right" },
+	{ 4, WIIDRC_BUTTON_DOWN, "D-Down" },
+	{ 5, WIIDRC_BUTTON_L, "L" },
+	{ 6, WIIDRC_BUTTON_R, "R" },
+	{ 7, WIIDRC_BUTTON_ZL, "Left Z" },
+	{ 8, WIIDRC_BUTTON_ZR, "Right Z" },
+	{ 9, WIIDRC_BUTTON_A, "A" },
+	{ 10, WIIDRC_BUTTON_B, "B" },
+	{ 11, WIIDRC_BUTTON_X, "X" },
+	{ 12, WIIDRC_BUTTON_Y, "Y" },
+	{ 13, WIIDRC_BUTTON_PLUS, "+" },
+	{ 14, WIIDRC_BUTTON_MINUS, "-" },
+	{ 15, WIIDRC_BUTTON_HOME, "Home" },
+	{ 16, WIIDRC_EXTRA_BUTTON_L3<<24, "RS-Button" },
+	{ 17, WIIDRC_EXTRA_BUTTON_R3<<24, "LS-Button" },
 	{ 18, R_STICK_U, "RS-Up" },
 	{ 19, R_STICK_L, "RS-Left" },
 	{ 20, R_STICK_R, "RS-Right" },
@@ -76,20 +84,16 @@ static button_t analog_sources[] = {
 };
 
 static button_t menu_combos[] = {
-		{ 0, WPAD_CLASSIC_BUTTON_X | WPAD_CLASSIC_BUTTON_Y, "X+Y" },
-		{ 1, WPAD_CLASSIC_BUTTON_ZL | WPAD_CLASSIC_BUTTON_ZR, "ZL+ZR" },
-		{ 2, WPAD_CLASSIC_BUTTON_HOME, "Home" },
+		{ 0, WIIDRC_BUTTON_X | WIIDRC_BUTTON_Y, "X+Y" },
+		{ 1, WIIDRC_BUTTON_ZL | WIIDRC_BUTTON_ZR, "ZL+ZR" },
+		{ 2, WIIDRC_BUTTON_HOME, "Home" },
 };
 
-static void pause(int Control){
-	WUPC_Rumble(Control, 0);
-}
+static void pause(int Control){ }
 
 static void resume(int Control){ }
 
-static void rumble(int Control, int rumble){
-	WUPC_Rumble(Control, (rumble && rumbleEnabled) ? 1 : 0);
-}
+static void rumble(int Control, int rumble){ }
 
 static void configure(int Control, controller_config_t* config){
 	// Don't know how this should be integrated
@@ -100,31 +104,34 @@ static void assign(int p, int v){
 }
 
 static int available(int Control){
-	struct WUPCData* data = WUPC_Data(Control);
-
-	controller_WiiUPro.available[Control] = data != NULL ? 1 : 0;
-
-	return controller_WiiUPro.available[Control];
+	if(Control == 0)
+		controller_WiiUGamepad.available[Control] = (WiiDRC_Inited() && WiiDRC_Connected()) ? 1 : 0;
+	else
+		controller_WiiUGamepad.available[Control] = 0;
+	return controller_WiiUGamepad.available[Control];
 }
 
-static unsigned int getButtons(int Control){
-	struct WUPCData* data = WUPC_Data(Control);
-	if (data != NULL){
+static unsigned int getButtons(int Control)
+{
+	if (Control == 0 && WiiDRC_Inited() && WiiDRC_Connected())
+	{
+		const struct WiiDRCData *data = WiiDRC_Data();
+
 		unsigned int btns = (unsigned int)data->button;
 
-		if(data->xAxisL < -256) btns |= L_STICK_L;
-		if(data->xAxisL >  256) btns |= L_STICK_R;
-		if(data->yAxisL >  256) btns |= L_STICK_U;
-		if(data->yAxisL < -256) btns |= L_STICK_D;
+		if(data->xAxisL < -20) btns |= L_STICK_L;
+		if(data->xAxisL >  20) btns |= L_STICK_R;
+		if(data->yAxisL >  20) btns |= L_STICK_U;
+		if(data->yAxisL < -20) btns |= L_STICK_D;
 
-		if(data->xAxisL < -256) btns |= R_STICK_L;
-		if(data->xAxisL >  256) btns |= R_STICK_R;
-		if(data->yAxisR >  256) btns |= R_STICK_U;
-		if(data->yAxisR < -256) btns |= R_STICK_D;
+		if(data->xAxisL < -20) btns |= R_STICK_L;
+		if(data->xAxisL >  20) btns |= R_STICK_R;
+		if(data->yAxisR >  20) btns |= R_STICK_U;
+		if(data->yAxisR < -20) btns |= R_STICK_D;
 
 		// Slight hack: Add the extra buttons (L3/R3 basically) to the data.
 		// They do not interfere with the other Wii U controller buttons.
-		btns |= data->extra;
+		btns |= (data->extra)<<24;
 
 		return btns;
 	}
@@ -134,7 +141,7 @@ static unsigned int getButtons(int Control){
 
 static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 {
-	if (wpadNeedScan){ WUPC_UpdateButtonStats(); wpadNeedScan = 0; }
+	if (wpadNeedScan){ WiiDRC_ScanPads(); wpadNeedScan = 0; }
 	BUTTONS* c = Keys;
 	memset(c, 0, sizeof(BUTTONS));
 	//Reset buttons & sticks
@@ -173,11 +180,11 @@ static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 	// we need to invert the Y axes of both sticks, since it tends to
 	// cause funny side-effects if we don't, like making Snake run down
 	// instead of up in Metal Gear Solid, for example.
-	c->leftStickX = convertToPSRange(WUPC_lStickX(Control));
-	c->leftStickY = convertToPSRange(-WUPC_lStickY(Control));
+	c->leftStickX = convertToPSRange(WiiDRC_lStickX());
+	c->leftStickY = convertToPSRange(-WiiDRC_lStickY());
 
-	c->rightStickX = convertToPSRange(WUPC_rStickX(Control));
-	c->rightStickY = convertToPSRange(-WUPC_rStickY(Control));
+	c->rightStickX = convertToPSRange(WiiDRC_rStickX());
+	c->rightStickY = convertToPSRange(-WiiDRC_rStickY());
 
 	// Return 1 if whether the exit button(s) are pressed
 	return isHeld(config->exit) ? 0 : 1;
@@ -185,7 +192,7 @@ static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 
 static void refreshAvailable(void);
 
-controller_t controller_WiiUPro =
+controller_t controller_WiiUGamepad =
 { 
 	'P',
 	_GetKeys,
@@ -230,13 +237,12 @@ controller_t controller_WiiUPro =
 static void refreshAvailable(void){
 	int i = 0;
 
-	struct WUPCData* data = NULL;
-
 	for (i = 0; i < 4; ++i)
 	{
-		data = WUPC_Data(i);
-
-		controller_WiiUPro.available[i] = data != NULL ? 1 : 0;
+		if(i == 0)
+			controller_WiiUGamepad.available[i] = (WiiDRC_Inited() && WiiDRC_Connected()) ? 1 : 0;
+		else
+			controller_WiiUGamepad.available[i] = 0;
 	}
 }
 

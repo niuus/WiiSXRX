@@ -256,6 +256,11 @@ void loadSettings(int argc, char *argv[])
 				load_configurations(f, &controller_WiiUPro);			//read in Wii U Pro controller mappings
 				fclose(f);
 			}
+			f = fopen("usb:/wiisxrx/controlGP.cfg", "r");  //attempt to open file
+			if (f) {
+				load_configurations(f, &controller_WiiUGamepad);		//read in Wii U Gamepad controller mappings
+				fclose(f);
+			}
 #endif //HW_RVL
 		}
 	}
@@ -293,6 +298,11 @@ void loadSettings(int argc, char *argv[])
 			f = fopen("sd:/wiisxrx/controlP.cfg", "r");  //attempt to open file
 			if (f) {
 				load_configurations(f, &controller_WiiUPro);			//read in Wii U Pro controller mappings
+				fclose(f);
+			}
+			f = fopen("sd:/wiisxrx/controlGP.cfg", "r");  //attempt to open file
+			if (f) {
+				load_configurations(f, &controller_WiiUGamepad);		//read in Wii U Gamepad controller mappings
 				fclose(f);
 			}
 #endif //HW_RVL

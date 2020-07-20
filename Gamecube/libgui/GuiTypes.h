@@ -26,6 +26,7 @@
 #ifdef HW_RVL
 #include <wiiuse/wpad.h>
 #include <wupc/wupc.h>
+#include <wiidrc/wiidrc.h>
 #endif
 #include <vector>
 #include <stack>
