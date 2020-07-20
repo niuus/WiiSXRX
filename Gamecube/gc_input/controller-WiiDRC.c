@@ -66,8 +66,8 @@ static button_t buttons[] = {
 	{ 13, WIIDRC_BUTTON_PLUS, "+" },
 	{ 14, WIIDRC_BUTTON_MINUS, "-" },
 	{ 15, WIIDRC_BUTTON_HOME, "Home" },
-	{ 16, WIIDRC_EXTRA_BUTTON_L3<<24, "RS-Button" },
-	{ 17, WIIDRC_EXTRA_BUTTON_R3<<24, "LS-Button" },
+	{ 16, WIIDRC_EXTRA_BUTTON_L3<<24, "LS-Button" },
+	{ 17, WIIDRC_EXTRA_BUTTON_R3<<24, "RS-Button" },
 	{ 18, R_STICK_U, "RS-Up" },
 	{ 19, R_STICK_L, "RS-Left" },
 	{ 20, R_STICK_R, "RS-Right" },
@@ -194,7 +194,7 @@ static void refreshAvailable(void);
 
 controller_t controller_WiiUGamepad =
 { 
-	'P',
+	'D', //for DRC I guess
 	_GetKeys,
 	configure,
 	assign,

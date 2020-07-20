@@ -230,33 +230,33 @@ void loadSettings(int argc, char *argv[])
 				readConfig(f);
 				fclose(f);
 			}
-			f = fopen( "usb:/wiisxrx/controlG.cfg", "r" );  //attempt to open file
+			f = fopen( "usb:/wiisxrx/controlG.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_GC);					//read in GC controller mappings
 				fclose(f);
 			}
 #ifdef HW_RVL
-			f = fopen( "usb:/wiisxrx/controlC.cfg", "r" );  //attempt to open file
+			f = fopen( "usb:/wiisxrx/controlC.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_Classic);			//read in Classic controller mappings
 				fclose(f);
 			}
-			f = fopen( "usb:/wiisxrx/controlN.cfg", "r" );  //attempt to open file
+			f = fopen( "usb:/wiisxrx/controlN.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_WiimoteNunchuk);		//read in WM+NC controller mappings
 				fclose(f);
 			}
-			f = fopen( "usb:/wiisxrx/controlW.cfg", "r" );  //attempt to open file
+			f = fopen( "usb:/wiisxrx/controlW.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_Wiimote);			//read in Wiimote controller mappings
 				fclose(f);
 			}
-			f = fopen("usb:/wiisxrx/controlP.cfg", "r");  //attempt to open file
+			f = fopen("usb:/wiisxrx/controlP.cfg", "rb");  //attempt to open file
 			if (f) {
 				load_configurations(f, &controller_WiiUPro);			//read in Wii U Pro controller mappings
 				fclose(f);
 			}
-			f = fopen("usb:/wiisxrx/controlGP.cfg", "r");  //attempt to open file
+			f = fopen("usb:/wiisxrx/controlD.cfg", "rb");  //attempt to open file
 			if (f) {
 				load_configurations(f, &controller_WiiUGamepad);		//read in Wii U Gamepad controller mappings
 				fclose(f);
@@ -274,33 +274,33 @@ void loadSettings(int argc, char *argv[])
 				readConfig(f);
 				fclose(f);
 			}
-			f = fopen( "sd:/wiisxrx/controlG.cfg", "r" );  //attempt to open file
+			f = fopen( "sd:/wiisxrx/controlG.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_GC);					//read in GC controller mappings
 				fclose(f);
 			}
 #ifdef HW_RVL
-			f = fopen( "sd:/wiisxrx/controlC.cfg", "r" );  //attempt to open file
+			f = fopen( "sd:/wiisxr/controlC.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_Classic);			//read in Classic controller mappings
 				fclose(f);
 			}
-			f = fopen( "sd:/wiisxrx/controlN.cfg", "r" );  //attempt to open file
+			f = fopen( "sd:/wiisxr/controlN.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_WiimoteNunchuk);		//read in WM+NC controller mappings
 				fclose(f);
 			}
-			f = fopen( "sd:/wiisxrx/controlW.cfg", "r" );  //attempt to open file
+			f = fopen( "sd:/wiisxr/controlW.cfg", "rb" );  //attempt to open file
 			if(f) {
 				load_configurations(f, &controller_Wiimote);			//read in Wiimote controller mappings
 				fclose(f);
 			}
-			f = fopen("sd:/wiisxrx/controlP.cfg", "r");  //attempt to open file
+			f = fopen("sd:/wiisxr/controlP.cfg", "rb");  //attempt to open file
 			if (f) {
 				load_configurations(f, &controller_WiiUPro);			//read in Wii U Pro controller mappings
 				fclose(f);
 			}
-			f = fopen("sd:/wiisxrx/controlGP.cfg", "r");  //attempt to open file
+			f = fopen("sd:/wiisxr/controlD.cfg", "rb");  //attempt to open file
 			if (f) {
 				load_configurations(f, &controller_WiiUGamepad);		//read in Wii U Gamepad controller mappings
 				fclose(f);
@@ -453,7 +453,9 @@ int main(int argc, char *argv[])
         }
 
 	#endif
-	
+
+	control_info_init(); //Perform controller auto assignment at least once at startup.
+
 	loadSettings(argc, argv);
 	MenuContext *menu = new MenuContext(vmode);
 	VIDEO_SetPostRetraceCallback (ScanPADSandReset);
@@ -467,8 +469,6 @@ int main(int argc, char *argv[])
 	DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
 	_break();
 #endif
-
-	control_info_init(); //Perform controller auto assignment at least once at startup.
 
 	// Start up AESND (inited here because its used in SPU and CD)
 	AESND_Init();

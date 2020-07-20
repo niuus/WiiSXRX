@@ -81,6 +81,7 @@ void Func_DisableRumbleYes();
 void Func_DisableRumbleNo();
 void Func_SaveButtonsSD();
 void Func_SaveButtonsUSB();
+void Func_SetButtonLoad();
 void Func_ToggleButtonLoad();
 
 void Func_DisableAudioYes();
@@ -458,6 +459,7 @@ void SettingsFrame::activateSubmenu(int submenu)
 			}
 			break;
 		case SUBMENU_INPUT:
+			Func_SetButtonLoad();
 			setDefaultFocus(FRAME_BUTTONS[2].button);
 			for (int i = 0; i < NUM_TAB_BUTTONS; i++)
 			{
@@ -1139,7 +1141,7 @@ void Func_SaveButtonsSD()
 			fclose(f);
 			num_written++;
 		}
-		f = fopen("sd:/wiisxrx/controlGP.cfg", "wb");  //attempt to open file
+		f = fopen("sd:/wiisxrx/controlD.cfg", "wb");  //attempt to open file
 		if (f) {
 			save_configurations(f, &controller_WiiUGamepad);		//write out Wii U Gamepad controller mappings
 			fclose(f);
@@ -1191,7 +1193,7 @@ void Func_SaveButtonsUSB()
 			fclose(f);
 			num_written++;
 		}
-		f = fopen("usb:/wiisxrx/controlGP.cfg", "wb");  //attempt to open file
+		f = fopen("usb:/wiisxrx/controlD.cfg", "wb");  //attempt to open file
 		if (f) {
 			save_configurations(f, &controller_WiiUGamepad);		//write out Wii U Gamepad controller mappings
 			fclose(f);
@@ -1205,13 +1207,18 @@ void Func_SaveButtonsUSB()
 		menu::MessageBox::getInstance().setMessage("Error saving Button Configs to USB");
 }
 
-void Func_ToggleButtonLoad()
+void Func_SetButtonLoad()
 {
-	loadButtonSlot = (loadButtonSlot + 1) % 5;
 	if (loadButtonSlot == LOADBUTTON_DEFAULT)
 		strcpy(FRAME_STRINGS[42], "Default");
 	else
 		sprintf(FRAME_STRINGS[42], "Slot %d", loadButtonSlot+1);
+}
+
+void Func_ToggleButtonLoad()
+{
+	loadButtonSlot = (loadButtonSlot + 1) % 5;
+	Func_SetButtonLoad();
 }
 
 void Func_DisableAudioYes()
