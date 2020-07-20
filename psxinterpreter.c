@@ -26,9 +26,9 @@
 #include "gte.h"
 #include "psxhle.h"
 
-static int branch = 0;
-static int branch2 = 0;
-static u32 branchPC;
+int branch = 0;
+int branch2 = 0;
+u32 branchPC;
 
 extern int stop;
 
