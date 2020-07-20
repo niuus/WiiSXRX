@@ -900,10 +900,10 @@ static void iBranch(u32 branchPC, int savectx) {
 void iDumpRegs() {
 	int i, j;
 
-	printf("%08x %08x\n", psxRegs.pc, psxRegs.cycle);
+	printf("%08x %08x\n", (unsigned int)psxRegs.pc, (unsigned int)psxRegs.cycle);
 	for (i=0; i<4; i++) {
 		for (j=0; j<8; j++)
-			printf("%08x ", psxRegs.GPR.r[j*i]);
+			printf("%08x ", (unsigned int)(psxRegs.GPR.r[j*i]));
 		printf("\n");
 	}
 }

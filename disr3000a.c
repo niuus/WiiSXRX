@@ -47,7 +47,7 @@ typedef char* (*TdisR3000AF)(u32 code, u32 pc);
 #define MakeDisFg(fn, b) char* fn(u32 code, u32 pc) { b; return ostr; }
 #define MakeDisF(fn, b) \
 	static char* fn(u32 code, u32 pc) { \
-		sprintf (ostr, "%08x %08x:", pc, code); \
+		sprintf (ostr, "%08x %08x:", (unsigned int)pc, (unsigned int)code); \
 		b; /*ostr[(strlen(ostr) - 1)] = 0;*/ return ostr; \
 	}
 
@@ -74,15 +74,15 @@ typedef char* (*TdisR3000AF)(u32 code, u32 pc);
 #define _OfB_     _Im_, _nRs_
 
 #define dName(i)	sprintf(ostr+strlen(ostr), " %-7s,", i)
-#define dGPR(i)		sprintf(ostr+strlen(ostr), " %08x (%s),", psxRegs.GPR.r[i], disRNameGPR[i])
-#define dCP0(i)		sprintf(ostr+strlen(ostr), " %08x (%s),", psxRegs.CP0.r[i], disRNameCP0[i])
-#define dHI()		sprintf(ostr+strlen(ostr), " %08x (%s),", psxRegs.GPR.n.hi, "hi")
-#define dLO()		sprintf(ostr+strlen(ostr), " %08x (%s),", psxRegs.GPR.n.lo, "lo")
-#define dImm()		sprintf(ostr+strlen(ostr), " %08x (%08x),", _Im_, _Im_)
-#define dTarget()	sprintf(ostr+strlen(ostr), " %08x,", _Target_)
-#define dSa()		sprintf(ostr+strlen(ostr), " %08x (%08x),", _Sa_, _Sa_)
-#define dOfB()		sprintf(ostr+strlen(ostr), " %08x (%08x (%s)),", _Im_, psxRegs.GPR.r[_Rs_], disRNameGPR[_Rs_])
-#define dOffset()	sprintf(ostr+strlen(ostr), " %08x,", _Branch_)
+#define dGPR(i)		sprintf(ostr+strlen(ostr), " %08x (%s),", (unsigned int)psxRegs.GPR.r[i], disRNameGPR[i])
+#define dCP0(i)		sprintf(ostr+strlen(ostr), " %08x (%s),", (unsigned int)psxRegs.CP0.r[i], disRNameCP0[i])
+#define dHI()		sprintf(ostr+strlen(ostr), " %08x (%s),", (unsigned int)psxRegs.GPR.n.hi, "hi")
+#define dLO()		sprintf(ostr+strlen(ostr), " %08x (%s),", (unsigned int)psxRegs.GPR.n.lo, "lo")
+#define dImm()		sprintf(ostr+strlen(ostr), " %08x (%08x),", (unsigned int)_Im_, (unsigned int)_Im_)
+#define dTarget()	sprintf(ostr+strlen(ostr), " %08x,", (unsigned int)_Target_)
+#define dSa()		sprintf(ostr+strlen(ostr), " %08x (%08x),", (unsigned int)_Sa_, (unsigned int)_Sa_)
+#define dOfB()		sprintf(ostr+strlen(ostr), " %08x (%08x (%s)),", (unsigned int)_Im_, (unsigned int)psxRegs.GPR.r[_Rs_], disRNameGPR[_Rs_])
+#define dOffset()	sprintf(ostr+strlen(ostr), " %08x,", (unsigned int)_Branch_)
 #define dCode()		sprintf(ostr+strlen(ostr), " %08x,", (code >> 6) & 0xffffff)
 
 /*********************************************************
