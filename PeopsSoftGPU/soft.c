@@ -1308,7 +1308,7 @@ __inline__ int shl10idiv(int x, int y)
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
                         
-__inline__ int RightSection_F(void)
+static __inline__ int RightSection_F(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -1324,7 +1324,7 @@ __inline__ int RightSection_F(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_F(void)
+static __inline__ int LeftSection_F(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -1340,7 +1340,7 @@ __inline__ int LeftSection_F(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_F(void)
+static __inline__ BOOL NextRow_F(void)
 {
  if(--left_section_height<=0) 
   {
@@ -1366,7 +1366,7 @@ __inline__ BOOL NextRow_F(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_F(short x1, short y1, short x2, short y2, short x3, short y3)
+static __inline__ BOOL SetupSections_F(short x1, short y1, short x2, short y2, short x3, short y3)
 {
  soft_vertex * v1, * v2, * v3;
  int height,longest;
@@ -1428,7 +1428,7 @@ __inline__ BOOL SetupSections_F(short x1, short y1, short x2, short y2, short x3
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_G(void)
+static __inline__ int RightSection_G(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -1444,7 +1444,7 @@ __inline__ int RightSection_G(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_G(void)
+static __inline__ int LeftSection_G(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -1467,7 +1467,7 @@ __inline__ int LeftSection_G(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_G(void)
+static __inline__ BOOL NextRow_G(void)
 {
  if(--left_section_height<=0) 
   {
@@ -1496,7 +1496,7 @@ __inline__ BOOL NextRow_G(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_G(short x1,short y1,short x2,short y2,short x3,short y3,long rgb1, long rgb2, long rgb3)
+static __inline__ BOOL SetupSections_G(short x1,short y1,short x2,short y2,short x3,short y3,long rgb1, long rgb2, long rgb3)
 {
  soft_vertex * v1, * v2, * v3;
  int height,longest,temp;
@@ -1574,7 +1574,7 @@ __inline__ BOOL SetupSections_G(short x1,short y1,short x2,short y2,short x3,sho
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_FT(void)
+static __inline__ int RightSection_FT(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -1590,7 +1590,7 @@ __inline__ int RightSection_FT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_FT(void)
+static __inline__ int LeftSection_FT(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -1611,7 +1611,7 @@ __inline__ int LeftSection_FT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_FT(void)
+static __inline__ BOOL NextRow_FT(void)
 {
  if(--left_section_height<=0) 
   {
@@ -1639,7 +1639,7 @@ __inline__ BOOL NextRow_FT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_FT(short x1, short y1, short x2, short y2, short x3, short y3, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3)
+static __inline__ BOOL SetupSections_FT(short x1, short y1, short x2, short y2, short x3, short y3, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3)
 {
  soft_vertex * v1, * v2, * v3;
  int height,longest,temp;
@@ -1727,7 +1727,7 @@ texture distortions
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_GT(void)
+static __inline__ int RightSection_GT(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -1743,7 +1743,7 @@ __inline__ int RightSection_GT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_GT(void)
+static __inline__ int LeftSection_GT(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -1771,7 +1771,7 @@ __inline__ int LeftSection_GT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_GT(void)
+static __inline__ BOOL NextRow_GT(void)
 {
  if(--left_section_height<=0) 
   {
@@ -1802,7 +1802,7 @@ __inline__ BOOL NextRow_GT(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_GT(short x1, short y1, short x2, short y2, short x3, short y3, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, long rgb1, long rgb2, long rgb3)
+static __inline__ BOOL SetupSections_GT(short x1, short y1, short x2, short y2, short x3, short y3, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, long rgb1, long rgb2, long rgb3)
 {
  soft_vertex * v1, * v2, * v3;
  int height,longest,temp;
@@ -1907,7 +1907,7 @@ texture distortions
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_F4(void)
+static __inline__ int RightSection_F4(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -1926,7 +1926,7 @@ __inline__ int RightSection_F4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_F4(void)
+static __inline__ int LeftSection_F4(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -1945,7 +1945,7 @@ __inline__ int LeftSection_F4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_F4(void)
+static __inline__ BOOL NextRow_F4(void)
 {
  if(--left_section_height<=0) 
   {
@@ -1977,7 +1977,7 @@ __inline__ BOOL NextRow_F4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_F4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4)
+static __inline__ BOOL SetupSections_F4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4)
 {
  soft_vertex * v1, * v2, * v3, * v4;
  int height,width,longest1,longest2;
@@ -2119,7 +2119,7 @@ __inline__ BOOL SetupSections_F4(short x1, short y1, short x2, short y2, short x
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_FT4(void)
+static __inline__ int RightSection_FT4(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -2142,7 +2142,7 @@ __inline__ int RightSection_FT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_FT4(void)
+static __inline__ int LeftSection_FT4(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -2165,7 +2165,7 @@ __inline__ int LeftSection_FT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_FT4(void)
+static __inline__ BOOL NextRow_FT4(void)
 {
  if(--left_section_height<=0) 
   {
@@ -2201,7 +2201,7 @@ __inline__ BOOL NextRow_FT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_FT4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, short tx4, short ty4)
+static __inline__ BOOL SetupSections_FT4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, short tx4, short ty4)
 {
  soft_vertex * v1, * v2, * v3, * v4;
  int height,width,longest1,longest2;
@@ -2350,7 +2350,7 @@ __inline__ BOOL SetupSections_FT4(short x1, short y1, short x2, short y2, short 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int RightSection_GT4(void)
+static __inline__ int RightSection_GT4(void)
 {
  soft_vertex * v1 = right_array[ right_section ];
  soft_vertex * v2 = right_array[ right_section-1 ];
@@ -2380,7 +2380,7 @@ __inline__ int RightSection_GT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ int LeftSection_GT4(void)
+static __inline__ int LeftSection_GT4(void)
 {
  soft_vertex * v1 = left_array[ left_section ];
  soft_vertex * v2 = left_array[ left_section-1 ];
@@ -2410,7 +2410,7 @@ __inline__ int LeftSection_GT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL NextRow_GT4(void)
+static __inline__ BOOL NextRow_GT4(void)
 {
  if(--left_section_height<=0) 
   {
@@ -2452,7 +2452,7 @@ __inline__ BOOL NextRow_GT4(void)
 
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ BOOL SetupSections_GT4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, short tx4, short ty4,long rgb1,long rgb2,long rgb3,long rgb4)
+static __inline__ BOOL SetupSections_GT4(short x1, short y1, short x2, short y2, short x3, short y3, short x4, short y4, short tx1, short ty1, short tx2, short ty2, short tx3, short ty3, short tx4, short ty4,long rgb1,long rgb2,long rgb3,long rgb4)
 {
  soft_vertex * v1, * v2, * v3, * v4;
  int height,width,longest1,longest2;
@@ -2622,7 +2622,7 @@ __inline__ BOOL SetupSections_GT4(short x1, short y1, short x2, short y2, short 
 // POLY 3/4 FLAT SHADED
 ////////////////////////////////////////////////////////////////////////
 
-__inline__ void drawPoly3Fi(short x1,short y1,short x2,short y2,short x3,short y3,long rgb)
+static __inline__ void drawPoly3Fi(short x1,short y1,short x2,short y2,short x3,short y3,long rgb)
 {
  int i,j,xmin,xmax,ymin,ymax;
  unsigned short color;unsigned long lcolor;
@@ -4648,7 +4648,7 @@ void drawPoly4TD_TW_S(short x1, short y1, short x2, short y2, short x3, short y3
 // POLY 3/4 G-SHADED
 ////////////////////////////////////////////////////////////////////////
  
-__inline__ void drawPoly3Gi(short x1,short y1,short x2,short y2,short x3,short y3,long rgb1, long rgb2, long rgb3)
+static __inline__ void drawPoly3Gi(short x1,short y1,short x2,short y2,short x3,short y3,long rgb1, long rgb2, long rgb3)
 {
  int i,j,xmin,xmax,ymin,ymax;
  long cR1,cG1,cB1;

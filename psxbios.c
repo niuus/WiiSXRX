@@ -2184,14 +2184,14 @@ void psxBiosInit() {
 void psxBiosShutdown() {
 }
 
-__inline void SaveRegs() {
+static __inline void SaveRegs() {
 	memcpy(regs, psxRegs.GPR.r, 32*4);
 	regs[32] = psxRegs.GPR.n.lo;
 	regs[33] = psxRegs.GPR.n.hi;
 	regs[34] = psxRegs.pc;
 }
 
-__inline void LoadRegs() {
+static __inline void LoadRegs() {
 	memcpy(psxRegs.GPR.r, regs, 32*4);
 	psxRegs.GPR.n.lo = regs[32];
 	psxRegs.GPR.n.hi = regs[33];
