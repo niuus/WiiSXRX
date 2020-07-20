@@ -128,7 +128,11 @@ void Gui::draw()
 					*(volatile unsigned int*)0xCC003024 = 0;  //reboot
 			  }
 #else
-				rld();
+				if(*(volatile unsigned int*)0x80001804 == 0x53545542 &&
+					*(volatile unsigned int*)0x80001808 == 0x48415858)
+					rld();
+				else
+					SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
 #endif
 			}
 		}

@@ -222,7 +222,7 @@ void loadSettings(int argc, char *argv[])
 	//config stuff
 	int (*configFile_init)(fileBrowser_file*) = fileBrowser_libfat_init;
 #ifdef HW_RVL
-	if(argv[0][0] == 'u') {  //assume USB
+	if(argc && argv[0][0] == 'u') {  //assume USB
 		fileBrowser_file* configFile_file = &saveDir_libfat_USB;
 		if(configFile_init(configFile_file)) {                //only if device initialized ok
 			FILE* f = fopen( "usb:/wiisxrx/settings.cfg", "r" );  //attempt to open file
