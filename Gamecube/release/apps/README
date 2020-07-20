@@ -1,5 +1,5 @@
 README : WiiSXRX / CubeSXRX
-Beta 2.2
+Beta 2.3
 
 LICENSE:
     This software is licensed under the GNU General Public License v2
@@ -75,6 +75,8 @@ CREDITS:
  * Audio & Core Coder: tehpola
  * Artwork: drmr
  * USB 2.0 support: matguitarist
+ * LibWiiDRC integration: FIX94
+ * LibWUPC: https://https://github.com/FIX94/libwiidrc
  * LibWUPC integration: Daxtsu
  * LibWUPC: https://github.com/FIX94/libwupc
  * pcsx team http://www.pcsx.net/
@@ -88,6 +90,33 @@ CREDITS:
  * Compiled using devKitPro
      ( http://sourceforge.net/projects/devkitpro )
  * www.emulatemii.com and https://code.google.com/archive/p/pcsxgc/downloads
+
+RX CHANGE LOG:
+Beta 2.3:
+* Fix indentation issue.
+* Missing include [Mystro256]
+* Fix misleading indentation warnings.
+* Fix missing stricmp. [Mystro256]
+* Flag opt cleanup for new gcc. [Mystro256]
+* Silence format warnings [Mystro256]
+Should have no binary change.
+* Silence warnings by making some functions static. [Mystro256]
+* Remove statics in psxinterpreter to silence a warning. [Mystro256]
+* Basic WiiU gamepad support in Wii VC using libwiidrc. [FIX94]
+* Corrected bugs in button mapping. [FIX94]
+* Make sure args exist before parsing them... [FIX94]
+...and make sure stubhaxx exists
+* Properly switched WUPC values, refined DRC analog stick... [FIX94]
+...conversion and added comments to exit code.
+* Adjusted DRC deadzone accordingly. [FIX94]
+* Math is hard, didnt have enough coffee today for that. [FIX94]
+* Credits update, and other minor QoL fixes.
+* We have a neat savestates folder now.
+
+Beta 2.2:
+* New working directory on the root of the device, WiiSXRX.
+* Fixed compile error with SMB.
+* Rebranding to WiiSX RX.
 
 OLD CHANGE LOG:
 Beta 2.2:
