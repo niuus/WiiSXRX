@@ -38,8 +38,14 @@ As well, i can't guarantee this project will be a success, unless i can get some
 - Improve plugins (perhaps replace them?)... e.g. cdrmooby28 has some optimization and possible memory issues. As well, maybe an opengl plugin can be ported to gx (with the help of something like gl2gx, WIP see gxrender branch), and a sound plugin with the help of a SDL layer (or ported?).
 ------------------------------------------
 - Xbox 360 and USB HID controller support.
+- Screenshot button.
+- Possibility to select other BIOS with some basic buttons.
+- 240p support.
+- CD-DA support.
 
 Any help is appreciated.
+
+#DISCLAIMER: Please do not report issues with specific games, as they may or not be fixed with updates to the code later in the future.
 
 ## Credits:
 Original WiiSX team:
