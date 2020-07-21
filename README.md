@@ -45,7 +45,7 @@ As well, i can't guarantee this project will be a success, unless i can get some
 
 Any help is appreciated.
 
-#DISCLAIMER: Please do not report issues with specific games, as they may or not be fixed with updates to the code later in the future.
+# DISCLAIMER: Please do not report issues with specific games, as they may or not be fixed with updates to the code later in the future.
 
 ## Credits:
 Original WiiSX team:
