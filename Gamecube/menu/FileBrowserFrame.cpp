@@ -206,7 +206,7 @@ void FileBrowserFrame::drawChildren(menu::Graphics &gfx)
 				previousButtonsWii[i] = wiiPad[i].btns_h;
 				if (wiiPad[i].exp.type == WPAD_EXP_CLASSIC)
 				{
-					if (currentButtonsDownWii & CLASSIC_CTRL_BUTTON_ZR)
+					if (currentButtonsDownWii & WPAD_CLASSIC_BUTTON_ZR)
 					{
 						// Change sort method
 						fileSortMode ^= 1;
@@ -250,7 +250,6 @@ void FileBrowserFrame::drawChildren(menu::Graphics &gfx)
 					else if (currentButtonsDownWii & WPAD_BUTTON_PLUS)
 					{
 						//move to next set & return
-						if(current_page+1 < max_page) 
 						current_page = (current_page + 1) % max_page;
 						fileBrowserFrame_FillPage();
 						menu::Focus::getInstance().clearPrimaryFocus();
