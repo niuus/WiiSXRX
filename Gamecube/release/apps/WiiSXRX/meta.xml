@@ -3,7 +3,7 @@
    <name>WiiSXRX</name>
    <coder>NiuuS</coder>
    <version>2.4 Beta</version>
-   <release_date>202008022254</release_date>
+   <release_date>202008022351</release_date>
    <short_description>PSX Emulator for Wii</short_description>
    <long_description>
 Featuring:
@@ -15,7 +15,7 @@ Featuring:
 
 * WiiSX/CubeSX is a PCSX port. The original team was:
 emu_kidid - general coding
-sepp256 - graphics & menu
+sepp256 - graphics and menu
 tehpola - audio
 * Later updates by:
 matguitarist
