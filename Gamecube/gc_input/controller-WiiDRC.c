@@ -124,8 +124,8 @@ static unsigned int getButtons(int Control)
 		if(data->yAxisL >  20) btns |= L_STICK_U;
 		if(data->yAxisL < -20) btns |= L_STICK_D;
 
-		if(data->xAxisL < -20) btns |= R_STICK_L;
-		if(data->xAxisL >  20) btns |= R_STICK_R;
+		if(data->xAxisR < -20) btns |= R_STICK_L;
+		if(data->xAxisR >  20) btns |= R_STICK_R;
 		if(data->yAxisR >  20) btns |= R_STICK_U;
 		if(data->yAxisR < -20) btns |= R_STICK_D;
 
