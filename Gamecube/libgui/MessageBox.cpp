@@ -61,9 +61,9 @@ struct ButtonInfo
 	ButtonFunc		returnFunc;
 } FRAME_BUTTONS[NUM_FRAME_BUTTONS] =
 { //	button	buttonStyle	buttonString		x		y		width	height	Up	Dwn	Lft	Rt	clickFunc				returnFunc
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	220.0,	340.0,	200.0,	56.0,	-1,	-1,	-1,	-1,	Func_MessageBoxCancel,	Func_MessageBoxCancel }, // OK
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	145.0,	340.0,	150.0,	56.0,	-1,	-1,	 2,	 2,	Func_MessageBoxOK,		Func_MessageBoxCancel }, // OK (OK/Cancel)
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	345.0,	340.0,	150.0,	56.0,	-1,	-1,	 1,	 1,	Func_MessageBoxCancel,	Func_MessageBoxCancel }, // Cancel (OK/Cancel)
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	220.0,	360.0,	200.0,	56.0,	-1,	-1,	-1,	-1,	Func_MessageBoxCancel,	Func_MessageBoxCancel }, // OK
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	145.0,	360.0,	150.0,	56.0,	-1,	-1,	 2,	 2,	Func_MessageBoxOK,		Func_MessageBoxCancel }, // OK (OK/Cancel)
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	345.0,	360.0,	150.0,	56.0,	-1,	-1,	 1,	 1,	Func_MessageBoxCancel,	Func_MessageBoxCancel }, // Cancel (OK/Cancel)
 };
 
 MessageBox::MessageBox()
@@ -223,7 +223,7 @@ void MessageBox::drawMessageBox(Graphics& gfx)
 {
 	GXColor tmpBoxColor = boxColor;
 	GXColor tmpTextColor = textColor;
-	float x = 40; float y = 60; float width = 560; float height = 360;
+	float x = 40; float y = 30; float width = 560; float height = 420;
 	if (messageFade > 0.0f)
 	{
 		tmpBoxColor.a = tmpBoxColor.a*messageFade;
@@ -251,7 +251,11 @@ void MessageBox::drawMessageBox(Graphics& gfx)
 	gfx.drawImage(0, x+width/2, y+height/2, width/2, height/2, width/16.0, 0.0, height/16.0, 0.0);
 
 	//detect number of lines
-#define MAX_LINES 12
+#ifdef HW_RVL
+	#define MAX_LINES 14
+#else
+	#define MAX_LINES 9
+#endif
 	int ind = 0;
 	int numLines = 0;
 	int lineStart[MAX_LINES];

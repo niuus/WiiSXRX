@@ -164,23 +164,24 @@ void Func_Credits()
 {
 	char CreditsInfo[512] = "";
 #ifdef HW_RVL
-	strcat(CreditsInfo,"WiiSXRX Beta 2.3\n");
+	strcat(CreditsInfo,"WiiSXRX Beta 2.4\n");
 #else
-	strcat(CreditsInfo,"CubeSXRX Beta 2.3\n");
+	strcat(CreditsInfo,"CubeSXRX Beta 2.4\n");
 #endif
-	strcat(CreditsInfo,"github.com/niuus/WiiSXRX\n");
-	strcat(CreditsInfo,"WiiSXRX: NiuuS\n");
+	strcat(CreditsInfo,"www.github.com/niuus/WiiSXRX\n");
+	strcat(CreditsInfo,"WiiSX RX & Logo: NiuuS\n");
 	strcat(CreditsInfo,"\n");
-	strcat(CreditsInfo,"Original WiiSX Team:\n");
+	strcat(CreditsInfo,"Original WiiSX team:\n");
 	strcat(CreditsInfo,"emu_kidid - general coding\n");
 	strcat(CreditsInfo,"sepp256 - graphics & menu\n");
 	strcat(CreditsInfo,"tehpola - audio\n");
+	strcat(CreditsInfo,"PCSX/PCSX-df/PCSX-r teams\n");
 	strcat(CreditsInfo,"\n");
 #ifdef HW_RVL
 	strcat(CreditsInfo,"FIX94 - Wii U gamepad support\n");
-	strcat(CreditsInfo,"matguitarist - USB 2.0 Support\n");
+	strcat(CreditsInfo,"matguitarist - USB 2.0 support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
-	strcat(CreditsInfo,"NiuuS - WiiSXRX logo\n");
+	strcat(CreditsInfo,"Mystro256 - WiiSXR fork\n");
 #endif
 
 	menu::MessageBox::getInstance().setMessage(CreditsInfo);

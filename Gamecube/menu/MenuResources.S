@@ -12,9 +12,9 @@
    .balign 32
    LogoTexture:
 #ifdef HW_RVL
-   .incbin	"../menu/resources/wiiSX.tx"
+   .incbin	"../menu/resources/wiiSXRX.tx"
 #else
-   .incbin	"../menu/resources/cubeSX.tx"
+   .incbin	"../menu/resources/cubeSXRX.tx"
 #endif
    .globl LogoTexture_length
    LogoTexture_length:
