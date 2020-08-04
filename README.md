@@ -14,8 +14,9 @@ https://code.google.com/archive/p/pcsxgc/downloads
 * WiiSXR is GNU GPL and the source can be found here:
 https://github.com/Mystro256/wiisxr
 
-* libwupc is also GPL, which can be found here:
+* libwupc and libwiidrc are also GPL, which can be found here:
 https://github.com/FIX94/libwupc
+https://github.com/FIX94/libwiidrc
 
 
 ## Downloads
@@ -38,10 +39,12 @@ As well, i can't guarantee this project will be a success, unless i can get some
 - Improve plugins (perhaps replace them?)... e.g. cdrmooby28 has some optimization and possible memory issues. As well, maybe an opengl plugin can be ported to gx (with the help of something like gl2gx, WIP see gxrender branch), and a sound plugin with the help of a SDL layer (or ported?).
 ------------------------------------------
 - Xbox 360 and USB HID controller support.
-- Screenshot button.
+- DualShock 3, DualShock 4 and DualShock 5 controller support.
+- Ability to take screenshots like Snes9x RX.
 - Possibility to select other BIOS with some basic buttons.
 - 240p support.
 - CD-DA support.
+- PS1 multitap support.
 
 Any help is appreciated.
 
