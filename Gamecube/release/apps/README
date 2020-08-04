@@ -1,5 +1,5 @@
-README : WiiSXRX / CubeSXRX
-Beta 2.3
+README : WiiSX RX / CubeSX RX
+Beta 2.4
 
 LICENSE:
     This software is licensed under the GNU General Public License v2
@@ -26,6 +26,8 @@ QUICK USAGE:
      (Note: this must be done to save your game; it will not be done automatically)
 
 Controls:
+ * While the Gamecube pad is compatible, a Wii Classic Controller, Wii Classic Controller Pro, or Wii U Pro Controller is recommended.
+ * The Wii U Gamepad is also compatible, but only when doing Wii U injections (no, you can't use it on vWii).
  * Controls are now fully configurable so any button on your controller can be mapped
  * The controller configuration screen presents each PSX button and allows you to toggle through sources
  * There are 4 configuration slots for each type of controller
