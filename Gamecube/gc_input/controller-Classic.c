@@ -146,7 +146,7 @@ static int available(int Control) {
 	}
 }
 
-static inline u8 CCtoPSXAnalog(int a)
+static inline s8 CCtoPSXAnalog(int a)
 {
 	a *= 14 / 11; // adjust reported range to fully cover ps1 range
 	if(a > 127) a = 127; else if(a < -128) a = -128; // clamp
