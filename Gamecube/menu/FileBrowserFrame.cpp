@@ -28,6 +28,7 @@
 #include "../libgui/MessageBox.h"
 #include "../libgui/FocusManager.h"
 #include "../libgui/CursorManager.h"
+
 #include "../../psxcommon.h"
 
 extern "C" {
@@ -452,6 +453,7 @@ extern char CdromId[10];
 extern char CdromLabel[33];
 extern signed char autoSaveLoaded;
 void Func_SetPlayGame();
+void Func_PlayGame();
 extern "C" {
 void newCD(fileBrowser_file *file);
 }
@@ -470,8 +472,19 @@ void fileBrowserFrame_LoadFile(int i)
 	} else if (fileBrowserMode == FileBrowserFrame::FILEBROWSER_LOADISO) {
 		// We must select this file
 		int ret = loadISO( &dir_entries[i] );
-		
+
 		if(!ret){	// If the read succeeded.
+			if(Autoboot){
+				// FIXME: The MessageBox is a hacky way to fix input not responding.
+				// No time to improve this...
+				menu::MessageBox::getInstance().setMessage("Autobooting game...");
+				Func_SetPlayGame();
+				Func_PlayGame();
+				pMenuContext->setActiveFrame(MenuContext::FRAME_MAIN);
+				Autoboot = false;
+				return;
+			}
+			
 			strcpy(feedback_string, "Loaded ");
 			strncat(feedback_string, filenameFromAbsPath(dir_entries[i].name), 36-7);
 
@@ -560,4 +573,13 @@ void fileBrowserFrame_LoadFile(int i)
 	  }
 	  pMenuContext->setActiveFrame(MenuContext::FRAME_MAIN);
 	}
+}
+
+void fileBrowserFrame_AutoBootFile()
+{
+	int i;
+	for(i = 0; i < num_entries - 1; i++)
+		if(strcasestr(dir_entries[i].name, AutobootROM) != NULL)
+			break;
+	fileBrowserFrame_LoadFile(i);
 }

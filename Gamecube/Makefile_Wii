@@ -35,7 +35,7 @@ INCLUDES	:=
 
 CFLAGS	= -g -flto -Ofast -Wall $(MACHDEP) $(INCLUDE) -D__GAMECUBE__ -DWII -DHW_RVL -D__ppc__ \
 		  -D__GX__ -DEMBEDDED_FONTS \
-		  -DTHREADED_AUDIO #-DRELEASE -DSHOW_DEBUG -DDEBUGON -DPROFILE -DPRINTGECKO
+		  -DTHREADED_AUDIO -D_GNU_SOURCE #-DRELEASE -DSHOW_DEBUG -DDEBUGON -DPROFILE -DPRINTGECKO
 		  
 CXXFLAGS	=	$(CFLAGS)
 
@@ -112,7 +112,7 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile_Wii
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile_Wii -j4
 	@echo creating ... $(notdir $(OUTPUT)).dol
 	@$(DEVKITPPC)/bin/elf2dol $(OUTPUT).elf $(OUTPUT).dol
 
