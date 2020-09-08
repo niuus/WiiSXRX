@@ -146,6 +146,13 @@ static int available(int Control) {
 	}
 }
 
+static inline u8 CCtoPSXAnalog(int a)
+{
+	a = a * 4 / 3; // adjust reported range to fully cover ps1 range
+	if(a > 127) a = 127; else if(a < -128) a = -128; // clamp
+	return a + 128; // PSX controls range 0-255
+}
+
 static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 {
 	if(wpadNeedScan){ WPAD_ScanPads(); wpadNeedScan = 0; }
@@ -186,8 +193,8 @@ static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 	c->btns.SELECT_BUTTON = isHeld(config->SELECT);
 
 	//adjust values by 128 cause PSX sticks range 0-255 with a 128 center pos
-	s8 stickX = 0;
-	s8 stickY = 0;
+	int stickX = 0;
+	int stickY = 0;
 	if(config->analogL->mask == L_STICK_AS_ANALOG){
 		stickX = getStickValue(&wpad->exp.classic.ljs, STICK_X, 127);
 		stickY = getStickValue(&wpad->exp.classic.ljs, STICK_Y, 127);
@@ -195,9 +202,8 @@ static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 		stickX = getStickValue(&wpad->exp.classic.rjs, STICK_X, 127);
 		stickY = getStickValue(&wpad->exp.classic.rjs, STICK_Y, 127);
 	}
-	c->leftStickX  = (u8)(stickX+127) & 0xFF;
-	if(config->invertedYL)	c->leftStickY = (u8)(stickY+127) & 0xFF;
-	else					c->leftStickY = (u8)(-stickY+127) & 0xFF;
+	c->leftStickX = CCtoPSXAnalog(stickX);
+	c->leftStickY = CCtoPSXAnalog(config->invertedYL ? stickY : -stickY);
 
 	if(config->analogR->mask == L_STICK_AS_ANALOG){
 		stickX = getStickValue(&wpad->exp.classic.ljs, STICK_X, 127);
@@ -206,9 +212,8 @@ static int _GetKeys(int Control, BUTTONS * Keys, controller_config_t* config)
 		stickX = getStickValue(&wpad->exp.classic.rjs, STICK_X, 127);
 		stickY = getStickValue(&wpad->exp.classic.rjs, STICK_Y, 127);
 	}
-	c->rightStickX  = (u8)(stickX+127) & 0xFF;
-	if(config->invertedYR)	c->rightStickY = (u8)(stickY+127) & 0xFF;
-	else					c->rightStickY = (u8)(-stickY+127) & 0xFF;
+	c->rightStickX = CCtoPSXAnalog(stickX);
+	c->rightStickY = CCtoPSXAnalog(config->invertedYR ? stickY : -stickY);
 
 	// Return 1 if whether the exit button(s) are pressed
 	return isHeld(config->exit) ? 0 : 1;
