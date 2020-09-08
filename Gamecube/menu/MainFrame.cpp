@@ -164,12 +164,12 @@ void Func_Credits()
 {
 	char CreditsInfo[512] = "";
 #ifdef HW_RVL
-	strcat(CreditsInfo,"WiiSXRX Beta 2.4\n");
+	sprintf(CreditsInfo,"WiiSX RX Beta 2.5\n");
 #else
-	strcat(CreditsInfo,"CubeSXRX Beta 2.4\n");
+	sprintf(CreditsInfo,"CubeSX RX Beta 2.5\n");
 #endif
 	strcat(CreditsInfo,"www.github.com/niuus/WiiSXRX\n");
-	strcat(CreditsInfo,"WiiSX RX & Logo: NiuuS\n");
+	strcat(CreditsInfo,"WiiSX RX & logo: NiuuS\n");
 	strcat(CreditsInfo,"\n");
 	strcat(CreditsInfo,"Original WiiSX team:\n");
 	strcat(CreditsInfo,"emu_kidid - general coding\n");
@@ -177,11 +177,28 @@ void Func_Credits()
 	strcat(CreditsInfo,"tehpola - audio\n");
 	strcat(CreditsInfo,"PCSX/PCSX-df/PCSX-r teams\n");
 	strcat(CreditsInfo,"\n");
+
+	char wiiDetails[30];
+	char wiiInfo[20];
+#ifdef HW_RVL
+	if(!IsWiiU()) {
+		sprintf(wiiInfo, "Wii (729 MHz)");
+	}
+	else if(IsWiiUFastCPU()) {
+		sprintf(wiiInfo, "vWii (1.215 GHz)");
+	}
+	else {
+		sprintf(wiiInfo, "vWii (729 MHz)");
+	}
+	sprintf(wiiDetails, "IOS: %d / %s", IOS_GetVersion(), wiiInfo);
+#endif
 #ifdef HW_RVL
 	strcat(CreditsInfo,"FIX94 - Wii U gamepad support\n");
 	strcat(CreditsInfo,"matguitarist - USB 2.0 support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
 	strcat(CreditsInfo,"Mystro256 - WiiSXR fork\n");
+	strcat(CreditsInfo,"\n");
+	strcat(CreditsInfo, wiiDetails);
 #endif
 
 	menu::MessageBox::getInstance().setMessage(CreditsInfo);

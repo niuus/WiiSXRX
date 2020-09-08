@@ -23,6 +23,8 @@
 #include "CursorManager.h"
 #include "../gc_input/controller.h"
 
+bool isWiiVC = false;
+
 void ShutdownWii();
 
 
@@ -36,6 +38,7 @@ Input::Input()
 	CONF_Init();
 	WUPC_Init();
 	WiiDRC_Init();
+	isWiiVC = WiiDRC_Inited();
 	WPAD_Init();
 	WPAD_SetIdleTimeout(120);
 	WPAD_SetVRes(WPAD_CHAN_ALL, 640, 480);
