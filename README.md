@@ -44,6 +44,7 @@ As well, i can't guarantee this project will be a success, unless i can get some
 - Possibility to select other BIOS with some basic buttons.
 - 240p support.
 - CD-DA support.
+- CHD, ECM, PBP compressed file support.
 - PS1 multitap support.
 
 Any help is appreciated.
