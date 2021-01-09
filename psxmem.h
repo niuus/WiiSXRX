@@ -64,7 +64,7 @@ extern s8 psxM[0x00220000] __attribute__((aligned(32)));
 #define psxMu16ref(mem)	(*(u16*)&psxM[(mem) & 0x1fffff])
 #define psxMu32ref(mem)	(*(u32*)&psxM[(mem) & 0x1fffff])
 
-s8 *psxP;
+extern s8 *psxP;
 #define psxPs8(mem)	    psxP[(mem) & 0xffff]
 #define psxPs16(mem)	(SWAP16(*(s16*)&psxP[(mem) & 0xffff]))
 #define psxPs32(mem)	(SWAP32(*(s32*)&psxP[(mem) & 0xffff]))
@@ -94,7 +94,7 @@ extern s8 psxR[0x00080000] __attribute__((aligned(32)));
 #define psxRu16ref(mem)	(*(u16*)&psxR[(mem) & 0x7ffff])
 #define psxRu32ref(mem)	(*(u32*)&psxR[(mem) & 0x7ffff])
 
-s8 *psxH;
+extern s8 *psxH;
 #define psxHs8(mem)		psxH[(mem) & 0xffff]
 #define psxHs16(mem)	(SWAP16(*(s16*)&psxH[(mem) & 0xffff]))
 #define psxHs32(mem)	(SWAP32(*(s32*)&psxH[(mem) & 0xffff]))

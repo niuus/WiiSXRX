@@ -32,7 +32,7 @@ typedef struct {
 
 extern psxCounter psxCounters[5];
 
-u32 psxNextCounter, psxNextsCounter;
+extern u32 psxNextCounter, psxNextsCounter;
 
 void psxRcntInit();
 void psxRcntUpdate();

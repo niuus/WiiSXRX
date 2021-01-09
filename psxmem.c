@@ -54,6 +54,8 @@
 
 extern void SysMessage(char *fmt, ...);
 
+s8 *psxP;
+s8 *psxH;
 s8 psxM[0x00220000] __attribute__((aligned(32)));
 s8 psxR[0x00080000] __attribute__((aligned(32)));
 u8* psxMemWLUT[0x10000] __attribute__((aligned(32)));

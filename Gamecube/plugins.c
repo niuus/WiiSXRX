@@ -35,6 +35,130 @@ static const char *err;
 static int errval;
 void *hGPUDriver;
 
+//plugin stuff From Shadow
+// *** walking in the valley of your darking soul i realize that i was alone
+//Gpu function pointers
+GPUupdateLace    GPU_updateLace;
+GPUinit          GPU_init;
+GPUshutdown      GPU_shutdown;
+GPUconfigure     GPU_configure;
+GPUtest          GPU_test;
+GPUabout         GPU_about;
+GPUopen          GPU_open;
+GPUclose         GPU_close;
+GPUreadStatus    GPU_readStatus;
+GPUreadData      GPU_readData;
+GPUreadDataMem   GPU_readDataMem;
+GPUwriteStatus   GPU_writeStatus;
+GPUwriteData     GPU_writeData;
+GPUwriteDataMem  GPU_writeDataMem;
+GPUdmaChain      GPU_dmaChain;
+GPUkeypressed    GPU_keypressed;
+GPUdisplayText   GPU_displayText;
+GPUmakeSnapshot  GPU_makeSnapshot;
+GPUfreeze        GPU_freeze;
+GPUgetScreenPic  GPU_getScreenPic;
+GPUshowScreenPic GPU_showScreenPic;
+GPUclearDynarec  GPU_clearDynarec;
+
+//cd rom function pointers
+CDRinit               CDR_init;
+CDRshutdown           CDR_shutdown;
+CDRopen               CDR_open;
+CDRclose              CDR_close;
+CDRtest               CDR_test;
+CDRgetTN              CDR_getTN;
+CDRgetTD              CDR_getTD;
+CDRreadTrack          CDR_readTrack;
+CDRgetBuffer          CDR_getBuffer;
+CDRplay               CDR_play;
+CDRstop               CDR_stop;
+CDRgetStatus          CDR_getStatus;
+CDRgetDriveLetter     CDR_getDriveLetter;
+CDRgetBufferSub       CDR_getBufferSub;
+CDRconfigure          CDR_configure;
+CDRabout              CDR_about;
+CDRsetfilename        CDR_setfilename;
+
+//SPU POINTERS
+SPUconfigure        SPU_configure;
+SPUabout            SPU_about;
+SPUinit             SPU_init;
+SPUshutdown         SPU_shutdown;
+SPUtest             SPU_test;
+SPUopen             SPU_open;
+SPUclose            SPU_close;
+SPUplaySample       SPU_playSample;
+SPUstartChannels1   SPU_startChannels1;
+SPUstartChannels2   SPU_startChannels2;
+SPUstopChannels1    SPU_stopChannels1;
+SPUstopChannels2    SPU_stopChannels2;
+SPUputOne           SPU_putOne;
+SPUgetOne           SPU_getOne;
+SPUsetAddr          SPU_setAddr;
+SPUsetPitch         SPU_setPitch;
+SPUsetVolumeL       SPU_setVolumeL;
+SPUsetVolumeR       SPU_setVolumeR;
+SPUwriteRegister    SPU_writeRegister;
+SPUreadRegister     SPU_readRegister;
+SPUwriteDMA         SPU_writeDMA;
+SPUreadDMA          SPU_readDMA;
+SPUwriteDMAMem      SPU_writeDMAMem;
+SPUreadDMAMem       SPU_readDMAMem;
+SPUplayADPCMchannel SPU_playADPCMchannel;
+SPUfreeze           SPU_freeze;
+SPUregisterCallback SPU_registerCallback;
+SPUregisterCDDAVolume SPU_registerCDDAVolume;
+SPUasync            SPU_async;
+
+//PAD POINTERS
+PADconfigure        PAD1_configure;
+PADabout            PAD1_about;
+PADinit             PAD1_init;
+PADshutdown         PAD1_shutdown;
+PADtest             PAD1_test;
+PADopen             PAD1_open;
+PADclose            PAD1_close;
+PADquery            PAD1_query;
+PADreadPort1        PAD1_readPort1;
+PADkeypressed       PAD1_keypressed;
+PADstartPoll        PAD1_startPoll;
+PADpoll             PAD1_poll;
+PADsetSensitive     PAD1_setSensitive;
+
+PADconfigure        PAD2_configure;
+PADabout            PAD2_about;
+PADinit             PAD2_init;
+PADshutdown         PAD2_shutdown;
+PADtest             PAD2_test;
+PADopen             PAD2_open;
+PADclose            PAD2_close;
+PADquery            PAD2_query;
+PADreadPort2        PAD2_readPort2;
+PADkeypressed       PAD2_keypressed;
+PADstartPoll        PAD2_startPoll;
+PADpoll             PAD2_poll;
+PADsetSensitive     PAD2_setSensitive;
+
+// NET function pointers
+NETinit               NET_init;
+NETshutdown           NET_shutdown;
+NETopen               NET_open;
+NETclose              NET_close;
+NETtest               NET_test;
+NETconfigure          NET_configure;
+NETabout              NET_about;
+NETpause              NET_pause;
+NETresume             NET_resume;
+NETqueryPlayer        NET_queryPlayer;
+NETsendData           NET_sendData;
+NETrecvData           NET_recvData;
+NETsendPadData        NET_sendPadData;
+NETrecvPadData        NET_recvPadData;
+NETsetInfo            NET_setInfo;
+NETkeypressed         NET_keypressed;
+
+
 void ConfigurePlugins();
 
 #if 0 // These are actually in the GPU plugin (and probably work in there )
