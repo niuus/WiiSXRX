@@ -33,7 +33,7 @@
 #include "reguse.h"
 #include "../r3000a.h"
 #include "../psxhle.h"
-#include "../Gamecube/DEBUG.h"
+#include "../../Gamecube/DEBUG.h"
 
 /* defines */
 #ifdef HW_DOL

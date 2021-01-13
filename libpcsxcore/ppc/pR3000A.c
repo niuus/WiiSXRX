@@ -31,7 +31,7 @@
 #include "pR3000A.h"
 #include "../r3000a.h"
 #include "../psxhle.h"
-#include "../Gamecube/DEBUG.h"
+#include "../../Gamecube/DEBUG.h"
 
 /* variable declarations */
 static u32 psxRecLUT[0x010000];

@@ -26,7 +26,7 @@
 #include "../libgui/CursorManager.h"
 #include "../libgui/MessageBox.h"
 #include "../wiiSXconfig.h"
-#include "../../psxcommon.h"
+#include "../../libpcsxcore/psxcommon.h"
 
 extern "C" {
 /*#include "../gc_memory/memory.h"

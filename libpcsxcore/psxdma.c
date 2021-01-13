@@ -20,7 +20,7 @@
 /*
 * Handles PSX DMA functions.
 */
-#include "Gamecube/DEBUG.h"
+#include "../Gamecube/DEBUG.h"
 #include "psxdma.h"
 
 // Dma0/1 in mdec.c

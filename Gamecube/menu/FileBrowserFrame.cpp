@@ -29,7 +29,7 @@
 #include "../libgui/FocusManager.h"
 #include "../libgui/CursorManager.h"
 
-#include "../../psxcommon.h"
+#include "../../libpcsxcore/psxcommon.h"
 
 extern "C" {
 #include "../fileBrowser/fileBrowser.h"

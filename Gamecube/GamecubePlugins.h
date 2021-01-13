@@ -22,9 +22,9 @@
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
-#include "../decode_xa.h"
-#include "../psemu_plugin_defs.h"
-#include "../plugins.h"
+#include "../libpcsxcore/decode_xa.h"
+#include "../libpcsxcore/psemu_plugin_defs.h"
+#include "../libpcsxcore/plugins.h"
 
 #define SYMS_PER_LIB 32
 typedef struct {

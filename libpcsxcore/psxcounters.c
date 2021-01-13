@@ -22,7 +22,7 @@
 */
 
 #include "psxcounters.h"
-#include "Gamecube/DEBUG.h"
+#include "../Gamecube/DEBUG.h"
 
 static int cnts = 4;
 psxCounter psxCounters[5];

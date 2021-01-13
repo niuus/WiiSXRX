@@ -25,8 +25,8 @@
 #include "cdrom.h"
 #include "psxhw.h"
 #include "mdec.h"
-#include "Gamecube/wiiSXconfig.h"
-#include "Gamecube/fileBrowser/fileBrowser-libfat.h"
+#include "../Gamecube/wiiSXconfig.h"
+#include "../Gamecube/fileBrowser/fileBrowser-libfat.h"
 
 int Log = 0;
 char CdromId[10];

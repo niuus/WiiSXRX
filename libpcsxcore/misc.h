@@ -25,7 +25,7 @@
 #include "plugins.h"
 #include "r3000a.h"
 #include "psxmem.h"
-#include "Gamecube/fileBrowser/fileBrowser.h"
+#include "../Gamecube/fileBrowser/fileBrowser.h"
 
 #undef s_addr
 

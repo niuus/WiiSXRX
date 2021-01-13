@@ -22,8 +22,8 @@
 */
 
 #include "sio.h"
-#include "Gamecube/fileBrowser/fileBrowser.h"
-#include "Gamecube/fileBrowser/fileBrowser-libfat.h"
+#include "../Gamecube/fileBrowser/fileBrowser.h"
+#include "../Gamecube/fileBrowser/fileBrowser-libfat.h"
 #include <sys/stat.h>
 
 // *** FOR WORKS ON PADS AND MEMORY CARDS *****
@@ -50,7 +50,7 @@ char mcd2Written = 0;
 PadDataS pad;
 
 #ifdef HW_RVL
-#include "Gamecube/MEM2.h"
+#include "../Gamecube/MEM2.h"
 char *Mcd1Data = (char*)MCD1_LO;
 char *Mcd2Data = (char*)MCD2_LO;
 #else

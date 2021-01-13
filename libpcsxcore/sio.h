@@ -26,7 +26,7 @@
 #include "psxmem.h"
 #include "plugins.h"
 #include "psemu_plugin_defs.h"
-#include "Gamecube/fileBrowser/fileBrowser.h"
+#include "../Gamecube/fileBrowser/fileBrowser.h"
 
 #define MCD_SIZE	(1024 * 8 * 16)
 
@@ -57,7 +57,7 @@ extern unsigned short CtrlReg;
 extern unsigned short BaudReg;
 
 #ifdef HW_RVL
-#include "Gamecube/MEM2.h"
+#include "../Gamecube/MEM2.h"
 extern char *Mcd1Data;
 extern char *Mcd2Data;
 #else

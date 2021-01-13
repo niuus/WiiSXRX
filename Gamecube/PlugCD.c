@@ -15,9 +15,9 @@
 #include <asndlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "../plugins.h"
+#include "../libpcsxcore/plugins.h"
 #include "PlugCD.h"
-#include "../psxcommon.h"
+#include "../libpcsxcore/psxcommon.h"
 #include "DEBUG.h"
 
 

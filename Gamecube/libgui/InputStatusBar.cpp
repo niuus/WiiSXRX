@@ -31,7 +31,7 @@ extern "C" {
 #include "../gc_input/controller.h"
 //#include "../main/rom.h"
 }
-#include "../../psxcommon.h"
+#include "../../libpcsxcore/psxcommon.h"
 
 namespace menu {
 

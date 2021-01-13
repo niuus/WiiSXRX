@@ -46,11 +46,11 @@
 #include "psxmem.h"
 #include "r3000a.h"
 #include "psxhw.h"
-#include "Gamecube/fileBrowser/fileBrowser.h"
-#include "Gamecube/fileBrowser/fileBrowser-libfat.h"
-#include "Gamecube/fileBrowser/fileBrowser-CARD.h"
-#include "Gamecube/fileBrowser/fileBrowser-DVD.h"
-#include "Gamecube/wiiSXconfig.h"
+#include "../Gamecube/fileBrowser/fileBrowser.h"
+#include "../Gamecube/fileBrowser/fileBrowser-libfat.h"
+#include "../Gamecube/fileBrowser/fileBrowser-CARD.h"
+#include "../Gamecube/fileBrowser/fileBrowser-DVD.h"
+#include "../Gamecube/wiiSXconfig.h"
 
 extern void SysMessage(char *fmt, ...);
 

@@ -21,7 +21,7 @@
 #include <string.h>
 
 #define EXT
-#include "../psxcommon.h"
+#include "../libpcsxcore/psxcommon.h"
 #include "GamecubePlugins.h"
 #define CheckErr(func) \
     err = SysLibError(); \

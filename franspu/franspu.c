@@ -1,8 +1,8 @@
 #include <gccore.h>
 #include <malloc.h>
 #include "franspu.h"
-#include "../psxcommon.h"
-#include "../decode_xa.h"
+#include "../libpcsxcore/psxcommon.h"
+#include "../libpcsxcore/decode_xa.h"
 #include "../Gamecube/DEBUG.h"
 
 extern void SoundFeedStreamData(unsigned char* pSound,long lBytes);

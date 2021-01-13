@@ -1,8 +1,8 @@
 #ifndef __SPUPSX4ALL_H__
 #define __SPUPSX4ALL_H__
 
-#include "../psxcommon.h"
-#include "../decode_xa.h"
+#include "../libpcsxcore/psxcommon.h"
+#include "../libpcsxcore/decode_xa.h"
 
 #include <unistd.h>
 #include <sys/time.h>

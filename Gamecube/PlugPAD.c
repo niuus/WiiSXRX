@@ -35,9 +35,9 @@
 #include <string.h>
 #include <sys/types.h>
 #include <ogc/pad.h>
-#include "../plugins.h"
-#include "../psxcommon.h"
-#include "../psemu_plugin_defs.h"
+#include "../libpcsxcore/plugins.h"
+#include "../libpcsxcore/psxcommon.h"
+#include "../libpcsxcore/psemu_plugin_defs.h"
 #include "gc_input/controller.h"
 #include "wiiSXconfig.h"
 #include "PadSSSPSX.h"

@@ -23,7 +23,7 @@ GPU = Soft
 #---------------------------------------------------------------------------------
 TARGET		:=	WiiSXRX
 BUILD		:=	build
-SOURCES		:=	. ../cdrmooby28/ ./gc_input/ ./libgui/ ./menu/ ./fileBrowser/ .. ../ppc/ ../Peops$(GPU)GPU/ ../franspu/
+SOURCES		:=	. ../cdrmooby28/ ./gc_input/ ./libgui/ ./menu/ ./fileBrowser/ ../libpcsxcore/ ../libpcsxcore/ppc/ ../Peops$(GPU)GPU/ ../franspu/
 
 DATA		:=	data  
 
