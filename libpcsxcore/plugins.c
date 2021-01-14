@@ -21,8 +21,8 @@
 #include <string.h>
 
 #define EXT
-#include "../libpcsxcore/psxcommon.h"
-#include "GamecubePlugins.h"
+#include "psxcommon.h"
+#include "../Gamecube/GamecubePlugins.h"
 #define CheckErr(func) \
     err = SysLibError(); \
     if (err != NULL) { SysPrintf("Error loading %s: %s\n", func, err); return -1; }
