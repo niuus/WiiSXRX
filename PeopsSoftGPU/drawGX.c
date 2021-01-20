@@ -30,6 +30,7 @@
 #include "swap.h"
 #include "../Gamecube/libgui/IPLFontC.h"
 #include "../Gamecube/DEBUG.h"
+#include "../Gamecube/debug_vconsole.h"
 #include "../Gamecube/wiiSXconfig.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -176,6 +177,7 @@ void DoClearFrontBuffer(void)                          // CLEAR DX BUFFER
 	for (i=0;i<DEBUG_TEXT_HEIGHT;i++)
 		IplFont_drawString(10,(10*i+60),DEBUG_text[i], 0.5, false);
 #endif
+	DEBUG_vc_render_console();
 
    //reset swap table from GUI/DEBUG
 	GX_SetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);
@@ -463,6 +465,7 @@ void GX_Flip(short width, short height, u8 * buffer, int pitch)
 	for (i=0;i<DEBUG_TEXT_HEIGHT;i++)
 		IplFont_drawString(10,(10*i+60),DEBUG_text[i], 0.5, false);
 #endif
+	DEBUG_vc_render_console();
 		
    //reset swap table from GUI/DEBUG
 	GX_SetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);
