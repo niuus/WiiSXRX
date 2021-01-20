@@ -101,7 +101,7 @@ NullParser::NullParser(const std::string& filename)
 {}
 
 // parses a CUE file
-void CueParser::parse() throw(Exception)
+void CueParser::parse() noexcept(false) //throw(Exception)
 {
    if (!theCueSheet)
    {
@@ -184,7 +184,7 @@ std::string CueParser::fileExists(const std::string& file)
 }
 
 // parses a CCD file
-void CCDParser::parse() throw(Exception)
+void CCDParser::parse() noexcept(false) //throw(Exception)
 {
    if (!theCueSheet)
    {

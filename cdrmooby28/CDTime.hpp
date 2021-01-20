@@ -93,7 +93,7 @@ public:
 
       // Note that this does NOT return a reference
    inline unsigned char operator[](const size_t index) const
-      throw(Exception)
+      noexcept(false) //throw(Exception)
    {
       switch(index)
       {
@@ -199,7 +199,7 @@ private:
 		// based on what conversions have already been done on the data, convertTime
 		// sets whatever data members have not been set yet.
    inline void convertTime()
-      throw(Exception);
+      noexcept(false); //throw(Exception);
 
       // Data members
 
@@ -392,7 +392,7 @@ inline CDTime& CDTime::setAbsoluteFrame(const unsigned long af)
 // set all the times for the conversions that have not been done yet.
 // at the end of the function, all the conversions should be done.
 inline void CDTime::convertTime()
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
       // if no times are set, throw an error
    if (conversions == 0)

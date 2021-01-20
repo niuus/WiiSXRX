@@ -64,10 +64,10 @@ public:
 
 		// returns the TrackInfo for trackNum
 	inline TrackInfo getTrackInfo(const unsigned long trackNum) const
-      throw(Exception);
+      noexcept(false); //throw(Exception);
 
 		// seeks the data pointer to time
-   inline void moveDataPointer(const CDTime& time) throw(Exception)
+   inline void moveDataPointer(const CDTime& time) noexcept(false) //throw(Exception)
    {
       image->seek(time); 
       scd->seek(time);
@@ -148,7 +148,7 @@ inline void CDInterface::open(const std::string& str)
 
 // returns the TrackInfo for trackNum if it exists
 inline TrackInfo CDInterface::getTrackInfo(const unsigned long trackNum) const
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
    if (trackNum >= trackList.size())
    {

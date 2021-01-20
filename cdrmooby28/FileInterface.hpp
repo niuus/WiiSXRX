@@ -51,11 +51,11 @@ public:
 
 		// opens the file
    virtual void openFile(const std::string& str, int type)
-      throw(Exception);
+      noexcept(false); //throw(Exception);
 
 		// seeks to the time cdt in the file and sets the buffer pointer
    inline void seek(const CDTime& cdt)
-      throw(Exception);
+      noexcept(false); //throw(Exception);
 
 		// returns the pointer to the last frame seeked.
    inline unsigned char* getBuffer() const 
@@ -93,7 +93,7 @@ protected:
 		// function buffers more data and sets the bufferPointer to
       // the requested time
    virtual void seekUnbuffered(const CDTime& cdt)
-      throw(std::exception, Exception) = 0;
+      noexcept(false) = 0; //throw(std::exception, Exception) = 0;
 
     fileBrowser_file *filePtr;      
       
@@ -144,7 +144,7 @@ public:
 
 protected:
    virtual void seekUnbuffered(const CDTime& cdt)
-      throw(std::exception, Exception);
+      noexcept(false); //throw(std::exception, Exception);
 
 private:
    UncompressedFileInterface();
@@ -155,7 +155,7 @@ private:
 // This only ensures that one frame is available at bufferPointer, but that should be
 // enough for most things...
 inline void FileInterface::seek(const CDTime& cdt)
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
 	using namespace std;
    seekTime = cdt;

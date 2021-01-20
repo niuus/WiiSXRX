@@ -141,7 +141,7 @@ FileInterface& FileInterface::setPregap(const CDTime& gapLength,
 
 // opens the file and calculates the length of the cd
 void FileInterface::openFile(const std::string& str, int type)
-      throw(Exception)
+      noexcept(false) //throw(Exception)
 {
   fileBrowser_file tempFile;
   memset(&tempFile, 0, sizeof(fileBrowser_file));
@@ -173,7 +173,7 @@ void FileInterface::openFile(const std::string& str, int type)
 
 // reads data into the cache for UncompressedFileInterface
 void UncompressedFileInterface::seekUnbuffered(const CDTime& cdt)
-   throw(std::exception, Exception)
+   noexcept(false) //throw(std::exception, Exception)
 {
    CDTime seekTime(cdt - CDTime(0,2,0));
    isoFile_seekFile(filePtr,seekTime.getAbsoluteByte(),FILE_BROWSER_SEEK_SET);

@@ -71,7 +71,7 @@ SUBSubchannelData::SUBSubchannelData() : filePtr(NULL), enableCache(0)
 
 // SUB files read from the file whenever data is needed
 void SUBSubchannelData::openFile(const string& file, int type)
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
    fileBrowser_file tempFile;
    memset(&tempFile, 0, sizeof(fileBrowser_file));
@@ -85,7 +85,7 @@ void SUBSubchannelData::openFile(const string& file, int type)
 }
 
 void SUBSubchannelData::seek(const CDTime& cdt)
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
 	// seek in the file for the data requested and set the subframe
 	// data
@@ -112,7 +112,7 @@ void SUBSubchannelData::seek(const CDTime& cdt)
 
 // opens the SBI file and caches all the subframes in a map
 void SBISubchannelData::openFile(const std::string& file, int type) 
-      throw(Exception)
+      noexcept(false) //throw(Exception)
 {
    fileBrowser_file tempFile;
    memset(&tempFile, 0, sizeof(fileBrowser_file));
@@ -171,7 +171,7 @@ void SBISubchannelData::openFile(const std::string& file, int type)
 
 // if the data is in the map, return it.  otherwise, make up data
 void SBISubchannelData::seek(const CDTime& cdt)
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
    map<CDTime, SubchannelFrame>::iterator itr = subMap.find(cdt);
    if (itr == subMap.end())
@@ -186,7 +186,7 @@ void SBISubchannelData::seek(const CDTime& cdt)
 
 // opens and caches the M3S data
 void M3SSubchannelData::openFile(const std::string& file, int type) 
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
    fileBrowser_file tempFile;
    memset(&tempFile, 0, sizeof(fileBrowser_file));
@@ -217,7 +217,7 @@ void M3SSubchannelData::openFile(const std::string& file, int type)
 
 // if no data is found, create data. otherwise, return the data found.
 void M3SSubchannelData::seek(const CDTime& cdt)
-   throw(Exception)
+   noexcept(false) //throw(Exception)
 {
    map<CDTime, SubchannelFrame>::iterator itr = subMap.find(cdt);
    if (itr == subMap.end())

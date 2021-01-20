@@ -100,9 +100,9 @@ class SubchannelData
 public:
    SubchannelData()  {}
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception) = 0;
+      noexcept(false) = 0; //throw(Exception) = 0;
    virtual void seek(const CDTime& cdt) 
-      throw(Exception) = 0;
+      noexcept(false) = 0; //throw(Exception) = 0;
    inline unsigned char* get(void) const {return sf.subData;}
    virtual ~SubchannelData() {}
 protected:
@@ -119,8 +119,8 @@ public:
       sf.subData = NULL;
    }
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception) {}
-   virtual void seek(const CDTime& cdt) throw(Exception)
+      noexcept(false) {} //throw(Exception) {}
+   virtual void seek(const CDTime& cdt) noexcept(false) //throw(Exception)
       {}
    virtual ~DisabledSubchannelData() {}
 };
@@ -131,8 +131,8 @@ class NoSubchannelData : public SubchannelData
 public:
    NoSubchannelData() {}
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception) {}
-   virtual void seek(const CDTime& cdt) throw(Exception)
+      noexcept(false) {} //throw(Exception) {}
+   virtual void seek(const CDTime& cdt) noexcept(false) //throw(Exception)
       {sf.setTime(cdt);}
    virtual ~NoSubchannelData() {}
 };
@@ -145,9 +145,9 @@ class SUBSubchannelData : public SubchannelData
 public:
    SUBSubchannelData();
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual void seek(const CDTime& cdt)
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual ~SUBSubchannelData() {}
 private:
    fileBrowser_file *filePtr;
@@ -178,9 +178,9 @@ class SBISubchannelData : public SubchannelData
 public:
    SBISubchannelData() : filePtr(NULL) {}
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual void seek(const CDTime& cdt)
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual ~SBISubchannelData() {}
 private:
    fileBrowser_file *filePtr;
@@ -201,9 +201,9 @@ class M3SSubchannelData : public SubchannelData
 public:
    M3SSubchannelData() : filePtr(NULL) {}
    virtual void openFile(const std::string& file, int type) 
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual void seek(const CDTime& cdt)
-      throw(Exception);
+      noexcept(false); //throw(Exception);
    virtual ~M3SSubchannelData() {}
 private:
    fileBrowser_file *filePtr;

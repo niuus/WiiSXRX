@@ -31,7 +31,7 @@ public:
 
    virtual ~TrackParser() {}
       // parses the cue file, if any.  throws when there's a read error
-   virtual void parse() throw(Exception) = 0;
+   virtual void parse() noexcept(false) = 0; //throw(Exception) = 0;
 
       // this needs the total CD length to correctly determine
       // the start times and length of each track
@@ -74,7 +74,7 @@ public:
 
    virtual ~NullParser() {}
 
-   virtual void parse() throw(Exception) {}
+   virtual void parse() noexcept(false) {} //throw(Exception) {}
 };
 
 // this parses CDRWin CUE files
@@ -89,7 +89,7 @@ public:
 
 	   // this is the only real function here - parses the cue sheet into
 		// the internal data members
-   virtual void parse() throw(Exception);
+   virtual void parse() noexcept(false); //throw(Exception);
       
       // returns a string with a CUE file name if that file exists
    static std::string fileExists(const std::string& file);
@@ -107,7 +107,7 @@ public:
 
 	   // this is the only real function here - parses the cue sheet into
 		// the internal data members
-   virtual void parse() throw(Exception);
+   virtual void parse() noexcept(false); //throw(Exception);
 
       // returns a string with a CCD file name if that file exists
    static std::string fileExists(const std::string& file);
