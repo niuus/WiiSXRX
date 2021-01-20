@@ -85,15 +85,14 @@ extern char txtbuffer[1024];
 extern "C" {
 #endif
 
+extern char DEBUG_text[DEBUG_TEXT_HEIGHT][DEBUG_TEXT_WIDTH];
+
 // Pre-formatted string (use sprintf before sending to print)
 void DEBUG_print(char* string,int pos);
 void DEBUG_stats(int stats_id, char *info, unsigned int stats_type, unsigned int adjustment_value);
 
 // Should be called before get_text. Ages the strings, and remove old ones
 void DEBUG_update(void);
-
-// Returns pointer to an array of char*
-char** DEBUG_get_text(void);
 
 #ifdef __cplusplus
 }

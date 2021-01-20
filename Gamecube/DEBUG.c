@@ -14,7 +14,7 @@
 #include "TEXT.h"
 //#include "usb.h"
 
-char text[DEBUG_TEXT_HEIGHT][DEBUG_TEXT_WIDTH];
+char DEBUG_text[DEBUG_TEXT_HEIGHT][DEBUG_TEXT_WIDTH] = {0};
 char printToSD = 1;
 extern u32 dyna_used;
 extern u32 dyna_total;
@@ -43,7 +43,7 @@ void DEBUG_update() {
 	for(i=0; i<DEBUG_TEXT_HEIGHT; i++){
 		if(diff_sec(texttimes[i],nowTick)>=DEBUG_STRING_LIFE) 
 		{
-			memset(text[i],0,DEBUG_TEXT_WIDTH);
+			memset(DEBUG_text[i],0,DEBUG_TEXT_WIDTH);
 		}
 	}
 	check_heap_space();
@@ -98,10 +98,11 @@ void DEBUG_print(char* string,int pos){
 			fwrite(string, 1, strlen(string), f);
 #endif
 		}
-		else {
-			memset(text[pos],0,DEBUG_TEXT_WIDTH);
-			strncpy(text[pos], string, DEBUG_TEXT_WIDTH);
-			memset(text[DEBUG_TEXT_WIDTH-1],0,1);
+		else if (pos >= 0 && pos < DEBUG_TEXT_HEIGHT) {
+			memset(DEBUG_text[pos],0,DEBUG_TEXT_WIDTH);
+			// -1 --> the last byte of DEBUG_text[pos] is always a 0
+			// --> 0 is interpreted as termination ('\0')
+			strncpy(DEBUG_text[pos], string, DEBUG_TEXT_WIDTH - 1);
 			texttimes[pos] = gettime();
 		}
 	#endif

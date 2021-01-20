@@ -68,7 +68,6 @@ char *	pCaptionText;
 extern u32* xfb[2];	/*** Framebuffers ***/
 extern int whichfb;        /*** Frame buffer toggle ***/
 extern time_t tStart;
-extern char text[DEBUG_TEXT_HEIGHT][DEBUG_TEXT_WIDTH]; /*** DEBUG textbuffer ***/
 extern char menuActive;
 extern char screenMode;
 
@@ -171,10 +170,12 @@ void DoClearFrontBuffer(void)                          // CLEAR DX BUFFER
 	if((ulKeybits&KEY_SHOWFPS)&&showFPSonScreen)
 		IplFont_drawString(10,35,szDispBuf, 1.0, false);
 
+#ifdef SHOW_DEBUG
 	int i = 0;
 	DEBUG_update();
 	for (i=0;i<DEBUG_TEXT_HEIGHT;i++)
-		IplFont_drawString(10,(10*i+60),text[i], 0.5, false);
+		IplFont_drawString(10,(10*i+60),DEBUG_text[i], 0.5, false);
+#endif
 
    //reset swap table from GUI/DEBUG
 	GX_SetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);
@@ -456,10 +457,12 @@ void GX_Flip(short width, short height, u8 * buffer, int pitch)
 	if((ulKeybits&KEY_SHOWFPS)&&showFPSonScreen)
 		IplFont_drawString(10,35,szDispBuf, 1.0, false);
 
+#ifdef SHOW_DEBUG
 	int i = 0;
 	DEBUG_update();
 	for (i=0;i<DEBUG_TEXT_HEIGHT;i++)
-		IplFont_drawString(10,(10*i+60),text[i], 0.5, false);
+		IplFont_drawString(10,(10*i+60),DEBUG_text[i], 0.5, false);
+#endif
 		
    //reset swap table from GUI/DEBUG
 	GX_SetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);

@@ -10,6 +10,14 @@ endif
 include $(DEVKITPPC)/gamecube_rules
 
 #---------------------------------------------------------------------------------
+# elf2dol tool to convert elf to dol format.
+#---------------------------------------------------------------------------------
+# if elf2dol is not find by PATH variable, then this can work (if correct)
+#ELF2DOL = $(DEVKITPPC)/bin/elf2dol
+# if elf2dol is find by PATH variable, then use this
+ELF2DOL = elf2dol
+
+#---------------------------------------------------------------------------------
 # GPU Plugin (GX or Soft)
 # For example, run "make GPU=GX" for GX
 #---------------------------------------------------------------------------------
@@ -114,7 +122,7 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile_GC
 	@echo creating ... $(notdir $(OUTPUT)).dol
-	@$(DEVKITPPC)/bin/elf2dol $(OUTPUT).elf $(OUTPUT).dol
+	@$(ELF2DOL) $(OUTPUT).elf $(OUTPUT).dol
 
 #---------------------------------------------------------------------------------
 clean:
