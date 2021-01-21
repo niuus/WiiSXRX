@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include "libgui/IPLFontC.h"
+#include "../Gamecube/libgui/IPLFontC.h"
 
 #define DEBUG_VCONSOLE_WIDTH  87 // usable are 86
 #define DEBUG_VCONSOLE_HEIGHT 40
@@ -93,6 +93,14 @@ void DEBUG_vc_print__(const char* text)
 	vc_current_line[vc_current_width_cursor_position] = '\0';
 }
 
+void DEBUG_vc_render_console_with_init__(unsigned char red,
+		unsigned green, unsigned char blue, unsigned char alpha)
+{
+	GXColor fontColor = (GXColor) {red, green, blue, alpha};
+	IplFont_drawInit(fontColor);
+	DEBUG_vc_render_console__();
+}
+
 void DEBUG_vc_render_console__()
 {
 	int line_index = 0;
@@ -111,6 +119,11 @@ void DEBUG_vc_printf__(const char *format, ...)
 }
 
 void DEBUG_vc_print__(const char* text)
+{
+}
+
+void DEBUG_vc_render_console_with_init__(unsigned char red,
+		unsigned green, unsigned char blue, unsigned char alpha)
 {
 }
 

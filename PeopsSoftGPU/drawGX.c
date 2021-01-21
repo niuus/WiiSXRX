@@ -30,8 +30,8 @@
 #include "swap.h"
 #include "../Gamecube/libgui/IPLFontC.h"
 #include "../Gamecube/DEBUG.h"
-#include "../Gamecube/debug_vconsole.h"
 #include "../Gamecube/wiiSXconfig.h"
+#include "../porting/debug_vconsole.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
 // misc globals

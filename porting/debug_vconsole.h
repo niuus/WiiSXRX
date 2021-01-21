@@ -17,10 +17,12 @@ of the rendered output depends on the used characters.
 #ifdef SHOW_DEBUGVC
 #define DEBUG_vc_printf(fmt, ...) DEBUG_vc_printf__(fmt, ##__VA_ARGS__)
 #define DEBUG_vc_print(text) DEBUG_vc_print__(text)
+#define DEBUG_vc_render_console_with_init(r, g, b, a) DEBUG_vc_render_console_with_init__(r, g, b, a)
 #define DEBUG_vc_render_console() DEBUG_vc_render_console__()
 #else
 #define DEBUG_vc_printf(fmt, ...)
 #define DEBUG_vc_print(fmt, ...)
+#define DEBUG_vc_render_console_with_init(r, g, b, a)
 #define DEBUG_vc_render_console()
 #endif
 
@@ -30,12 +32,11 @@ extern "C" {
 #endif
 
 void DEBUG_vc_printf__(const char *format, ...)
-#if defined(__GNUC__)
-	__attribute__ ((format(printf, 1, 2)))
-#endif
-	;
+	__attribute__ ((format(printf, 1, 2)));
 
 void DEBUG_vc_print__(const char* text);
+void DEBUG_vc_render_console_with_init__(unsigned char red,
+		unsigned green, unsigned char blue, unsigned char alpha);
 void DEBUG_vc_render_console__();
 
 #ifdef __cplusplus

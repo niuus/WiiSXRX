@@ -26,6 +26,7 @@
 #include "MessageBox.h"
 #include "LoadingBar.h"
 #include "GuiResources.h"
+#include "../../porting/debug_vconsole.h"
 
 extern "C" {
 #include "../gc_input/controller.h"
@@ -88,7 +89,10 @@ void Gui::draw()
 	menuLogo->draw(*gfx);
 	if (MessageBox::getInstance().getActive()) MessageBox::getInstance().drawMessageBox(*gfx);
 	if (LoadingBar::getInstance().getActive()) LoadingBar::getInstance().drawLoadingBar(*gfx);
+
 	Cursor::getInstance().drawCursor(*gfx);
+
+	DEBUG_vc_render_console_with_init(255, 255, 255, 255);
 
 	if(shutdown)
 	{
