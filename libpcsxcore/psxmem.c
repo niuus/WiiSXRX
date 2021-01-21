@@ -51,8 +51,7 @@
 #include "../Gamecube/fileBrowser/fileBrowser-CARD.h"
 #include "../Gamecube/fileBrowser/fileBrowser-DVD.h"
 #include "../Gamecube/wiiSXconfig.h"
-
-extern void SysMessage(char *fmt, ...);
+#include "system.h"
 
 s8 *psxP;
 s8 *psxH;
@@ -102,7 +101,7 @@ int psxMemInit() {
 }
 
 void psxMemReset() {
-  //printf("BIOS file %s\n",biosFile->name);
+  SysPrintf("BIOS file %s\n",biosFile->name);
   int temp;
 	memset(psxM, 0, 0x00200000);
 	memset(psxP, 0, 0x00010000);
@@ -116,11 +115,11 @@ void psxMemReset() {
   	if(biosFile_readFile(biosFile, &temp, 4) == 4) {  //bios file exists
   	  biosFile->offset = 0;
   		if(biosFile_readFile(biosFile, psxR, 0x80000) != 0x80000) { //failed size
-  		  //printf("Using HLE\n");
+  		  SysMessage("Using HLE\n");
   		  Config.HLE = BIOS_HLE;
   	  }
   		else {
-    		//printf("Using BIOS file %s\n",biosFile->name);
+    		SysMessage("Using BIOS file %s\n",biosFile->name);
   		  Config.HLE = BIOS_USER_DEFINED;
   	  }
   	}

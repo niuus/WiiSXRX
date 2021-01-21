@@ -17,19 +17,32 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
  ***************************************************************************/
 
-#ifndef __SYSTEM_H__
-#define __SYSTEM_H__
+// VERY IMPORTANT!
+// This header file defines the macro __SYSTEM_0_H__ and not __SYSTEM_H__
+// __SYSTEM_H__ is already used by the libogc library for the file
+// libogc/include/ogc/system.h
+
+#ifndef __SYSTEM_0_H__
+#define __SYSTEM_0_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int  SysInit();							// Init mem and plugins
 void SysReset();						// Resets mem
-void SysPrintf(char *fmt, ...);			// Printf used by bios syscalls
-void SysMessage(char *fmt, ...);		// Message used to print msg to users
-void *SysLoadLibrary(char *lib);		// Loads Library
-void *SysLoadSym(void *lib, char *sym);	// Loads Symbol from Library
+void SysPrintf(const char *fmt, ...);			// Printf used by bios syscalls
+void SysMessage(const char *fmt, ...);		// Message used to print msg to users
+void *SysLoadLibrary(const char *lib);		// Loads Library
+void *SysLoadSym(void *lib, const char *sym);	// Loads Symbol from Library
 const char *SysLibError();				// Gets previous error loading sysbols
 void SysCloseLibrary(void *lib);		// Closes Library
 void SysUpdate();						// Called on VBlank (to update i.e. pads)
 void SysRunGui();						// Returns to the Gui
 void SysClose();						// Close mem and plugins
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __SYSTEM_H__ */

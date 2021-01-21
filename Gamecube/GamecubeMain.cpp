@@ -37,8 +37,10 @@
 #endif
 
 #include "../libpcsxcore/psxcommon.h"
+#include "../libpcsxcore/system.h"
 #include "wiiSXconfig.h"
 #include "menu/MenuContext.h"
+#include "../porting/debug_vconsole.h"
 
 extern u32 __di_check_ahbprot(void);
 
@@ -59,21 +61,6 @@ extern "C" {
 #include <di/di.h>
 }
 #endif //WII
-
-/* function prototypes */
-extern "C" {
-int SysInit();
-void SysReset();
-void SysClose();
-void SysPrintf(const char *fmt, ...);
-void *SysLoadLibrary(char *lib);
-void *SysLoadSym(void *lib, char *sym);
-char *SysLibError();
-void SysCloseLibrary(void *lib);
-void SysUpdate();
-void SysRunGui();
-void SysMessage(char *fmt, ...);
-}
 
 unsigned int* xfb[2] = { NULL, NULL };	/*** Framebuffers ***/
 int whichfb = 0;        /*** Frame buffer toggle ***/
@@ -723,14 +710,18 @@ void SysClose()
 
 void SysPrintf(const char *fmt, ...) 
 {
-#ifdef PRINTGECKO
+#if defined(PRINTGECKO) || defined(SHOW_DEBUGVC)
 	va_list list;
 	char msg[512];
 
 	va_start(list, fmt);
-	vsprintf(msg, fmt, list);
+	vsnprintf(msg, 512, fmt, list);
+	msg[511] = '\0';
 	va_end(list);
 
+	DEBUG_vc_print(msg);
+
+#ifdef PRINTGECKO
 	//if (Config.PsxOut) printf ("%s", msg);
 	DEBUG_print(msg, DBG_USBGECKO);
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
@@ -738,9 +729,10 @@ void SysPrintf(const char *fmt, ...)
 	fprintf(emuLog, "%s", msg);
 #endif
 #endif
+#endif
 }
 
-void *SysLoadLibrary(char *lib) 
+void *SysLoadLibrary(const char *lib)
 {
 	int i;
 	for(i=0; i<NUM_PLUGINS; i++)
@@ -749,7 +741,7 @@ void *SysLoadLibrary(char *lib)
 	return NULL;
 }
 
-void *SysLoadSym(void *lib, char *sym) 
+void *SysLoadSym(void *lib, const char *sym)
 {
 	PluginTable* plugin = plugins + (int)lib;
 	int i;
@@ -769,8 +761,23 @@ void SysUpdate()
 }
 
 void SysRunGui() {}
-void SysMessage(char *fmt, ...) {}
+
+void SysMessage(const char *fmt, ...)
+{
+#ifdef SHOW_DEBUGVC
+	va_list list;
+	char msg[512];
+
+	va_start(list, fmt);
+	vsnprintf(msg, 512, fmt, list);
+	msg[511] = '\0';
+	va_end(list);
+
+	DEBUG_vc_print(msg);
+#endif
+}
+
 void SysCloseLibrary(void *lib) {}
-char *SysLibError() {	return NULL; }
+const char *SysLibError() {	return NULL; }
 
 } //extern "C"

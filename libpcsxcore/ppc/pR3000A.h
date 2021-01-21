@@ -105,10 +105,6 @@
 #define HWUSAGE_PSXREG    0x100
 
 /* externals */
-extern void SysRunGui();
-extern void SysMessage(char *fmt, ...);
-extern void SysReset();
-extern void SysPrintf(char *fmt, ...);
 extern int stop;
 
 /* structs */

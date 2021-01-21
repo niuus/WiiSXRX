@@ -171,9 +171,6 @@ void Func_ShowRomInfo()
 extern BOOL hasLoadedISO;
 
 extern "C" {
-void SysReset();
-void SysInit();
-void SysClose();
 void CheckCdrom();
 void LoadCdrom();
 }

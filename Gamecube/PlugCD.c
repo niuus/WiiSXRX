@@ -23,9 +23,6 @@
 
 static s32 voice = SND_INVALID;
 
-extern void SysPrintf(char *fmt, ...);
-
-
 static _CD CD; //Current CD struct
 static int isCDDAPlaying = 0;
 

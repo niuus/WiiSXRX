@@ -108,9 +108,6 @@ extern int stop;
 extern char menuActive;
 
 extern "C" {
-void SysReset();
-int SysInit();
-void SysClose();
 void SysStartCPU();
 void CheckCdrom();
 void LoadCdrom();
