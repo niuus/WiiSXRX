@@ -16,6 +16,15 @@
  *                                                                         *
  ***************************************************************************/
 
+/***************************************************************************/ 
+// History of changes:
+//
+// 2021/01/22 - retro100
+// - rename it to gpu_gx.c. Otherwise it would not be compiled
+//   because of libpcsxcore/gpu.c which share the same location
+//   for the object file.
+/***************************************************************************/ 
+
 //TODO WIP, lots of stubbed functions
 #include "stdafx.h"
 

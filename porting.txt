@@ -15,6 +15,10 @@ Problem: PPC dynarec is brocken :-(
 
 Porting history:
 * Current Version / This commit:
+  Add WiiIO for easyer porting. (Currently not used)
+  Also rename PeopsGXGPU/gpu.c to PeopsGXGPU/gpu_gx.c like PeopsSoftGPU/gpu_soft.c
+
+* Commit 4621779a:
   Start with porting to current pcsxr version from iCatButler (commit 62467b86).
   Port/sync libpcsxcore/ppc/ (iCatButler) and all necessary
   files from libpcsxcore/ (iCatButler) which
@@ -23,6 +27,7 @@ Porting history:
   The current status is listed below after the Porting history.
 
 * Commit d9d4e283:
+  Last working version!!!
   Last working version before starting with porting to current pcsxr version.
 
 * From commit 6d1c2a77 to commit d9d4e283:
