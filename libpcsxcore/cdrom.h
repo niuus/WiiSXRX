@@ -20,12 +20,27 @@
 #ifndef __CDROM_H__
 #define __CDROM_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "decode_xa.h"
 #include "r3000a.h"
 #include "plugins.h"
 #include "psxmem.h"
 #include "psxhw.h"
+#include "psxcommon.h"
+
+#define btoi(b)     ((b) / 16 * 10 + (b) % 16) /* BCD to u_char */
+#define itob(i)     ((i) / 10 * 16 + (i) % 10) /* u_char to BCD */
+
+#define MSF2SECT(m, s, f)		(((m) * 60 + (s) - 2) * 75 + (f))
+
+#define CD_FRAMESIZE_RAW		2352
+#define DATA_SIZE				(CD_FRAMESIZE_RAW - 12)
+
+#define SUB_FRAMESIZE			96
 
 typedef struct {
 	unsigned char OCUP;
@@ -37,12 +52,12 @@ typedef struct {
 
 	unsigned char StatP;
 
-	unsigned char Transfer[2352];
-	unsigned char *pTransfer;
+	unsigned char Transfer[CD_FRAMESIZE_RAW];
+	unsigned int  transferIndex;
 
 	unsigned char Prev[4];
 	unsigned char Param[8];
-	unsigned char Result[8];
+	unsigned char Result[16];
 
 	unsigned char ParamC;
 	unsigned char ParamP;
@@ -51,16 +66,18 @@ typedef struct {
 	unsigned char ResultReady;
 	unsigned char Cmd;
 	unsigned char Readed;
-	unsigned long Reading;
+	unsigned char SetlocPending;
+	u32 Reading;
 
 	unsigned char ResultTN[6];
 	unsigned char ResultTD[4];
+	unsigned char SetSectorPlay[4];
+	unsigned char SetSectorEnd[4];
 	unsigned char SetSector[4];
-	unsigned char SetSectorSeek[4];
 	unsigned char Track;
-	int Play;
+	boolean Play, Muted;
 	int CurTrack;
-	int Mode, File, Channel, Muted;
+	int Mode, File, Channel;
 	int Reset;
 	int RErr;
 	int FirstSector;
@@ -69,19 +86,43 @@ typedef struct {
 
 	int Init;
 
-	unsigned char Irq;
-	unsigned long eCycle;
+	u16 Irq;
+	u8 IrqRepeated;
+	u32 eCycle;
 
-	int Seeked;
+	u8 Seeked;
+	u8 ReadRescheduled;
 
-	char Unused[4083];
+	u8 DriveState;
+	u8 FastForward;
+	u8 FastBackward;
+
+	u8 AttenuatorLeftToLeft, AttenuatorLeftToRight;
+	u8 AttenuatorRightToRight, AttenuatorRightToLeft;
+	u8 AttenuatorLeftToLeftT, AttenuatorLeftToRightT;
+	u8 AttenuatorRightToRightT, AttenuatorRightToLeftT;
+
+	struct {
+		unsigned char Track;
+		unsigned char Index;
+		unsigned char Relative[3];
+		unsigned char Absolute[3];
+	} subq;
+	unsigned char TrackChanged;
 } cdrStruct;
 
 extern cdrStruct cdr;
 
 void cdrReset();
+void cdrAttenuate(s16 *buf, int samples, int stereo);
+
 void cdrInterrupt();
 void cdrReadInterrupt();
+void cdrDecodedBufferInterrupt();
+void cdrLidSeekInterrupt();
+void cdrPlayInterrupt();
+void cdrDmaInterrupt();
+void LidInterrupt();
 unsigned char cdrRead0(void);
 unsigned char cdrRead1(void);
 unsigned char cdrRead2(void);
@@ -92,4 +133,7 @@ void cdrWrite2(unsigned char rt);
 void cdrWrite3(unsigned char rt);
 int cdrFreeze(gzFile f, int Mode);
 
-#endif /* __CDROM_H__ */
+#ifdef __cplusplus
+}
+#endif
+#endif

@@ -1,4 +1,6 @@
 
+#if defined (__ppc__) || defined (__ppc64__) || defined (__powerpc__) || defined (__powerpc64__) || defined (__POWERPC__)
+
 #include "../psxcommon.h"
 #include "reguse.h"
 
@@ -274,12 +276,12 @@ int useOfPsxReg(u32 code, int use, int psxreg)
 static int _nextPsxRegUse(u32 pc, int psxreg, int numInstr) __attribute__ ((__pure__, __unused__));
 static int _nextPsxRegUse(u32 pc, int psxreg, int numInstr)
 {
-    u32 code;
-    int i, reguse = 0;
+    u32 *ptr, code, bPC = 0;
+    int i, use, reguse = 0;
 
     for (i=0; i<numInstr; ) {
         // load current instruction
-		  u32 *ptr = (u32*)PSXM(pc);
+		  ptr = PSXM(pc);
 		  if (ptr==NULL) {
 				// going nowhere... might as well assume a write, since we will hopefully never reach here
 				reguse = REGUSE_WRITE;
@@ -287,7 +289,7 @@ static int _nextPsxRegUse(u32 pc, int psxreg, int numInstr)
 		  }
 		  code = SWAP32(*ptr);
 		  // get usage patterns for instruction
-		  int use = getRegUse(code);
+		  use = getRegUse(code);
 		  // find the use of psxreg in the instruction
         reguse = useOfPsxReg(code, use, psxreg);
         
@@ -307,7 +309,7 @@ static int _nextPsxRegUse(u32 pc, int psxreg, int numInstr)
 					reguse = _nextPsxRegUse(pc, psxreg, 1);
 					if (reguse != REGUSE_NONE) break;
 					
-					u32 bPC = _fImm_(code) * 4 + pc;
+					bPC = _fImm_(code) * 4 + pc;
 					reguse = _nextPsxRegUse(pc+4, psxreg, (numInstr-i-1)/2);
 					if (reguse != REGUSE_NONE) {
 						int reguse2 = _nextPsxRegUse(bPC, psxreg, (numInstr-i-1)/2);
@@ -324,7 +326,7 @@ static int _nextPsxRegUse(u32 pc, int psxreg, int numInstr)
 					reguse = _nextPsxRegUse(pc, psxreg, 1);
 					if (reguse != REGUSE_NONE) break;
 					
-					u32 bPC = _fTarget_(code) * 4 + (pc & 0xf0000000);
+					bPC = _fTarget_(code) * 4 + (pc & 0xf0000000);
 					reguse = _nextPsxRegUse(bPC, psxreg, numInstr-i-1);
 #endif
 					break;
@@ -417,3 +419,5 @@ int isPsxRegUsed(u32 pc, int psxreg)
     else
         return 0; // the next use is a write, i.e. current value is not important
 }
+
+#endif

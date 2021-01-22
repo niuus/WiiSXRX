@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 Ryan Schultz, PCSX-df Team, PCSX team              *
+ *   Copyright (C) 2010 by Blade_Arma                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,28 +20,34 @@
 #ifndef __PSXCOUNTERS_H__
 #define __PSXCOUNTERS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "r3000a.h"
 #include "psxmem.h"
 #include "plugins.h"
 
-typedef struct {
-	u32 count, mode, target;
-	u32 sCycle, Cycle, rate, interrupt;
-} psxCounter;
-
-extern psxCounter psxCounters[5];
-
 extern u32 psxNextCounter, psxNextsCounter;
 
 void psxRcntInit();
 void psxRcntUpdate();
+
 void psxRcntWcount(u32 index, u32 value);
 void psxRcntWmode(u32 index, u32 value);
 void psxRcntWtarget(u32 index, u32 value);
+
 u32 psxRcntRcount(u32 index);
-int psxRcntFreeze(gzFile f, int Mode);
+u32 psxRcntRmode(u32 index);
+u32 psxRcntRtarget(u32 index);
 
-void psxUpdateVSyncRate();
+s32 psxRcntFreeze(gzFile f, s32 Mode);
 
-#endif /* __PSXCOUNTERS_H__ */
+// TODO: should be removed - from old version
+void psxUpdateVSyncRate(); //!!!
+
+#ifdef __cplusplus
+}
+#endif
+#endif

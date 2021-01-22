@@ -1,5 +1,12 @@
 ![WiiSXRX logo](./logo.jpg)
 
+**This current development version doesn't work!**
+This version tries to port the current version of https://github.com/iCatButler/pcsxr.git.
+The current version compiles successfully but does not currently work.
+For more detailed information see porting.txt.
+This hint will be removed as soon as the version is runnable.
+
+
 Fork of WiiSXR (a port of PCSX-R), a PSX emulator for the Gamecube / Wii / Wii U.
 
 The starting point for this code base will be Mystro256's WiiSXR, a continuation of

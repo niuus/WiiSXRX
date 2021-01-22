@@ -20,6 +20,10 @@
 #ifndef __R3000A_H__
 #define __R3000A_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "psxmem.h"
 #include "psxcounters.h"
@@ -32,15 +36,31 @@ typedef struct {
 	void (*ExecuteBlock)();	/* executes up to a jump */
 	void (*Clear)(u32 Addr, u32 Size);
 	void (*Shutdown)();
+	void (*SetPGXPMode)(u32 pgxpMode);
 } R3000Acpu;
 
 extern R3000Acpu *psxCpu;
 extern R3000Acpu psxInt;
-extern R3000Acpu psxIntDbg;
-#if defined(__x86_64__) || defined(__i386__) || defined(__sh__) || defined(__ppc__) || defined(HW_RVL) || defined(HW_DOL)
+#if (defined(__x86_64__) || defined(__i386__) || defined(__sh__) || defined(__ppc__)) && !defined(NOPSXREC)
 extern R3000Acpu psxRec;
 #define PSXREC
 #endif
+
+typedef union {
+#if defined(__BIGENDIAN__)
+	struct { u8 h3, h2, h, l; } b;
+	struct { s8 h3, h2, h, l; } sb;
+	struct { u16 h, l; } w;
+	struct { s16 h, l; } sw;
+#else
+	struct { u8 l, h, h2, h3; } b;
+	struct { u16 l, h; } w;
+	struct { s8 l, h, h2, h3; } sb;
+	struct { s16 l, h; } sw;
+#endif
+	u32 d;
+	s32 sd;
+} PAIR;
 
 typedef union {
 	struct {
@@ -49,19 +69,20 @@ typedef union {
 						s0, s1, s2, s3, s4, s5, s6, s7,
 						t8, t9, k0, k1, gp, sp, s8, ra, lo, hi;
 	} n;
-	u32 r[34]; /* Lo, Hi in r[33] and r[34] */
+	u32 r[34]; /* Lo, Hi in r[32] and r[33] */
+	PAIR p[34];
 } psxGPRRegs;
 
 typedef union {
 	struct {
-		u32	Index,     Random,    EntryLo0,  EntryLo1,
-						Context,   PageMask,  Wired,     Reserved0,
-						BadVAddr,  Count,     EntryHi,   Compare,
-						Status,    Cause,     EPC,       PRid,
-						Config,    LLAddr,    WatchLO,   WatchHI,
-						XContext,  Reserved1, Reserved2, Reserved3,
-						Reserved4, Reserved5, ECC,       CacheErr,
-						TagLo,     TagHi,     ErrorEPC,  Reserved6;
+		u32	Index,     Random,    EntryLo0,  BPC,
+				Context,   BDA,       PIDMask,   DCIC,
+				BadVAddr,  BDAM,      EntryHi,   BPCM,
+				Status,    Cause,     EPC,       PRid,
+				Config,    LLAddr,    WatchLO,   WatchHI,
+				XContext,  Reserved1, Reserved2, Reserved3,
+				Reserved4, Reserved5, ECC,       CacheErr,
+				TagLo,     TagHi,     ErrorEPC,  Reserved6;
 	} n;
 	u32 r[32];
 } psxCP0Regs;
@@ -105,6 +126,7 @@ typedef union {
 		s32          lzcs, lzcr;
 	} n;
 	u32 r[32];
+	PAIR p[32];
 } psxCP2Data;
 
 typedef union {
@@ -122,23 +144,127 @@ typedef union {
 		s32      flag;
 	} n;
 	u32 r[32];
+	PAIR p[32];
 } psxCP2Ctrl;
+
+enum {
+	PSXINT_SIO = 0,
+	PSXINT_CDR,
+	PSXINT_CDREAD,
+	PSXINT_GPUDMA,
+	PSXINT_MDECOUTDMA,
+	PSXINT_SPUDMA,
+	PSXINT_GPUBUSY,
+	PSXINT_MDECINDMA,
+	PSXINT_GPUOTCDMA,
+	PSXINT_CDRDMA,
+	PSXINT_SPUASYNC,
+	PSXINT_CDRDBUF,
+	PSXINT_CDRLID,
+	PSXINT_CDRPLAY
+};
 
 typedef struct {
 	psxGPRRegs GPR;		/* General Purpose Registers */
 	psxCP0Regs CP0;		/* Coprocessor0 Registers */
 	psxCP2Data CP2D; 	/* Cop2 data registers */
 	psxCP2Ctrl CP2C; 	/* Cop2 control registers */
-    u32 pc;				/* Program counter */
-    u32 code;			/* The instruction */
+  u32 pc;						/* Program counter */
+  u32 code;					/* The instruction */
 	u32 cycle;
 	u32 interrupt;
-	u32 intCycle[32];
+	struct { u32 sCycle, cycle; } intCycle[32];
+	u8 ICache_Addr[0x1000];
+	u8 ICache_Code[0x1000];
+	boolean ICache_valid;
 } psxRegisters;
 
 extern psxRegisters psxRegs;
 
-#if defined(HW_RVL) || defined(HW_DOL) || defined(BIG_ENDIAN)
+/*
+Formula One 2001
+- Use old CPU cache code when the RAM location is
+  updated with new code (affects in-game racing)
+
+TODO:
+- I-cache / D-cache swapping
+- Isolate D-cache from RAM
+*/
+
+static inline u32 *Read_ICache(u32 pc, boolean isolate) {
+	u32 pc_bank, pc_offset, pc_cache;
+	u8 *IAddr, *ICode;
+
+	pc_bank = pc >> 24;
+	pc_offset = pc & 0xffffff;
+	pc_cache = pc & 0xfff;
+
+	IAddr = psxRegs.ICache_Addr;
+	ICode = psxRegs.ICache_Code;
+
+	// clear I-cache
+	if (!psxRegs.ICache_valid) {
+		memset(psxRegs.ICache_Addr, 0xff, sizeof(psxRegs.ICache_Addr));
+		memset(psxRegs.ICache_Code, 0xff, sizeof(psxRegs.ICache_Code));
+
+		psxRegs.ICache_valid = TRUE;
+	}
+
+	// uncached
+	if (pc_bank >= 0xa0)
+		return (u32 *)PSXM(pc);
+
+	// cached - RAM
+	if (pc_bank == 0x80 || pc_bank == 0x00) {
+		if (SWAP32(*(u32 *)(IAddr + pc_cache)) == pc_offset) {
+			// Cache hit - return last opcode used
+			return (u32 *)(ICode + pc_cache);
+		} else {
+			// Cache miss - addresses don't match
+			// - default: 0xffffffff (not init)
+
+			if (!isolate) {
+				// cache line is 4 bytes wide
+				pc_offset &= ~0xf;
+				pc_cache &= ~0xf;
+
+				// address line
+				*(u32 *)(IAddr + pc_cache + 0x0) = SWAP32(pc_offset + 0x0);
+				*(u32 *)(IAddr + pc_cache + 0x4) = SWAP32(pc_offset + 0x4);
+				*(u32 *)(IAddr + pc_cache + 0x8) = SWAP32(pc_offset + 0x8);
+				*(u32 *)(IAddr + pc_cache + 0xc) = SWAP32(pc_offset + 0xc);
+
+				// opcode line
+				pc_offset = pc & ~0xf;
+				*(u32 *)(ICode + pc_cache + 0x0) = psxMu32ref(pc_offset + 0x0);
+				*(u32 *)(ICode + pc_cache + 0x4) = psxMu32ref(pc_offset + 0x4);
+				*(u32 *)(ICode + pc_cache + 0x8) = psxMu32ref(pc_offset + 0x8);
+				*(u32 *)(ICode + pc_cache + 0xc) = psxMu32ref(pc_offset + 0xc);
+			}
+
+			// normal code
+			return (u32 *)PSXM(pc);
+		}
+	}
+
+	/*
+	TODO: Probably should add cached BIOS
+	*/
+
+	// default
+	return (u32 *)PSXM(pc);
+}
+
+// U64 and S64 are used to wrap long integer constants.
+#if defined __GNUC__ || defined _MSC_VER_
+#define U64(val) val##ULL
+#define S64(val) val##LL
+#else
+#define U64(val) val
+#define S64(val) val
+#endif
+
+#if defined(__BIGENDIAN__)
 
 #define _i32(x) *(s32 *)&x
 #define _u32(x) x
@@ -176,6 +302,7 @@ extern psxRegisters psxRegs;
 
 #define _fImm_(code)	((s16)code)            // sign-extended immediate
 #define _fImmU_(code)	(code&0xffff)          // zero-extended immediate
+#define _fImmLU_(code)	(code<<16)             // LUI
 
 #define _Op_     _fOp_(psxRegs.code)
 #define _Funct_  _fFunct_(psxRegs.code)
@@ -188,6 +315,7 @@ extern psxRegisters psxRegs;
 
 #define _Imm_	 _fImm_(psxRegs.code)
 #define _ImmU_	 _fImmU_(psxRegs.code)
+#define _ImmLU_	 _fImmLU_(psxRegs.code)
 
 #define _rRs_   psxRegs.GPR.r[_Rs_]   // Rs register
 #define _rRt_   psxRegs.GPR.r[_Rt_]   // Rt register
@@ -217,7 +345,11 @@ void psxExecuteBios();
 int  psxTestLoadDelay(int reg, u32 tmp);
 void psxDelayTest(int reg, u32 bpc);
 void psxTestSWInts();
-void psxTestHWInts();
 void psxJumpTest();
 
-#endif /* __R3000A_H__ */
+void psxSetPGXPMode(u32 pgxpMode);
+
+#ifdef __cplusplus
+}
+#endif
+#endif

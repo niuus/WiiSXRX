@@ -76,6 +76,10 @@ typedef long (CALLBACK* GPUfreeze)(uint32_t, GPUFreeze_t *);
 typedef long (CALLBACK* GPUgetScreenPic)(unsigned char *);
 typedef long (CALLBACK* GPUshowScreenPic)(unsigned char *);
 typedef void (CALLBACK* GPUclearDynarec)(void (CALLBACK *callback)(void));
+typedef void (CALLBACK* GPUhSync)(int); //!!!
+typedef void (CALLBACK* GPUvBlank)(int); //!!!
+typedef void (CALLBACK* GPUpgxpMemory)(unsigned int, unsigned char*); //!!!
+
 
 //plugin stuff From Shadow
 // *** walking in the valley of your darking soul i realize that i was alone
@@ -102,6 +106,10 @@ extern GPUfreeze        GPU_freeze;
 extern GPUgetScreenPic  GPU_getScreenPic;
 extern GPUshowScreenPic GPU_showScreenPic;
 extern GPUclearDynarec  GPU_clearDynarec;
+extern GPUhSync         GPU_hSync; //!!!
+extern GPUvBlank        GPU_vBlank; //!!!
+extern GPUpgxpMemory	GPU_pgxpMemory; //!!!
+
 
 //cd rom plugin ;)
 typedef long (CALLBACK* CDRinit)(void);
@@ -133,8 +141,10 @@ struct SubQ {
 	unsigned char TrackRelativeAddress[3];
 	unsigned char Filler;
 	unsigned char AbsoluteAddress[3];
+	unsigned char CRC[2]; //!!!
 	char res1[72];
 };
+typedef long (CALLBACK* CDRreadCDDA)(unsigned char, unsigned char, unsigned char, unsigned char *); //!!!
 typedef unsigned char* (CALLBACK* CDRgetBufferSub)(void);
 
 //cd rom function pointers 
@@ -155,6 +165,7 @@ extern CDRgetBufferSub       CDR_getBufferSub;
 extern CDRconfigure          CDR_configure;
 extern CDRabout              CDR_about;
 extern CDRsetfilename        CDR_setfilename;
+extern CDRreadCDDA           CDR_readCDDA; //!!!
 
 // spu plugin
 typedef long (CALLBACK* SPUinit)(void);				
@@ -195,6 +206,7 @@ typedef struct
 } SPUFreeze_t;
 typedef long (CALLBACK* SPUfreeze)(uint32_t, SPUFreeze_t *);
 typedef void (CALLBACK* SPUasync)(uint32_t);
+typedef void (CALLBACK* SPUplayCDDAchannel)(short *, int); //!!!
 
 //SPU POINTERS
 extern SPUconfigure        SPU_configure;
@@ -226,6 +238,7 @@ extern SPUfreeze           SPU_freeze;
 extern SPUregisterCallback SPU_registerCallback;
 extern SPUregisterCDDAVolume SPU_registerCDDAVolume;
 extern SPUasync            SPU_async;
+extern SPUplayCDDAchannel  SPU_playCDDAchannel; //!!!
 
 // PAD Functions
 

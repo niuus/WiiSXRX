@@ -19,6 +19,11 @@
 //*************************************************************************// 
 // History of changes:
 //
+// 2021/01/22 - retro100
+// - rename it to gpu_soft.c. Otherwise it would not be compiled
+//   because of libpcsxcore/gpu.c which share the same location
+//   for the object file.
+//
 // 2008/05/17 - Pete  
 // - added GPUvisualVibration and "visual rumble" stuff
 //

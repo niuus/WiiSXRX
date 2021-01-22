@@ -118,11 +118,11 @@ BOOL           bDoVSyncUpdate=FALSE;
 #ifdef __i386__
 
 #define BGR24to16 i386_BGR24to16
-__inline unsigned short BGR24to16 (unsigned long BGR);
+static __inline unsigned short BGR24to16 (unsigned long BGR);
 
 #else
 
-__inline unsigned short BGR24to16 (unsigned long BGR)
+static __inline unsigned short BGR24to16 (unsigned long BGR)
 {
  return (unsigned short)(((BGR>>3)&0x1f)|((BGR&0xf80000)>>9)|((BGR&0xf800)>>6));
 }
@@ -133,7 +133,7 @@ __inline unsigned short BGR24to16 (unsigned long BGR)
 // Update global TP infos
 ////////////////////////////////////////////////////////////////////////
 
-__inline void UpdateGlobalTP(unsigned short gdata)
+static __inline void UpdateGlobalTP(unsigned short gdata)
 {
  GlobalTextAddrX = (gdata << 6) & 0x3c0;               // texture addr
  GlobalTextAddrY = (gdata << 4) & 0x100;
@@ -161,7 +161,7 @@ __inline void UpdateGlobalTP(unsigned short gdata)
 
 ////////////////////////////////////////////////////////////////////////                                          
 
-__inline void SetRenderMode(unsigned long DrawAttributes)
+static __inline void SetRenderMode(unsigned long DrawAttributes)
 {
  DrawSemiTrans = (SEMITRANSBIT(DrawAttributes)) ? TRUE : FALSE;
 
@@ -253,7 +253,7 @@ void AdjustCoord1()
 //  . . .
 //   2___3
 
-__inline BOOL CheckCoord4()
+static __inline BOOL CheckCoord4()
 {
  if(lx0<0)
   {
@@ -319,7 +319,7 @@ __inline BOOL CheckCoord4()
  return FALSE;
 }
 
-__inline BOOL CheckCoord3()
+static __inline BOOL CheckCoord3()
 {
  if(lx0<0)
   {
@@ -356,7 +356,7 @@ __inline BOOL CheckCoord3()
 }
 
 
-__inline BOOL CheckCoord2()
+static __inline BOOL CheckCoord2()
 {
  if(lx0<0)
   {
@@ -378,7 +378,7 @@ __inline BOOL CheckCoord2()
  return FALSE;
 }
 
-__inline BOOL CheckCoordL(short slx0,short sly0,short slx1,short sly1)
+static __inline BOOL CheckCoordL(short slx0,short sly0,short slx1,short sly1)
 {
  if(slx0<0)
   {

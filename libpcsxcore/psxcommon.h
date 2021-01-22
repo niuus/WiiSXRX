@@ -54,9 +54,12 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 typedef uintptr_t uptr;
 */
+
+typedef uint8_t boolean;
+
 /* Local includes */
 #include "system.h"
-#include "coredebug.h"
+#include "debug.h"
 
 /* Ryan TODO WTF is this? */
 #if defined (__LINUX__) || defined (__MACOSX__) || defined(HW_RVL) || defined(HW_DOL)
@@ -99,8 +102,9 @@ typedef struct {
 	char Bios[256];
 	char BiosDir[MAXPATHLEN];
 	char PluginsDir[MAXPATHLEN];
+	char PatchesDir[MAXPATHLEN]; //!!!
 	long Xa;
-	long Sio;
+	long SioIrq; //!!!
 	long Mdec;
 	long PsxAuto;
 	long PsxType;		/* NTSC or PAL */
@@ -113,6 +117,12 @@ typedef struct {
 	long RCntFix;
 	long UseNet;
 	long VSyncWA;
+	boolean Widescreen; //!!!
+	u8 HackFix; //!!!
+	boolean PGXP_GTE; //!!!
+	boolean PGXP_Cache; //!!!
+	boolean PGXP_Texture; //!!!
+	u32             PGXP_Mode; //!!!
 } PcsxConfig;
 
 extern PcsxConfig Config;
@@ -142,5 +152,17 @@ enum {
 	PSX_TYPE_PAL
 };	/* PSX Type */
 
+enum {
+	CPU_DYNAREC = 0,
+	CPU_INTERPRETER
+}; // CPU Types
+
+enum {
+	CDDA_ENABLED_LE = 0,
+	CDDA_DISABLED,
+	CDDA_ENABLED_BE
+}; // CDDA Types
+
+void EmuUpdate(); //!!!
 
 #endif /* __PSXCOMMON_H__ */

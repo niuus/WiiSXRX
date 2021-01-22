@@ -65,8 +65,16 @@ extern char Mcd1Data[MCD_SIZE], Mcd2Data[MCD_SIZE];
 #endif
 
 extern unsigned char sioRead8();
+unsigned short sioReadStat16();
+unsigned short sioReadMode16();
+unsigned short sioReadCtrl16();
+unsigned short sioReadBaud16();
+
 extern void sioWrite8(unsigned char value);
+void sioWriteStat16(unsigned short value);
+void sioWriteMode16(unsigned short value);
 extern void sioWriteCtrl16(unsigned short value);
+void sioWriteBaud16(unsigned short value);
 extern void sioInterrupt();
 extern int sioFreeze(gzFile f, int Mode);
 

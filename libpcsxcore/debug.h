@@ -17,57 +17,61 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
  ***************************************************************************/
 
-#ifndef __MISC_H__
-#define __MISC_H__
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
-#include "psxcommon.h"
-#include "coff.h"
-#include "plugins.h"
-#include "r3000a.h"
-#include "psxmem.h"
-#include "../Gamecube/fileBrowser/fileBrowser.h"
+#include <gctypes.h>
 
-#undef s_addr
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct {
-	unsigned char id[8];
-    u32 text;                   
-    u32 data;                    
-    u32 pc0;
-    u32 gp0;                     
-    u32 t_addr;
-    u32 t_size;
-    u32 d_addr;                  
-    u32 d_size;                  
-    u32 b_addr;                  
-    u32 b_size;                  
-    u32 s_addr;
-    u32 s_size;
-    u32 SavedSP;
-    u32 SavedFP;
-    u32 SavedGP;
-    u32 SavedRA;
-    u32 SavedS0;
-} EXE_HEADER;
+enum breakpoint_types {
+	BE, BR1, BR2, BR4, BW1, BW2, BW4
+};
 
-extern char CdromId[10];
-extern char CdromLabel[33];
+void StartDebugger();
+void StopDebugger();
 
-int LoadCdrom();
-int LoadCdromFile(char *filename, EXE_HEADER *head);
-int CheckCdrom();
-int Load(fileBrowser_file *exe);
+void DebugVSync();
+void ProcessDebug();
 
-int SaveState();
-int LoadState();
-int CheckState();
+void DebugCheckBP(u32 address, enum breakpoint_types type);
 
-int SendPcsxInfo();
-int RecvPcsxInfo();
+void PauseDebugger();
+void ResumeDebugger();
 
-u16 calcCrc(u8 *d, int len);
+extern char *disRNameGPR[];
+extern char *disRNameCP2D[];
+extern char *disRNameCP2C[];
+extern char *disRNameCP0[];
 
-//extern char *LabelAuthors; // not used
-//extern char *LabelGreets; // not used
+char* disR3000AF(u32 code, u32 pc);
 
-#endif /* __MISC_H__ */
+/* 
+ * Specficies which logs should be activated.
+ */
+
+//#define LOG_STDOUT
+
+//#define PAD_LOG  __Log
+//#define SIO1_LOG  __Log
+//#define GTE_LOG  __Log
+//#define CDR_LOG  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+//#define CDR_LOG_IO  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+
+//#define PSXHW_LOG   __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+//#define PSXBIOS_LOG __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+//#define PSXDMA_LOG  __Log
+//#define PSXMEM_LOG  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+//#define PSXCPU_LOG  __Log
+
+#if defined(PSXCPU_LOG)  || defined(PSXDMA_LOG) || defined(CDR_LOG) || defined(PSXHW_LOG) || \
+	defined(PSXBIOS_LOG) || defined(PSXMEM_LOG) || defined(GTE_LOG) || defined(PAD_LOG) || defined(SIO1_LOG)
+#define EMU_LOG __Log
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+#endif

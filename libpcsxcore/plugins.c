@@ -60,6 +60,9 @@ GPUfreeze        GPU_freeze;
 GPUgetScreenPic  GPU_getScreenPic;
 GPUshowScreenPic GPU_showScreenPic;
 GPUclearDynarec  GPU_clearDynarec;
+GPUhSync         GPU_hSync;
+GPUvBlank        GPU_vBlank;
+GPUpgxpMemory    GPU_pgxpMemory;
 
 //cd rom function pointers
 CDRinit               CDR_init;
@@ -79,6 +82,7 @@ CDRgetBufferSub       CDR_getBufferSub;
 CDRconfigure          CDR_configure;
 CDRabout              CDR_about;
 CDRsetfilename        CDR_setfilename;
+CDRreadCDDA           CDR_readCDDA;
 
 //SPU POINTERS
 SPUconfigure        SPU_configure;
@@ -110,6 +114,7 @@ SPUfreeze           SPU_freeze;
 SPUregisterCallback SPU_registerCallback;
 SPUregisterCDDAVolume SPU_registerCDDAVolume;
 SPUasync            SPU_async;
+SPUplayCDDAchannel  SPU_playCDDAchannel;
 
 //PAD POINTERS
 PADconfigure        PAD1_configure;

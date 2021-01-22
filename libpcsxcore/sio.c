@@ -57,15 +57,28 @@ char *Mcd2Data = (char*)MCD2_LO;
 char Mcd1Data[MCD_SIZE], Mcd2Data[MCD_SIZE];
 #endif
 
+#define SIO_INT(eCycle) { \
+	if (!Config.SioIrq) { \
+		psxRegs.interrupt |= (1 << PSXINT_SIO); \
+		psxRegs.intCycle[PSXINT_SIO].cycle = eCycle; \
+		psxRegs.intCycle[PSXINT_SIO].sCycle = psxRegs.cycle; \
+	} \
+}
+
+
 // clk cycle byte
 // 4us * 8bits = ((PSXCLK / 1000000) * 32) / BIAS; (linuzappz)
+#define SIO_CYCLES (BaudReg * 8)
+
+#if 0
 #define SIO_INT() { \
-	if (!Config.Sio) { \
+	if (!Config.SioIrq) { \
 		psxRegs.interrupt|= 0x80; \
 		psxRegs.intCycle[7+1] = 200; /*270;*/ \
 		psxRegs.intCycle[7] = psxRegs.cycle; \
 	} \
 }
+#endif
 
 unsigned char sioRead8() {
 	unsigned char ret = 0;
@@ -104,6 +117,36 @@ unsigned char sioRead8() {
 	return ret;
 }
 
+unsigned short sioReadStat16() {
+	u16 hard;
+
+	hard = StatReg;
+
+#if 0
+	// wait for IRQ first
+	if( psxRegs.interrupt & (1 << PSXINT_SIO) )
+	{
+		hard &= ~TX_RDY;
+		hard &= ~RX_RDY;
+		hard &= ~TX_EMPTY;
+	}
+#endif
+
+	return hard;
+}
+
+unsigned short sioReadMode16() {
+	return ModeReg;
+}
+
+unsigned short sioReadCtrl16() {
+	return CtrlReg;
+}
+
+unsigned short sioReadBaud16() {
+	return BaudReg;
+}
+
 void netError() {
 	ClosePlugins();
 	SysMessage(_("Connection closed!\n"));
@@ -115,7 +158,7 @@ void sioWrite8(unsigned char value) {
 	PAD_LOG("sio write8 %x\n", value);
 #endif
 	switch (padst) {
-		case 1: SIO_INT();
+		case 1: SIO_INT(SIO_CYCLES);
 			if ((value&0x40) == 0x40) {
 				padst = 2; parp = 1;
 				if (!Config.UseNet) {
@@ -153,7 +196,7 @@ void sioWrite8(unsigned char value) {
 			parp++;
 /*			if (buf[1] == 0x45) {
 				buf[parp] = 0;
-				SIO_INT();
+				SIO_INT(SIO_CYCLES);
 				return;
 			}*/
 			if (!Config.UseNet) {
@@ -164,13 +207,13 @@ void sioWrite8(unsigned char value) {
 			}
 
 			if (parp == bufcount) { padst = 0; return; }
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			return;
 	}
 
 	switch (mcdst) {
 		case 1:
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			if (rdwr) { parp++; return; }
 			parp = 1;
 			switch (value) {
@@ -180,7 +223,7 @@ void sioWrite8(unsigned char value) {
 			}
 			return;
 		case 2: // address H
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			adrH = value;
 			*buf = 0;
 			parp = 0;
@@ -188,7 +231,7 @@ void sioWrite8(unsigned char value) {
 			mcdst = 3;
 			return;
 		case 3: // address L
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			adrL = value;
 			*buf = adrH;
 			parp = 0;
@@ -196,7 +239,7 @@ void sioWrite8(unsigned char value) {
 			mcdst = 4;
 			return;
 		case 4:
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			parp = 0;
 			switch (rdwr) {
 				case 1: // read
@@ -240,7 +283,7 @@ void sioWrite8(unsigned char value) {
 			if (rdwr == 2) {
 				if (parp < 128) buf[parp+1] = value;
 			}
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			return;
 	}
 
@@ -288,7 +331,7 @@ void sioWrite8(unsigned char value) {
 			bufcount = 2;
 			parp = 0;
 			padst = 1;
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			return;
 		case 0x81: // start memcard
 			StatReg |= RX_RDY;
@@ -297,9 +340,16 @@ void sioWrite8(unsigned char value) {
 			bufcount = 3;
 			mcdst = 1;
 			rdwr = 0;
-			SIO_INT();
+			SIO_INT(SIO_CYCLES);
 			return;
 	}
+}
+
+void sioWriteStat16(unsigned short value) {
+}
+
+void sioWriteMode16(unsigned short value) {
+	ModeReg = value;
 }
 
 void sioWriteCtrl16(unsigned short value) {
@@ -310,6 +360,10 @@ void sioWriteCtrl16(unsigned short value) {
 		StatReg = TX_RDY | TX_EMPTY;
 		psxRegs.interrupt&=~0x80;
 	}
+}
+
+void sioWriteBaud16(unsigned short value) {
+	BaudReg = value;
 }
 
 void sioInterrupt() {

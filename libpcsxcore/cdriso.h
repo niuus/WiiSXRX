@@ -1,5 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 Ryan Schultz, PCSX-df Team, PCSX team              *
+ *   Copyright (C) 2007 PCSX-df Team                                       *
+ *   Copyright (C) 2009 Wei Mingzhi                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,49 +18,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
  ***************************************************************************/
 
-/* 
-* Specficies which logs should be activated.
-* Ryan TODO: These should ALL be definable with configure flags.
-*/
+#ifndef CDRISO_H
+#define CDRISO_H
 
-#ifndef __CORE_DEBUG_H__
-#define __CORE_DEBUG_H__
-
-#include <gctypes.h>
-#include <stdint.h>
-
-extern char *disRNameCP0[];
-
-char* disR3000AF(u32 code, u32 pc);
-
-#if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
-extern FILE *emuLog;
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-//#define GTE_DUMP
+int handleecm(const char *isoname, FILE* cdh, s32* accurate_length);
+int aropen(FILE* fparchive, const char* _fn);
+void cdrIsoInit(void);
+int cdrIsoActive(void);
 
-#ifdef GTE_DUMP
-FILE *gteLog;
+extern unsigned int cdrIsoMultidiskCount;
+extern unsigned int cdrIsoMultidiskSelect;
+
+#ifdef __cplusplus
+}
 #endif
-
-//#define LOG_STDOUT
-
-//#define PAD_LOG  __Log
-//#define GTE_LOG  __Log
-//#define CDR_LOG  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
-
-//#define PSXHW_LOG   __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
-//#define PSXBIOS_LOG __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
-//#define PSXDMA_LOG  __Log
-//#define PSXMEM_LOG  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
-//#define PSXCPU_LOG  __Log
-
-//#define CDRCMD_DEBUG
-
-#if defined (PSXCPU_LOG) || defined(PSXDMA_LOG) || defined(CDR_LOG) || defined(PSXHW_LOG) || \
-	defined(PSXBIOS_LOG) || defined(PSXMEM_LOG) || defined(GTE_LOG)    || defined(PAD_LOG)
-#define EMU_LOG __Log
 #endif
-
-#endif /* __DEBUG_H__ */

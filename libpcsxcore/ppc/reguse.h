@@ -1,6 +1,9 @@
-
 #ifndef __REGUSE_H__
 #define __REGUSE_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // include basic types
 #include "../psxcommon.h"
@@ -74,4 +77,7 @@ int useOfPsxReg(u32 code, int use, int psxreg) __attribute__ ((__pure__));;
 int nextPsxRegUse(u32 pc, int psxreg) __attribute__ ((__pure__));;
 int isPsxRegUsed(u32 pc, int psxreg) __attribute__ ((__pure__));;
 
-#endif /* __REGUSE_H__ */
+#ifdef __cplusplus
+}
+#endif
+#endif

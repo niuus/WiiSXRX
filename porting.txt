@@ -1,0 +1,145 @@
+PCSXR Version for Porting/Merging:
+origin	https://github.com/iCatButler/pcsxr.git
+
+commit 62467b86
+commit 62467b86871aee3d70c7445f3cb79f0858ec566e
+Date:   Wed Mar 6 11:37:17 2019 +0000
+Disable autoselect for PPC dynarec since it's broken
+
+---------------------------
+
+Problem: PPC dynarec is brocken :-(
+--> Maybe old PPC dynarec code must be used?
+
+---------------------------
+
+Porting history:
+* Current Version / This commit:
+  Start with porting to current pcsxr version from iCatButler (commit 62467b86).
+  Port/sync libpcsxcore/ppc/ (iCatButler) and all necessary
+  files from libpcsxcore/ (iCatButler) which
+  are needed by the synced version of libpcsxcore/ppc/.
+  Many files changed and added.
+  The current status is listed below after the Porting history.
+
+* Commit d9d4e283:
+  Last working version before starting with porting to current pcsxr version.
+
+* From commit 6d1c2a77 to commit d9d4e283:
+  Fix linking errors for current devkitPro version.
+  Create and move some files to libpcsxcore to be more pcsxr compatible with the file structure.
+  Add a virtual console for debugging. Activate with -DSHOW_DEBUGVC.
+  Fix some warnings and small bugs.
+
+---------------------------
+
+The original new file libpcsxcore/ppc/pasm.s from iCatButler repo
+has another format. This format is converted to the old format.
+libpcsxcore/ppc/pasm.s.old.txt        - Original old version
+libpcsxcore/ppc/pasm.s.new.orig.txt   - New original version from iCatButler.
+libpcsxcore/ppc/pasm.s.new.ported.txt - Converted version into old format.
+libpcsxcore/ppc/pasm.s                - Same as pasm.s.new.ported.txt
+
+---------------------------
+
+New added files with full sync:
+libpcsxcore/cdriso.c
+libpcsxcore/cdriso.h
+libpcsxcore/debug.c
+libpcsxcore/debug.h (renamed from libpcsxcore/coredebug.h, full sync)
+libpcsxcore/ecm.h
+libpcsxcore/gpu.c
+libpcsxcore/gpu.h (currently __GPU_H__ to __GPU_0_H__. TODO: undo)
+libpcsxcore/pgxp_cpu.c (full sync, change lUsedAddr to extern declaration)
+libpcsxcore/pgxp_cpu.h
+libpcsxcore/pgxp_debug.c
+libpcsxcore/pgxp_debug.h
+libpcsxcore/pgxp_gte.c
+libpcsxcore/pgxp_gte.h
+libpcsxcore/pgxp_mem.c
+libpcsxcore/pgxp_mem.h
+libpcsxcore/pgxp_value.c
+libpcsxcore/pgxp_value.h
+libpcsxcore/ppc/pGte.h
+libpcsxcore/ppc/pasm.s.new.orig.txt
+libpcsxcore/ppc/pasm.s.new.ported.txt
+libpcsxcore/ppc/pasm.s.old.txt
+libpcsxcore/ppf.c
+libpcsxcore/ppf.h
+libpcsxcore/socket.h
+libpcsxcore/socket.c (Implementation currently disabled)
+
+New added files with some parts:
+libpcsxcore/psxcommon.c (Only a short part)
+
+Full sync of existing files:
+- exact: Full sync without modification
+- full: Full sync with small modification like include changes or fixing warnings.
+libpcsxcore/cdrom.c - full
+libpcsxcore/cdrom.h - exact
+libpcsxcore/mdec.c - exact
+libpcsxcore/mdec.h - exact
+libpcsxcore/ppc/pR3000A.c - full
+libpcsxcore/ppc/pasm.s - full with convertion
+libpcsxcore/ppc/ppc.c - exact
+libpcsxcore/ppc/ppc.h - exact
+libpcsxcore/ppc/ppc_mnemonics.h - exact
+libpcsxcore/ppc/reguse.c - exact
+libpcsxcore/ppc/reguse.h - exact
+libpcsxcore/psxcounters.c - full sync, but psxUpdateVSyncRate() is added which should be removed
+libpcsxcore/psxcounters.h - full sync, but psxUpdateVSyncRate() is added which should be removed
+libpcsxcore/psxdma.c - exact
+libpcsxcore/psxdma.h - exact
+libpcsxcore/psxhw.c - exact
+libpcsxcore/psxhw.h - exact
+libpcsxcore/r3000a.c - full
+libpcsxcore/r3000a.h - exact
+
+Only changes to fix errors from new/fully synced files:
+libpcsxcore/disr3000a.c - part/fix only
+libpcsxcore/misc.c - part/fix only
+libpcsxcore/misc.h - part/fix only
+libpcsxcore/plugins.c - part/fix only
+libpcsxcore/plugins.h - part/fix only
+libpcsxcore/psxcommon.h - part/fix only
+libpcsxcore/psxmem.h - part/fix only
+libpcsxcore/sio.c - part/fix only
+libpcsxcore/sio.h - part/fix only
+
+Existing not synced:
+libpcsxcore/coff.h
+libpcsxcore/decode_xa.c
+libpcsxcore/decode_xa.h
+libpcsxcore/gte.c
+libpcsxcore/gte.h
+libpcsxcore/psemu_plugin_defs.h
+libpcsxcore/psxbios.c
+libpcsxcore/psxbios.h
+libpcsxcore/psxhle.c
+libpcsxcore/psxhle.h
+libpcsxcore/psxinterpreter.c
+libpcsxcore/psxmem.c
+libpcsxcore/spu.c
+libpcsxcore/spu.h
+libpcsxcore/system.h - but after sync __SYSTEM_H__ must be renamed to __SYSTEM_0_H__ because of libogc conflict
+
+Currently not added:
+libpcsxcore/cheat.h
+libpcsxcore/cheat.c
+libpcsxcore/psxinterpreter_pgxp.h
+libpcsxcore/sjisfont.h
+
+Already removed files:
+libpcsxcore/ppc/pR3000A.h
+libpcsxcore/coredebug.h (renamed to libpcsxcore/debug.h)
+
+Files which should be removed:
+libpcsxcore/extendedkeys.h
+libpcsxcore/nopic.h
+
+New files:
+porting/debug_assert.h
+config.h
+
+Renamed:
+PeopsSoftGPU/gpu.c -> PeopsSoftGPU/gpu_soft.c (otherwise object file conflict)
