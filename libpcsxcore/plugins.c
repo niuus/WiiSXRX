@@ -63,6 +63,7 @@ GPUclearDynarec  GPU_clearDynarec;
 GPUhSync         GPU_hSync;
 GPUvBlank        GPU_vBlank;
 GPUpgxpMemory    GPU_pgxpMemory;
+GPUpgxpCacheVertex  GPU_pgxpCacheVertex;
 
 //cd rom function pointers
 CDRinit               CDR_init;

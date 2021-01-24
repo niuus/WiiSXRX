@@ -20,6 +20,10 @@
 #ifndef __PSXBIOS_H__
 #define __PSXBIOS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "r3000a.h"
 #include "psxmem.h"
@@ -39,4 +43,9 @@ extern void (*biosA0[256])();
 extern void (*biosB0[256])();
 extern void (*biosC0[256])();
 
-#endif /* __PSXBIOS_H__ */
+extern boolean hleSoftCall;
+
+#ifdef __cplusplus
+}
+#endif
+#endif

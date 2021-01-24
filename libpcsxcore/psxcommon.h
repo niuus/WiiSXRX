@@ -52,8 +52,8 @@ typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
-typedef uintptr_t uptr;
 */
+typedef uintptr_t uptr;
 
 typedef uint8_t boolean;
 
@@ -111,14 +111,16 @@ typedef struct {
 	long Cdda;
 	long HLE;
 	long Cpu;
-	long Dbg;
+	long Debug; //!!! renamed for psxmem.c
 	long PsxOut;
 	long SpuIrq;
 	long RCntFix;
 	long UseNet;
 	long VSyncWA;
+	boolean NoMemcard; //!!!
 	boolean Widescreen; //!!!
 	u8 HackFix; //!!!
+	u8 MemHack; //!!! by psxmem.c
 	boolean PGXP_GTE; //!!!
 	boolean PGXP_Cache; //!!!
 	boolean PGXP_Texture; //!!!

@@ -15,6 +15,11 @@ Problem: PPC dynarec is brocken :-(
 
 Porting history:
 * Current Version / This commit:
+  More files are synced to current pcsxr version from iCatButler (commit 62467b86).
+  The current status is listed below after the Porting history.
+  The sync-changes of this commit are marked with ***
+
+* Commit 9407f218:
   Add WiiIO for easyer porting. (Currently not used)
   Also rename PeopsGXGPU/gpu.c to PeopsGXGPU/gpu_gx.c like PeopsSoftGPU/gpu_soft.c
 
@@ -24,7 +29,6 @@ Porting history:
   files from libpcsxcore/ (iCatButler) which
   are needed by the synced version of libpcsxcore/ppc/.
   Many files changed and added.
-  The current status is listed below after the Porting history.
 
 * Commit d9d4e283:
   Last working version!!!
@@ -47,14 +51,16 @@ libpcsxcore/ppc/pasm.s                - Same as pasm.s.new.ported.txt
 
 ---------------------------
 
+ *** means added/synced by this commit
+
 New added files with full sync:
 libpcsxcore/cdriso.c
 libpcsxcore/cdriso.h
 libpcsxcore/debug.c
 libpcsxcore/debug.h (renamed from libpcsxcore/coredebug.h, full sync)
 libpcsxcore/ecm.h
-libpcsxcore/gpu.c
-libpcsxcore/gpu.h (currently __GPU_H__ to __GPU_0_H__. TODO: undo)
+libpcsxcore/gpu.c - full, lUsedAddr[3] is changed to extern declaration
+libpcsxcore/gpu.h - exact, was renamed from __GPU_H__ to __GPU_0_H__. undo to __GPU_H__ DONE
 libpcsxcore/pgxp_cpu.c (full sync, change lUsedAddr to extern declaration)
 libpcsxcore/pgxp_cpu.h
 libpcsxcore/pgxp_debug.c
@@ -73,6 +79,8 @@ libpcsxcore/ppf.c
 libpcsxcore/ppf.h
 libpcsxcore/socket.h
 libpcsxcore/socket.c (Implementation currently disabled)
+libpcsxcore/psxinterpreter_pgxp.h - exact ***
+libpcsxcore/sjisfont.h - exact ***
 
 New added files with some parts:
 libpcsxcore/psxcommon.c (Only a short part)
@@ -99,52 +107,51 @@ libpcsxcore/psxhw.c - exact
 libpcsxcore/psxhw.h - exact
 libpcsxcore/r3000a.c - full
 libpcsxcore/r3000a.h - exact
+libpcsxcore/coff.h - exact ***
+libpcsxcore/decode_xa.c - exact: but now double instead of float is used for K0 and K1 (performance?) ***
+libpcsxcore/decode_xa.h - exact ***
+libpcsxcore/gte.c - exact ***
+libpcsxcore/gte.h - exact ***
+libpcsxcore/psemu_plugin_defs.h - exact ***
+libpcsxcore/psxbios.c - full/part: disable remove psxBios_format(), CreateMcd, LoadMcd and SaveMcd ***
+libpcsxcore/psxbios.h - exact ***
+libpcsxcore/psxhle.c - exact ***
+libpcsxcore/psxhle.h - exact ***
+libpcsxcore/psxinterpreter.c - exact ***
+libpcsxcore/psxmem.c - full: change allocation. use old version of psxMemReset(), using MemHack, rename Dbg to Debug ***
+libpcsxcore/spu.c - exact ***
+libpcsxcore/spu.h - exact ***
+libpcsxcore/system.h - full/exact: change __SYSTEM_H__ to __SYSTEM_0_H__ because of libogc conflict ***
+libpcsxcore/psxmem.h - full, small modification for allocation ***
+libpcsxcore/disr3000a.c - (part/fix only) - exact ***
 
 Only changes to fix errors from new/fully synced files:
-libpcsxcore/disr3000a.c - part/fix only
 libpcsxcore/misc.c - part/fix only
 libpcsxcore/misc.h - part/fix only
 libpcsxcore/plugins.c - part/fix only
-libpcsxcore/plugins.h - part/fix only
+libpcsxcore/plugins.h - part/fix only, move spu.h include for CALLBACK macro
 libpcsxcore/psxcommon.h - part/fix only
-libpcsxcore/psxmem.h - part/fix only
 libpcsxcore/sio.c - part/fix only
 libpcsxcore/sio.h - part/fix only
-
-Existing not synced:
-libpcsxcore/coff.h
-libpcsxcore/decode_xa.c
-libpcsxcore/decode_xa.h
-libpcsxcore/gte.c
-libpcsxcore/gte.h
-libpcsxcore/psemu_plugin_defs.h
-libpcsxcore/psxbios.c
-libpcsxcore/psxbios.h
-libpcsxcore/psxhle.c
-libpcsxcore/psxhle.h
-libpcsxcore/psxinterpreter.c
-libpcsxcore/psxmem.c
-libpcsxcore/spu.c
-libpcsxcore/spu.h
-libpcsxcore/system.h - but after sync __SYSTEM_H__ must be renamed to __SYSTEM_0_H__ because of libogc conflict
 
 Currently not added:
 libpcsxcore/cheat.h
 libpcsxcore/cheat.c
-libpcsxcore/psxinterpreter_pgxp.h
-libpcsxcore/sjisfont.h
 
 Already removed files:
 libpcsxcore/ppc/pR3000A.h
-libpcsxcore/coredebug.h (renamed to libpcsxcore/debug.h)
-
-Files which should be removed:
-libpcsxcore/extendedkeys.h
-libpcsxcore/nopic.h
+libpcsxcore/coredebug.h (renamed to libpcsxcore/debug.h and full sync)
+libpcsxcore/extendedkeys.h - removed ***
+libpcsxcore/nopic.h - removed ***
 
 New files:
 porting/debug_assert.h
 config.h
 
 Renamed:
-PeopsSoftGPU/gpu.c -> PeopsSoftGPU/gpu_soft.c (otherwise object file conflict)
+PeopsSoftGPU/gpu.c -> PeopsSoftGPU/gpu_soft.c (otherwise object file conflict with libpcsxcore/gpu.c)
+PeopsGXGPU/gpu.c -> PeopsGXGPU/gpu_gx.c (otherwise object file conflict with libpcsxcore/gpu.c)
+
+TODO: after first sync:
+----------------------
+psxmem.h/psxmem.c: psxMemReset() should be more like the pcsxr version. using malloc/free like pcsxr version.

@@ -1,6 +1,10 @@
 #ifndef _PSEMU_PLUGIN_DEFS_H
 #define _PSEMU_PLUGIN_DEFS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // header version
 #define _PPDK_HEADER_VERSION		3
 
@@ -12,6 +16,7 @@
 #define PSE_LT_SPU					4
 #define PSE_LT_PAD					8
 #define PSE_LT_NET					16
+#define PSE_LT_SIO1					32
 
 // DLL function return codes
 #define PSE_ERR_SUCCESS				0	// every function in DLL if completed sucessfully should return this value
@@ -26,7 +31,6 @@
 #define PSE_INIT_ERR_NOHARDWARE		-3	// this driver can not operate properly on this hardware or hardware is not detected
 
 /*         GPU PlugIn          */
-
 
 //  GPU_Test return values
 
@@ -46,9 +50,6 @@
 // WARNINGS
 // this warning might be returned as undefined warning but allowing driver to continue
 #define PSE_GPU_WARN				20
-
-
-
 
 //  GPU_Query		- will be implemented soon
 
@@ -126,7 +127,7 @@ typedef struct
 /*
 
   functions that must be exported from PAD Plugin
-  
+
   long	PADinit(long flags);	// called only once when PSEmu Starts
   void	PADshutdown(void);		// called when PSEmu exits
   long	PADopen(PadInitS *);	// called when PSEmu is running program
@@ -136,8 +137,8 @@ typedef struct
   long  PADtest(void);			// called from Configure Dialog and after PADopen();
   long	PADquery(void);
 
-  long	PADreadPort1(PadDataS *);
-  long	PADreadPort2(PadDataS *);
+  unsigned char PADstartPoll(int);
+  unsigned char PADpoll(unsigned char);
 
 */
 
@@ -146,9 +147,9 @@ typedef struct
 // notice that PSEmu will call PADinit and PADopen only once when they are from
 // same plugin
 
-// might be used in port 1 (must support PADreadPort1() function)
+// might be used in port 1
 #define PSE_PAD_USE_PORT1			1
-// might be used in port 2 (must support PADreadPort2() function)
+// might be used in port 2
 #define PSE_PAD_USE_PORT2			2
 
 
@@ -193,12 +194,12 @@ typedef struct
 {
 	// controler type - fill it withe predefined values above
 	unsigned char controllerType;
-	
+
 	// status of buttons - every controller fills this field
 	unsigned short buttonStatus;
-	
+
 	// for analog pad fill those next 4 bytes
-	// values are analog in range 0-255 where 128 is center position
+	// values are analog in range 0-255 where 127 is center position
 	unsigned char rightJoyX, rightJoyY, leftJoyX, leftJoyY;
 
 	// for mouse fill those next 2 bytes
@@ -279,5 +280,7 @@ typedef struct {
     key is a XK_?? (X11) keycode.
 */
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif // _PSEMU_PLUGIN_DEFS_H

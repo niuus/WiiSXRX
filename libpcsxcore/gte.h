@@ -20,6 +20,10 @@
 #ifndef __GTE_H__
 #define __GTE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "r3000a.h"
 
@@ -31,14 +35,14 @@ void gteLWC2();
 void gteSWC2();
 
 void gteRTPS();
-void gteOP();
 void gteNCLIP();
+void gteOP();
 void gteDPCS();
 void gteINTPL();
 void gteMVMVA();
 void gteNCDS();
-void gteNCDT();
 void gteCDP();
+void gteNCDT();
 void gteNCCS();
 void gteCC();
 void gteNCS();
@@ -53,4 +57,7 @@ void gteGPF();
 void gteGPL();
 void gteNCCT();
 
-#endif /* __GTE_H__ */
+#ifdef __cplusplus
+}
+#endif
+#endif

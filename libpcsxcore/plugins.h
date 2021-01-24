@@ -21,7 +21,6 @@
 #define __PLUGINS_H__
 
 #include "psxcommon.h"
-#include "spu.h"
 
 typedef void* HWND;
 #define CALLBACK
@@ -33,6 +32,8 @@ typedef long (* PADopen)(unsigned long *);
 long PAD1__open(void);			
 long PAD2__open(void);
 typedef long (* NETopen)(unsigned long *);
+
+#include "spu.h"
 
 #include "psemu_plugin_defs.h"
 #include "decode_xa.h"
@@ -79,6 +80,7 @@ typedef void (CALLBACK* GPUclearDynarec)(void (CALLBACK *callback)(void));
 typedef void (CALLBACK* GPUhSync)(int); //!!!
 typedef void (CALLBACK* GPUvBlank)(int); //!!!
 typedef void (CALLBACK* GPUpgxpMemory)(unsigned int, unsigned char*); //!!!
+typedef void (CALLBACK* GPUpgxpCacheVertex)(short sx, short sy, const unsigned char* _pVertex); //!!!
 
 
 //plugin stuff From Shadow
@@ -109,6 +111,7 @@ extern GPUclearDynarec  GPU_clearDynarec;
 extern GPUhSync         GPU_hSync; //!!!
 extern GPUvBlank        GPU_vBlank; //!!!
 extern GPUpgxpMemory	GPU_pgxpMemory; //!!!
+extern GPUpgxpCacheVertex GPU_pgxpCacheVertex; //!!!
 
 
 //cd rom plugin ;)

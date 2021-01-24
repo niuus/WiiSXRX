@@ -28,7 +28,8 @@
 #include "psemu_plugin_defs.h"
 #include "../Gamecube/fileBrowser/fileBrowser.h"
 
-#define MCD_SIZE	(1024 * 8 * 16)
+#define MCD_SECT_SIZE   (8 * 16)
+#define MCD_SIZE        (1024 * MCD_SECT_SIZE)
 
 // Status Flags
 #define TX_RDY		0x0001

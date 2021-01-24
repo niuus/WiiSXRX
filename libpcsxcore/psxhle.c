@@ -57,7 +57,7 @@ static void hleBootstrap() { // 0xbfc00000
 	SysPrintf("hleBootstrap\n");
 	CheckCdrom();
 	LoadCdrom();
-	SysPrintf("CdromLabel: \"%s\": PC = %8.8lx (SP = %8.8lx)\n", CdromLabel, psxRegs.pc, psxRegs.GPR.n.sp);
+	SysPrintf("CdromLabel: \"%s\": PC = %8.8x (SP = %8.8x)\n", CdromLabel, (unsigned int)psxRegs.pc, (unsigned int)psxRegs.GPR.n.sp);
 }
 
 typedef struct {                   

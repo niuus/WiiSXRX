@@ -1,5 +1,5 @@
-#ifndef __GPU_0_H__
-#define __GPU_0_H__
+#ifndef __GPU_H__
+#define __GPU_H__
 
 #ifdef __cplusplus
 extern "C"
