@@ -298,7 +298,7 @@ void Dither16(unsigned short * pdest,unsigned long r,unsigned long g,unsigned lo
 /////////////////////////////////////////////////////////////////
 
 //__inline__ void GetShadeTransCol_Dither(unsigned short * pdest,long m1,long m2,long m3) __attribute__ ((__pure__));
-__inline__ void GetShadeTransCol_Dither(unsigned short * pdest,long m1,long m2,long m3)
+static __inline__ void GetShadeTransCol_Dither(unsigned short * pdest,long m1,long m2,long m3)
 {
  long r,g,b;
 
@@ -362,7 +362,7 @@ __inline__ void GetShadeTransCol_Dither(unsigned short * pdest,long m1,long m2,l
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetShadeTransCol(unsigned short * pdest,unsigned short color) __attribute__ ((__pure__));
-__inline__ void GetShadeTransCol(unsigned short * pdest,unsigned short color)
+static __inline__ void GetShadeTransCol(unsigned short * pdest,unsigned short color)
 {
  if(bCheckMask && (*pdest & HOST2LE16(0x8000))) return;
 
@@ -421,7 +421,7 @@ __inline__ void GetShadeTransCol(unsigned short * pdest,unsigned short color)
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetShadeTransCol32(unsigned long * pdest,unsigned long color) __attribute__ ((__pure__));
-__inline__ void GetShadeTransCol32(unsigned long * pdest,unsigned long color)
+static __inline__ void GetShadeTransCol32(unsigned long * pdest,unsigned long color)
 {
  if(DrawSemiTrans)
   {
@@ -513,7 +513,7 @@ __inline__ void GetShadeTransCol32(unsigned long * pdest,unsigned long color)
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG(unsigned short * pdest,unsigned short color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG(unsigned short * pdest,unsigned short color)
+static __inline__ void GetTextureTransColG(unsigned short * pdest,unsigned short color)
 {
  long r,g,b;unsigned short l;
 
@@ -586,7 +586,7 @@ __inline__ void GetTextureTransColG(unsigned short * pdest,unsigned short color)
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG_S(unsigned short * pdest,unsigned short color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG_S(unsigned short * pdest,unsigned short color)
+static __inline__ void GetTextureTransColG_S(unsigned short * pdest,unsigned short color)
 {
  long r,g,b;unsigned short l;
 
@@ -607,7 +607,7 @@ __inline__ void GetTextureTransColG_S(unsigned short * pdest,unsigned short colo
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG_SPR(unsigned short * pdest,unsigned short color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG_SPR(unsigned short * pdest,unsigned short color)
+static __inline__ void GetTextureTransColG_SPR(unsigned short * pdest,unsigned short color)
 {
  long r,g,b;unsigned short l;
 
@@ -680,7 +680,7 @@ __inline__ void GetTextureTransColG_SPR(unsigned short * pdest,unsigned short co
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG32(unsigned long * pdest,unsigned long color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG32(unsigned long * pdest,unsigned long color)
+static __inline__ void GetTextureTransColG32(unsigned long * pdest,unsigned long color)
 {
  long r,g,b,l;
 
@@ -784,7 +784,7 @@ __inline__ void GetTextureTransColG32(unsigned long * pdest,unsigned long color)
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG32_S(unsigned long * pdest,unsigned long color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG32_S(unsigned long * pdest,unsigned long color)
+static __inline__ void GetTextureTransColG32_S(unsigned long * pdest,unsigned long color)
 {
  long r,g,b;
 
@@ -809,7 +809,7 @@ __inline__ void GetTextureTransColG32_S(unsigned long * pdest,unsigned long colo
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColG32_SPR(unsigned long * pdest,unsigned long color) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColG32_SPR(unsigned long * pdest,unsigned long color)
+static __inline__ void GetTextureTransColG32_SPR(unsigned long * pdest,unsigned long color)
 {
  long r,g,b;
 
@@ -911,7 +911,7 @@ __inline__ void GetTextureTransColG32_SPR(unsigned long * pdest,unsigned long co
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColGX_Dither(unsigned short * pdest,unsigned short color,long m1,long m2,long m3) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColGX_Dither(unsigned short * pdest,unsigned short color,long m1,long m2,long m3)
+static __inline__ void GetTextureTransColGX_Dither(unsigned short * pdest,unsigned short color,long m1,long m2,long m3)
 {
  long r,g,b;
 
@@ -982,7 +982,7 @@ __inline__ void GetTextureTransColGX_Dither(unsigned short * pdest,unsigned shor
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColGX(unsigned short * pdest,unsigned short color,short m1,short m2,short m3) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColGX(unsigned short * pdest,unsigned short color,short m1,short m2,short m3)
+static __inline__ void GetTextureTransColGX(unsigned short * pdest,unsigned short color,short m1,short m2,short m3)
 {
  long r,g,b;unsigned short l;
 
@@ -1054,7 +1054,7 @@ __inline__ void GetTextureTransColGX(unsigned short * pdest,unsigned short color
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColGX_S(unsigned short * pdest,unsigned short color,short m1,short m2,short m3) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColGX_S(unsigned short * pdest,unsigned short color,short m1,short m2,short m3)
+static __inline__ void GetTextureTransColGX_S(unsigned short * pdest,unsigned short color,short m1,short m2,short m3)
 {
  long r,g,b;
 
@@ -1073,7 +1073,7 @@ __inline__ void GetTextureTransColGX_S(unsigned short * pdest,unsigned short col
 
 ////////////////////////////////////////////////////////////////////////
 //__inline__ void GetTextureTransColGX32_S(unsigned long * pdest,unsigned long color,short m1,short m2,short m3) __attribute__ ((__pure__));
-__inline__ void GetTextureTransColGX32_S(unsigned long * pdest,unsigned long color,short m1,short m2,short m3)
+static __inline__ void GetTextureTransColGX32_S(unsigned long * pdest,unsigned long color,short m1,short m2,short m3)
 {
  long r,g,b;
  

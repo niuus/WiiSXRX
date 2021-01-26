@@ -26,6 +26,7 @@
 
 static int cnts = 4;
 psxCounter psxCounters[5];
+u32 psxNextCounter, psxNextsCounter;
 
 static void psxRcntUpd(unsigned long index) {
 	psxCounters[index].sCycle = psxRegs.cycle;

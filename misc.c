@@ -29,6 +29,8 @@
 #include "Gamecube/fileBrowser/fileBrowser-libfat.h"
 
 int Log = 0;
+char CdromId[10];
+char CdromLabel[33];
 
 /* PSX Executable types */
 #define PSX_EXE     1
