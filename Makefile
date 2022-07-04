@@ -4,7 +4,7 @@ ifndef ECHO
 ECHO = echo
 endif
 
-VERSION = beta2.5
+VERSION = beta2.6
 
 .PHONY:  all
 
@@ -13,7 +13,7 @@ all:
 	@$(MAKE) -C Gamecube clean -f Makefile_Wii
 	@$(MAKE) -C Gamecube -f Makefile_Wii 2> temp.log
   #This step removes all leading pathes from the build.log
-	@sed 's|.*wiisxr/Gamecube|/wiisxr/Gamecube|;s|/./|/|;s|\r\n|\n|' temp.log > build.log
+	@sed 's|.*wiisxrx/Gamecube|/wiisxrx/Gamecube|;s|/./|/|;s|\r\n|\n|' temp.log > build.log
   #note that msys doesn't seem to like sed -i
 	@rm temp.log
 
