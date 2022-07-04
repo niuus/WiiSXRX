@@ -5,7 +5,7 @@
     copyright            : (C) 2001 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
- 
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,28 +16,28 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************// 
+//*************************************************************************//
 // History of changes:
 //
-// 2008/05/17 - Pete  
+// 2008/05/17 - Pete
 // - added GPUvisualVibration and "visual rumble" stuff
 //
-// 2008/02/03 - Pete  
+// 2008/02/03 - Pete
 // - added GPUsetframelimit and GPUsetfix ("fake gpu busy states")
 //
-// 2007/11/03 - Pete  
+// 2007/11/03 - Pete
 // - new way to create save state picture (Vista)
 //
-// 2004/01/31 - Pete  
+// 2004/01/31 - Pete
 // - added zn bits
 //
-// 2003/01/04 - Pete  
+// 2003/01/04 - Pete
 // - the odd/even bit hack (CronoCross status screen) is now a special game fix
 //
-// 2003/01/04 - Pete  
+// 2003/01/04 - Pete
 // - fixed wrapped y display position offset - Legend of Legaia
 //
-// 2002/11/24 - Pete  
+// 2002/11/24 - Pete
 // - added new frameskip func support
 //
 // 2002/11/02 - Farfetch'd & Pete
@@ -64,7 +64,7 @@
 // 2002/06/15 - Pete
 // - removed dmachain fixes, added dma endless loop detection instead
 //
-// 2002/05/31 - Lewpy 
+// 2002/05/31 - Lewpy
 // - Win95/NT "disable screensaver" fix
 //
 // 2002/05/30 - Pete
@@ -106,14 +106,14 @@
 // - added recording frame in updateLace and stop recording
 //   in GPUclose (if it is still recording)
 //
-// 2001/10/28 - Pete  
+// 2001/10/28 - Pete
 // - generic cleanup for the Peops release
 //
-//*************************************************************************// 
+//*************************************************************************//
 
 
 #include "stdafx.h"
-
+#include <stdbool.h>
 #include "../Gamecube/DEBUG.h"
 #include "../Gamecube/wiiSXconfig.h"
 
@@ -148,9 +148,9 @@ static char *libraryName      = "P.E.Op.S. SoftGPU Driver";
 static char *libraryInfo      = "P.E.Op.S. SoftGPU Driver V1.18\nCoded by Pete Bernert and the P.E.Op.S. team\n";
 
 static char *PluginAuthor     = "Pete Bernert and the P.E.Op.S. team";
- 
+
 ////////////////////////////////////////////////////////////////////////
-// memory image of the PSX vram 
+// memory image of the PSX vram
 ////////////////////////////////////////////////////////////////////////
 
 unsigned char  psxVSecure[(iGPUHeight*2)*1024 + (1024*1024)];
@@ -171,7 +171,7 @@ long              lGPUstatusRet;
 char              szDispBuf[64];
 char              szMenuBuf[36];
 char              szDebugText[512];
-unsigned long     ulStatusControl[256];      
+unsigned long     ulStatusControl[256];
 
 static unsigned   long gpuDataM[256];
 static unsigned   char gpuCommand = 0;
@@ -276,10 +276,10 @@ char * pGetConfigInfos(int iCfg)
  else
   sprintf(szTxt,"Resolution/Color:\r\n- %dx%d ",iResX,iResY);
  strcat(pB,szTxt);
- if(iWindowMode && iCfg) 
+ if(iWindowMode && iCfg)
    strcpy(szTxt,"Window mode\r\n");
  else
- if(iWindowMode) 
+ if(iWindowMode)
    sprintf(szTxt,"Window mode - [%d Bit]\r\n",iDesktopCol);
  else
    sprintf(szTxt,"Fullscreen - [%d Bit]\r\n",iColDepth);
@@ -322,7 +322,7 @@ void DoTextSnapShot(int iNum)
  sprintf(szTxt,"%s/peopssoft%03d.txt",getenv("HOME"),iNum);
 
  if((txtfile=fopen(szTxt,"wb"))==NULL)
-  return;                                              
+  return;
  //----------------------------------------------------//
  pB=pGetConfigInfos(0);
  if(pB)
@@ -330,7 +330,7 @@ void DoTextSnapShot(int iNum)
    fwrite(pB,strlen(pB),1,txtfile);
    free(pB);
   }
- fclose(txtfile); 
+ fclose(txtfile);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -338,7 +338,7 @@ void DoTextSnapShot(int iNum)
 void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
 {
  FILE *bmpfile;
- char filename[256];     
+ char filename[256];
  unsigned char header[0x36];
  long size,height;
  unsigned char line[1024*3];
@@ -346,11 +346,11 @@ void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
  unsigned char empty[2]={0,0};
  unsigned short color;
  unsigned long snapshotnr = 0;
- 
+
  height=iGPUHeight;
 
  size=height*1024*3+0x38;
- 
+
  // fill in proper values for BMP
 
  // hardcoded BMP header
@@ -389,7 +389,7 @@ void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
  // try opening new snapshot file
  if((bmpfile=fopen(filename,"wb"))==NULL)
   return;
- 
+
  fwrite(header,0x36,1,bmpfile);
  for(i=height-1;i>=0;i--)
   {
@@ -403,10 +403,10 @@ void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
    fwrite(line,1024*3,1,bmpfile);
   }
  fwrite(empty,0x2,1,bmpfile);
- fclose(bmpfile);  
+ fclose(bmpfile);
 
  DoTextSnapShot(snapshotnr);
-}        
+}
 
 ////////////////////////////////////////////////////////////////////////
 // INIT, will be called after lib load... well, just do some var init...
@@ -431,11 +431,11 @@ long PEOPS_GPUinit()                                // GPU INIT
  psxVul=(unsigned long *)psxVub;
 
  psxVuw_eom=psxVuw+1024*iGPUHeight;                    // pre-calc of end of vram
-                        
+
  memset(psxVSecure,0x00,(iGPUHeight*2)*1024 + (1024*1024));
  memset(lGPUInfoVals,0x00,16*sizeof(unsigned long));
- 
- SetFPSHandler();   
+
+ SetFPSHandler();
 
  PSXDisplay.RGB24        = FALSE;                      // init some stuff
  PSXDisplay.Interlaced   = FALSE;
@@ -459,7 +459,7 @@ long PEOPS_GPUinit()                                // GPU INIT
  // Reset transfer values, to prevent mis-transfer of data
  memset(&VRAMWrite,0,sizeof(VRAMLoad_t));
  memset(&VRAMRead,0,sizeof(VRAMLoad_t));
- 
+
  // device initialised already !
  lGPUstatusRet = 0x14802000;
  GPUIsIdle;
@@ -541,8 +541,8 @@ void updateDisplay(void)                               // UPDATE DISPLAY
  if(dwActFixes&32)                                     // pc fps calculation fix
   {
    if(UseFrameLimit) PCFrameCap();                     // -> brake
-   if(UseFrameSkip || ulKeybits&KEY_SHOWFPS)  
-    PCcalcfps();         
+   if(UseFrameSkip || ulKeybits&KEY_SHOWFPS)
+    PCcalcfps();
   }
 
  if(ulKeybits&KEY_SHOWFPS)                             // make fps display buf
@@ -631,7 +631,7 @@ void ChangeDispOffsetsX(void)                          // X CENTER
    PreviousPSXDisplay.Range.x1=PreviousPSXDisplay.Range.x1>>1;
    PreviousPSXDisplay.Range.x1=PreviousPSXDisplay.Range.x1<<1;
 
-   DoClearScreenBuffer();
+   //DoClearScreenBuffer();
   }
 
  bDoVSyncUpdate=TRUE;
@@ -667,7 +667,7 @@ void ChangeDispOffsetsY(void)                          // Y CENTER
 
  if(PreviousPSXDisplay.DisplayModeNew.y!=iOldYOffset) // if old offset!=new offset: recalc height
   {
-   PSXDisplay.Height = PSXDisplay.Range.y1 - 
+   PSXDisplay.Height = PSXDisplay.Range.y1 -
                        PSXDisplay.Range.y0 +
                        PreviousPSXDisplay.DisplayModeNew.y;
    PSXDisplay.DisplayModeNew.y=PSXDisplay.Height*PSXDisplay.Double;
@@ -686,13 +686,13 @@ void ChangeDispOffsetsY(void)                          // Y CENTER
    PSXDisplay.DisplayModeNew.y+=
     PreviousPSXDisplay.Range.y0;
   }
- else 
+ else
   PreviousPSXDisplay.Range.y0=0;
 
- if(iO!=PreviousPSXDisplay.Range.y0)
-  {
-   DoClearScreenBuffer();
- }
+// if(iO!=PreviousPSXDisplay.Range.y0)
+//  {
+//   DoClearScreenBuffer();
+// }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -701,10 +701,10 @@ void ChangeDispOffsetsY(void)                          // Y CENTER
 
 void updateDisplayIfChanged(void)                      // UPDATE DISPLAY IF CHANGED
 {
- if ((PSXDisplay.DisplayMode.y == PSXDisplay.DisplayModeNew.y) && 
+ if ((PSXDisplay.DisplayMode.y == PSXDisplay.DisplayModeNew.y) &&
      (PSXDisplay.DisplayMode.x == PSXDisplay.DisplayModeNew.x))
   {
-   if((PSXDisplay.RGB24      == PSXDisplay.RGB24New) && 
+   if((PSXDisplay.RGB24      == PSXDisplay.RGB24New) &&
       (PSXDisplay.Interlaced == PSXDisplay.InterlacedNew)) return;
   }
 
@@ -714,10 +714,10 @@ void updateDisplayIfChanged(void)                      // UPDATE DISPLAY IF CHAN
  PSXDisplay.DisplayMode.x = PSXDisplay.DisplayModeNew.x;
  PreviousPSXDisplay.DisplayMode.x=                     // previous will hold
   min(640,PSXDisplay.DisplayMode.x);                   // max 640x512... that's
- PreviousPSXDisplay.DisplayMode.y=                     // the size of my 
+ PreviousPSXDisplay.DisplayMode.y=                     // the size of my
   min(512,PSXDisplay.DisplayMode.y);                   // back buffer surface
  PSXDisplay.Interlaced    = PSXDisplay.InterlacedNew;
-    
+
  PSXDisplay.DisplayEnd.x=                              // calc end of display
   PSXDisplay.DisplayPosition.x+ PSXDisplay.DisplayMode.x;
  PSXDisplay.DisplayEnd.y=
@@ -783,8 +783,8 @@ void PEOPS_GPUupdateLace(void)
   {
    if(dwActFixes&64)                                   // lazy screen update fix
     {
-     if(bDoLazyUpdate && !UseFrameSkip) 
-      updateDisplay(); 
+     if(bDoLazyUpdate && !UseFrameSkip)
+      updateDisplay();
      bDoLazyUpdate=FALSE;
     }
    else
@@ -866,13 +866,13 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
     bUsingTWin = FALSE;
     return;
    //--------------------------------------------------//
-   // dis/enable display 
-   case 0x03:  
+   // dis/enable display
+   case 0x03:
 
     PreviousPSXDisplay.Disabled = PSXDisplay.Disabled;
     PSXDisplay.Disabled = (gdata & 1);
 
-    if(PSXDisplay.Disabled) 
+    if(PSXDisplay.Disabled)
          lGPUstatusRet|=GPUSTATUS_DISPLAYDISABLED;
     else lGPUstatusRet&=~GPUSTATUS_DISPLAYDISABLED;
     return;
@@ -891,7 +891,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
     return;
    //--------------------------------------------------//
    // setting display position
-   case 0x05: 
+   case 0x05:
     {
      PreviousPSXDisplay.DisplayPosition.x = PSXDisplay.DisplayPosition.x;
      PreviousPSXDisplay.DisplayPosition.y = PSXDisplay.DisplayPosition.y;
@@ -899,9 +899,9 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
 ////////
 /*
      PSXDisplay.DisplayPosition.y = (short)((gdata>>10)&0x3ff);
-     if (PSXDisplay.DisplayPosition.y & 0x200) 
+     if (PSXDisplay.DisplayPosition.y & 0x200)
       PSXDisplay.DisplayPosition.y |= 0xfffffc00;
-     if(PSXDisplay.DisplayPosition.y<0) 
+     if(PSXDisplay.DisplayPosition.y<0)
       {
        PreviousPSXDisplay.DisplayModeNew.y=PSXDisplay.DisplayPosition.y/PSXDisplay.Double;
        PSXDisplay.DisplayPosition.y=0;
@@ -912,7 +912,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
 // new
      if(iGPUHeight==1024)
       {
-       if(dwGPUVersion==2) 
+       if(dwGPUVersion==2)
             PSXDisplay.DisplayPosition.y = (short)((gdata>>12)&0x3ff);
        else PSXDisplay.DisplayPosition.y = (short)((gdata>>10)&0x3ff);
       }
@@ -948,7 +948,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
       PreviousPSXDisplay.DisplayPosition.x+ PSXDisplay.DisplayMode.x;
      PreviousPSXDisplay.DisplayEnd.y=
       PreviousPSXDisplay.DisplayPosition.y+ PSXDisplay.DisplayMode.y + PreviousPSXDisplay.DisplayModeNew.y;
- 
+
      bDoVSyncUpdate=TRUE;
 
      if (!(PSXDisplay.Interlaced))                      // stupid frame skipping option
@@ -976,10 +976,10 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
 
      PSXDisplay.Range.y0=(short)(gdata & 0x3ff);
      PSXDisplay.Range.y1=(short)((gdata>>10) & 0x3ff);
-                                      
+
      PreviousPSXDisplay.Height = PSXDisplay.Height;
 
-     PSXDisplay.Height = PSXDisplay.Range.y1 - 
+     PSXDisplay.Height = PSXDisplay.Range.y1 -
                          PSXDisplay.Range.y0 +
                          PreviousPSXDisplay.DisplayModeNew.y;
 
@@ -1013,7 +1013,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
 
     lGPUstatusRet&=~GPUSTATUS_WIDTHBITS;                   // Clear the width bits
     lGPUstatusRet|=
-               (((gdata & 0x03) << 17) | 
+               (((gdata & 0x03) << 17) |
                ((gdata & 0x40) << 10));                // Set the width bits
 
     if(PSXDisplay.InterlacedNew)
@@ -1044,11 +1044,11 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
     return;
    //--------------------------------------------------//
    // ask about GPU version and other stuff
-   case 0x10: 
+   case 0x10:
 
     gdata&=0xff;
 
-    switch(gdata) 
+    switch(gdata)
      {
       case 0x02:
        lGPUdataRet=lGPUInfoVals[INFO_TW];              // tw infos
@@ -1075,7 +1075,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
      }
     return;
    //--------------------------------------------------//
-  }   
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1234,7 +1234,7 @@ const unsigned char primTableCX[256] =
 //  7,7,7,7,9,9,9,9,    // GLINE
     255,255,255,255,255,255,255,255,
     // 60
-    3,3,3,3,4,4,4,4,    
+    3,3,3,3,4,4,4,4,
     // 68
     2,2,2,2,3,3,3,3,    // 3=SPRITE1???
     // 70
@@ -1364,7 +1364,7 @@ ENDVRAM:
      if(gpuDataC == 0)
       {
        command = (unsigned char)((gdata>>24) & 0xff);
- 
+
 //if(command>=0xb0 && command<0xc0) auxprintf("b0 %x!!!!!!!!!\n",command);
 
        if(primTableCX[command])
@@ -1390,7 +1390,7 @@ ENDVRAM:
         }
        gpuDataP++;
       }
- 
+
      if(gpuDataP == gpuDataC)
       {
 #ifdef PEOPS_SDLOG
@@ -1413,7 +1413,7 @@ ENDVRAM:
 //       if(dwEmuFixes&0x0001 || dwActFixes&0x0400)      // hack for emulating "gpu busy" in some games
 //        iFakePrimBusy=4;
       }
-    } 
+    }
   }
 
  lGPUdataRet=gdata;
@@ -1867,8 +1867,8 @@ void PaintPicDot(unsigned char * p,unsigned char c)
 ////////////////////////////////////////////////////////////////////////
 // the main emu allocs 128x96x3 bytes, and passes a ptr
 // to it in pMem... the plugin has to fill it with
-// 8-8-8 bit BGR screen data (Win 24 bit BMP format 
-// without header). 
+// 8-8-8 bit BGR screen data (Win 24 bit BMP format
+// without header).
 // Beware: the func can be called at any time,
 // so you have to use the frontbuffer to get a fully
 // rendered picture
