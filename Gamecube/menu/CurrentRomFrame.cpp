@@ -59,7 +59,7 @@ void Func_ReturnFromCurrentRomFrame();
 /* Button Layout:
  * [Restart Game] [Swap CD]
  * [Load MemCard] [Save MemCard]
- * [Show ISO Info]
+ * [Show CD Info]
  * [Load State] [Slot "x"]
  * [Save State]
  */
@@ -69,7 +69,7 @@ static char FRAME_STRINGS[8][15] =
 	  "Swap CD",
 	  "Load MemCards",
 	  "Save MemCards",
-	  "Show ISO Info",
+	  "Show CD Info",
 	  "Load State",
 	  "Save State",
 	  "Slot 0"};
@@ -96,16 +96,16 @@ struct ButtonInfo
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[2],	100.0,	120.0,	210.0,	56.0,	 0,	 4,	 3,	 3,	Func_LoadSave,		Func_ReturnFromCurrentRomFrame }, // Load MemCards
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[3],	330.0,	120.0,	210.0,	56.0,	 1,	 4,	 2,	 2,	Func_SaveGame,		Func_ReturnFromCurrentRomFrame }, // Save MemCards
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[4],	150.0,	180.0,	340.0,	56.0,	 2,	 5,	-1,	-1,	Func_ShowRomInfo,	Func_ReturnFromCurrentRomFrame }, // Show ISO Info
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[5],	150.0,	240.0,	220.0,	56.0,	 4,	 6,	 7,	 7,	Func_LoadState,		Func_ReturnFromCurrentRomFrame }, // Load State 
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[6],	150.0,	300.0,	220.0,	56.0,	 5,	 0,	 7,	 7,	Func_SaveState,		Func_ReturnFromCurrentRomFrame }, // Save State 
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[7],	390.0,	270.0,	100.0,	56.0,	 4,	 1,	 5,	 5,	Func_StateCycle,	Func_ReturnFromCurrentRomFrame }, // Cycle State 
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[5],	150.0,	240.0,	220.0,	56.0,	 4,	 6,	 7,	 7,	Func_LoadState,		Func_ReturnFromCurrentRomFrame }, // Load State
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[6],	150.0,	300.0,	220.0,	56.0,	 5,	 0,	 7,	 7,	Func_SaveState,		Func_ReturnFromCurrentRomFrame }, // Save State
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[7],	390.0,	270.0,	100.0,	56.0,	 4,	 1,	 5,	 5,	Func_StateCycle,	Func_ReturnFromCurrentRomFrame }, // Cycle State
 };
 
 CurrentRomFrame::CurrentRomFrame()
 {
 	for (int i = 0; i < NUM_FRAME_BUTTONS; i++)
-		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString, 
-										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y, 
+		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString,
+										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y,
 										FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].height);
 
 	for (int i = 0; i < NUM_FRAME_BUTTONS; i++)
@@ -118,8 +118,8 @@ CurrentRomFrame::CurrentRomFrame()
 		if (FRAME_BUTTONS[i].clickedFunc) FRAME_BUTTONS[i].button->setClicked(FRAME_BUTTONS[i].clickedFunc);
 		if (FRAME_BUTTONS[i].returnFunc) FRAME_BUTTONS[i].button->setReturn(FRAME_BUTTONS[i].returnFunc);
 		add(FRAME_BUTTONS[i].button);
-		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x, 
-												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y, 
+		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x,
+												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y,
 												FRAME_BUTTONS[i].y+FRAME_BUTTONS[i].height);
 	}
 	setDefaultFocus(FRAME_BUTTONS[0].button);
@@ -149,16 +149,16 @@ void Func_ShowRomInfo()
 {
 	char RomInfo[256] = "";
 	char buffer [50];
-	
+
 	sprintf(buffer,"CD-ROM Label: %s\n",CdromLabel);
   strcat(RomInfo,buffer);
   sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
   strcat(RomInfo,buffer);
-  sprintf(buffer,"ISO Size: %u Mb\n",isoFile.size/1024/1024);
+  sprintf(buffer,"CD Size: %u Mb\n",isoFile.size/1024/1024);
   strcat(RomInfo,buffer);
-  sprintf(buffer,"Country: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
+  sprintf(buffer,"Region: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
   strcat(RomInfo,buffer);
-  sprintf(buffer,"BIOS: %s\n",(Config.HLE==BIOS_USER_DEFINED) ? "USER DEFINED":"HLE");
+  sprintf(buffer,"BIOS: %s\n",(Config.HLE==BIOS_USER_DEFINED) ? "PSX":"HLE");
   strcat(RomInfo,buffer);
   unsigned char tracks[2];
   Mooby2CDRgetTN(&tracks[0]);
@@ -298,7 +298,7 @@ void Func_SaveGame()
   result += SaveMcd(2,saveFile_dir);
   saveFile_deinit(saveFile_dir);
 
-	if (result>=amountSaves) {	
+	if (result>=amountSaves) {
 		switch (nativeSaveDevice)
 		{
 			case NATIVESAVEDEVICE_SD:
@@ -342,7 +342,7 @@ static unsigned int which_slot = 0;
 
 void Func_StateCycle()
 {
-	
+
 	which_slot = (which_slot+1) %10;
 	savestates_select_slot(which_slot);
 	FRAME_STRINGS[7][5] = which_slot + '0';

@@ -495,9 +495,9 @@ void fileBrowserFrame_LoadFile(int i)
 			strcat(RomInfo,buffer);
 			sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
 			strcat(RomInfo,buffer);
-			sprintf(buffer,"ISO Size: %u Mb\n",isoFile.size/1024/1024);
+			sprintf(buffer,"CD size: %u Mb\n",isoFile.size/1024/1024);
 			strcat(RomInfo,buffer);
-			sprintf(buffer,"Country: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
+			sprintf(buffer,"Region: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
 			strcat(RomInfo,buffer);
 			sprintf(buffer,"BIOS: %s\n",(Config.HLE==BIOS_USER_DEFINED) ? "USER DEFINED":"HLE");
 			strcat(RomInfo,buffer);

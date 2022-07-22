@@ -127,37 +127,37 @@ void resumeAudio(void); void resumeInput(void);
 
 /*
 General Tab:
-Select CPU Core: Interpreter; Dynarec
-Select Bios: HLE; SD; USB
-Boot Games Through Bios: Yes; No
-Execute Bios
-Save settings.cfg: SD; USB
+Select CPU core: Interpreter; Dynarec
+Select BIOS: HLE; SD; USB
+Boot games through BIOS: Yes; No
+Execute BIOS
+Save settings: SD; USB
 
 Video Tab:
 Show FPS: Yes; No
 Limit FPS: Auto; Off; xxx
-Frame Skip: On; Off
-Screen Mode: 4:3; 16:9
+Frameskip: On; Off
+Screen Ratio: 4:3; 16:9
 Scaling: None; 2xSaI
-Dithering: None; Game Dependent; Always
+Dithering: None; Game dependent; Always
 
 Input Tab:
-Assign Controllers (assign player->pad)
-Configure Button Mappings
-PSX Controller Type: Standard/Analog/Light Gun
+Assign controllers (assign player->pad)
+Configure Button mappings
+PSX controller type: Standard/Analog/Light Gun
 Number of Multitaps: 0, 1, 2
 
 Audio Tab:
-Disable Audio: Yes; No
+Disable audio: Yes; No
 Disable XA: Yes; No
 Disable CDDA: Yes; No
-Volume Level: ("0: low", "1: medium", "2: loud", "3: loudest")
+Volume Level: ("0: Low", "1: Medium", "2: Loud", "3: Loudest")
 	Note: iVolume=4-ComboBox_GetCurSel(hWC);, so 1 is loudest and 4 is low; default is medium
 
 Saves Tab:
-Memcard Save Device: SD; USB; CardA; CardB
+Memcard Save device: SD; USB; CardA; CardB
 Auto Save Memcards: Yes; No
-Save States Device: SD; USB
+Save States device: SD; USB
 */
 
 static char FRAME_STRINGS[56][24] =
@@ -167,11 +167,11 @@ static char FRAME_STRINGS[56][24] =
 	  "Audio",
 	  "Saves",
 	//Strings for General tab (starting at FRAME_STRINGS[5])
-	  "Select CPU Core",
-	  "Select Bios",
-	  "Boot Through Bios",
-	  "Execute Bios",
-	  "Save settings.cfg",
+	  "Select CPU core",
+	  "Select BIOS",
+	  "Boot through BIOS",
+	  "Execute BIOS",
+	  "Save settings",
 	  "Interpreter",
 	  "Dynarec",
 	  "HLE",
@@ -183,8 +183,8 @@ static char FRAME_STRINGS[56][24] =
 	//Strings for Video tab (starting at FRAME_STRINGS[18])..was[])
 	  "Show FPS",
 	  "Limit FPS",
-	  "Frame Skip",
-	  "Screen Mode",
+	  "Frameskip",
+	  "Screen Ratio",
 	  "Dithering",
 	  "Scaling",
 	  "On",
@@ -200,26 +200,26 @@ static char FRAME_STRINGS[56][24] =
 	//Strings for Input tab (starting at FRAME_STRINGS[34]..was[])
 	  "Configure Input",
 	  "Configure Buttons",
-	  "PSX Controller Type",
+	  "PSX controller type",
 	  "Disable Rumble",
 	  "Standard",
 	  "Analog",
-	  "Save Button Configs",
-	  "Auto Load Slot:",
+	  "Save button configs",
+	  "Auto Load slot:",
 	  "Default",
 	//Strings for Audio tab (starting at FRAME_STRINGS[43]) ..was[47]
-	  "Disable Audio",
+	  "Disable audio",
 	  "Disable XA",
 	  "Disable CDDA",
 	  "Volume",
-	  "loudest",	//iVolume=1
-	  "loud",
-	  "medium",
-	  "low",		//iVolume=4
+	  "Loudest",	//iVolume=1
+	  "Loud",
+	  "Medium",
+	  "Low",		//iVolume=4
 	//Strings for Saves tab (starting at FRAME_STRINGS[51]) ..was[55]
-	  "Memcard Save Device",
+	  "Memcard Save device",
 	  "Auto Save Memcards",
-	  "Save States Device",
+	  "Save States device",
 	  "CardA",
 	  "CardB"};
 
@@ -254,21 +254,21 @@ struct ButtonInfo
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[13],	375.0,	170.0,	 55.0,	56.0,	 5,	12,	 7,	 9,	Func_BiosSelectSD,		Func_ReturnFromSettingsFrame }, // Bios: SD
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[14],	440.0,	170.0,	 70.0,	56.0,	 6,	12,	 8,	10,	Func_BiosSelectUSB,		Func_ReturnFromSettingsFrame }, // Bios: USB
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[15],	520.0,	170.0,	 70.0,	56.0,	 6,	12,	 9,	 7,	Func_BiosSelectDVD,		Func_ReturnFromSettingsFrame }, // Bios: DVD
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	295.0,	240.0,	 75.0,	56.0,	 7,	13,	12,	12,	Func_BootBiosYes,		Func_ReturnFromSettingsFrame }, // Boot Thru Bios: Yes
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	380.0,	240.0,	 75.0,	56.0,	 8,	13,	11,	11,	Func_BootBiosNo,		Func_ReturnFromSettingsFrame }, // Boot Thru Bios: No
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[8],	295.0,	310.0,	200.0,	56.0,	11,	14,	-1,	-1,	Func_ExecuteBios,		Func_ReturnFromSettingsFrame }, // Execute Bios
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[13],	295.0,	380.0,	 55.0,	56.0,	13,	 0,	15,	15,	Func_SaveSettingsSD,	Func_ReturnFromSettingsFrame }, // Save Settings: SD
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[14],	360.0,	380.0,	 70.0,	56.0,	13,	 0,	14,	14,	Func_SaveSettingsUSB,	Func_ReturnFromSettingsFrame }, // Save Settings: USB
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	295.0,	240.0,	 75.0,	56.0,	 7,	13,	12,	12,	Func_BootBiosYes,		Func_ReturnFromSettingsFrame }, // Boot thru BIOS: Yes
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	380.0,	240.0,	 75.0,	56.0,	 8,	13,	11,	11,	Func_BootBiosNo,		Func_ReturnFromSettingsFrame }, // Boot thru BIOS: No
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[8],	295.0,	310.0,	200.0,	56.0,	11,	14,	-1,	-1,	Func_ExecuteBios,		Func_ReturnFromSettingsFrame }, // Execute BIOS
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[13],	295.0,	380.0,	 55.0,	56.0,	13,	 0,	15,	15,	Func_SaveSettingsSD,	Func_ReturnFromSettingsFrame }, // Save settings: SD
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[14],	360.0,	380.0,	 70.0,	56.0,	13,	 0,	14,	14,	Func_SaveSettingsUSB,	Func_ReturnFromSettingsFrame }, // Save settings: USB
 	//Buttons for Video Tab (starts at button[16])
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[24],	325.0,	100.0,	 75.0,	56.0,	 1,	18,	17,	17,	Func_ShowFpsOn,			Func_ReturnFromSettingsFrame }, // Show FPS: On
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[25],	420.0,	100.0,	 75.0,	56.0,	 1,	19,	16,	16,	Func_ShowFpsOff,		Func_ReturnFromSettingsFrame }, // Show FPS: Off
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[26],	325.0,	170.0,	 75.0,	56.0,	16,	20,	19,	19,	Func_FpsLimitAuto,		Func_ReturnFromSettingsFrame }, // FPS Limit: Auto
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[25],	420.0,	170.0,	 75.0,	56.0,	17,	21,	18,	18,	Func_FpsLimitOff,		Func_ReturnFromSettingsFrame }, // FPS Limit: Off
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[24],	325.0,	240.0,	 75.0,	56.0,	18,	23,	21,	21,	Func_FrameSkipOn,		Func_ReturnFromSettingsFrame }, // Frame Skip: On
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[25],	420.0,	240.0,	 75.0,	56.0,	19,	24,	20,	20,	Func_FrameSkipOff,		Func_ReturnFromSettingsFrame }, // Frame Skip: Off
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[27],	230.0,	310.0,	 75.0,	56.0,	20,	25,	24,	23,	Func_ScreenMode4_3,		Func_ReturnFromSettingsFrame }, // ScreenMode: 4:3
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[28],	325.0,	310.0,	 75.0,	56.0,	20,	26,	22,	24,	Func_ScreenMode16_9,	Func_ReturnFromSettingsFrame }, // ScreenMode: 16:9
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[29],	420.0,	310.0,	155.0,	56.0,	21,	27,	23,	22,	Func_ScreenForce16_9,	Func_ReturnFromSettingsFrame }, // ScreenMode: Force 16:9
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[26],	325.0,	170.0,	 75.0,	56.0,	16,	20,	19,	19,	Func_FpsLimitAuto,		Func_ReturnFromSettingsFrame }, // Limit FPS: Auto
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[25],	420.0,	170.0,	 75.0,	56.0,	17,	21,	18,	18,	Func_FpsLimitOff,		Func_ReturnFromSettingsFrame }, // Limit FPS: Off
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[24],	325.0,	240.0,	 75.0,	56.0,	18,	23,	21,	21,	Func_FrameSkipOn,		Func_ReturnFromSettingsFrame }, // Frameskip: On
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[25],	420.0,	240.0,	 75.0,	56.0,	19,	24,	20,	20,	Func_FrameSkipOff,		Func_ReturnFromSettingsFrame }, // Frameskip: Off
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[27],	230.0,	310.0,	 75.0,	56.0,	20,	25,	24,	23,	Func_ScreenMode4_3,		Func_ReturnFromSettingsFrame }, // ScreenRatio: 4:3
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[28],	325.0,	310.0,	 75.0,	56.0,	20,	26,	22,	24,	Func_ScreenMode16_9,	Func_ReturnFromSettingsFrame }, // ScreenRatio: 16:9
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[29],	420.0,	310.0,	155.0,	56.0,	21,	27,	23,	22,	Func_ScreenForce16_9,	Func_ReturnFromSettingsFrame }, // ScreenRatio: Force 16:9
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[30],	230.0,	380.0,	 75.0,	56.0,	22,	 1,	27,	26,	Func_DitheringNone,		Func_ReturnFromSettingsFrame }, // Dithering: None
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[32],	325.0,	380.0,	110.0,	56.0,	23,	 1,	25,	27,	Func_DitheringDefault,	Func_ReturnFromSettingsFrame }, // Dithering: Game Dependent
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[33],	455.0,	380.0,	110.0,	56.0,	24,	 1,	26,	25,	Func_DitheringAlways,	Func_ReturnFromSettingsFrame }, // Dithering: Always
@@ -276,22 +276,22 @@ struct ButtonInfo
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[31],	420.0,	430.0,	 75.0,	56.0,	-1,	-1,	28,	28,	Func_Scaling2xSai,		Func_ReturnFromSettingsFrame }, // Scaling: 2xSai
 	//Buttons for Input Tab (starts at button[30])
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[34],	 90.0,	100.0,	220.0,	56.0,	 2,	32,	31,	31,	Func_ConfigureInput,	Func_ReturnFromSettingsFrame }, // Configure Input Assignment
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[35],	325.0,	100.0,	235.0,	56.0,	 2,	32,	30,	30,	Func_ConfigureButtons,	Func_ReturnFromSettingsFrame }, // Configure Button Mappings
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[38],	285.0,	170.0,	130.0,	56.0,	30,	34,	33,	33,	Func_PsxTypeStandard,	Func_ReturnFromSettingsFrame }, // PSX Controller Type: Standard
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[39],	425.0,	170.0,	110.0,	56.0,	31,	35,	32,	32,	Func_PsxTypeAnalog,		Func_ReturnFromSettingsFrame }, // PSX Controller Type: Analog
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[35],	325.0,	100.0,	235.0,	56.0,	 2,	32,	30,	30,	Func_ConfigureButtons,	Func_ReturnFromSettingsFrame }, // Configure Button mappings
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[38],	285.0,	170.0,	130.0,	56.0,	30,	34,	33,	33,	Func_PsxTypeStandard,	Func_ReturnFromSettingsFrame }, // PSX controller type: Standard
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[39],	425.0,	170.0,	110.0,	56.0,	31,	35,	32,	32,	Func_PsxTypeAnalog,		Func_ReturnFromSettingsFrame }, // PSX controller type: Analog
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	285.0,	240.0,	 75.0,	56.0,	32,	36,	35,	35,	Func_DisableRumbleYes,	Func_ReturnFromSettingsFrame }, // Disable Rumble: Yes
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	380.0,	240.0,	 75.0,	56.0,	33,	37,	34,	34,	Func_DisableRumbleNo,	Func_ReturnFromSettingsFrame }, // Disable Rumble: No
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[13],	285.0,	310.0,	 55.0,	56.0,	34,	38,	37,	37,	Func_SaveButtonsSD,		Func_ReturnFromSettingsFrame }, // Save Button Mappings: SD
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[14],	350.0,	310.0,	 70.0,	56.0,	35,	38,	36,	36,	Func_SaveButtonsUSB,	Func_ReturnFromSettingsFrame }, // Save Button Mappings: USB
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[42],	285.0,	380.0,	135.0,	56.0,	36,	 2,	-1,	-1,	Func_ToggleButtonLoad,	Func_ReturnFromSettingsFrame }, // Auto Load Button Config Slot: Default,1,2,3,4
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[13],	285.0,	310.0,	 55.0,	56.0,	34,	38,	37,	37,	Func_SaveButtonsSD,		Func_ReturnFromSettingsFrame }, // Save Button mappings: SD
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[14],	350.0,	310.0,	 70.0,	56.0,	35,	38,	36,	36,	Func_SaveButtonsUSB,	Func_ReturnFromSettingsFrame }, // Save Button mappings: USB
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[42],	285.0,	380.0,	135.0,	56.0,	36,	 2,	-1,	-1,	Func_ToggleButtonLoad,	Func_ReturnFromSettingsFrame }, // Auto load Button config slot: Default,1,2,3,4
 	//Buttons for Audio Tab (starts at button[39]) ..was[41]
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	345.0,	100.0,	 75.0,	56.0,	 3,	41,	40,	40,	Func_DisableAudioYes,	Func_ReturnFromSettingsFrame }, // Disable Audio: Yes
-	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	440.0,	100.0,	 75.0,	56.0,	 3,	42,	39,	39,	Func_DisableAudioNo,	Func_ReturnFromSettingsFrame }, // Disable Audio: No
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	345.0,	100.0,	 75.0,	56.0,	 3,	41,	40,	40,	Func_DisableAudioYes,	Func_ReturnFromSettingsFrame }, // Disable audio: Yes
+	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	440.0,	100.0,	 75.0,	56.0,	 3,	42,	39,	39,	Func_DisableAudioNo,	Func_ReturnFromSettingsFrame }, // Disable audio: No
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	345.0,	170.0,	 75.0,	56.0,	39,	43,	42,	42,	Func_DisableXaYes,		Func_ReturnFromSettingsFrame }, // Disable XA: Yes
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	440.0,	170.0,	 75.0,	56.0,	40,	44,	41,	41,	Func_DisableXaNo,		Func_ReturnFromSettingsFrame }, // Disable XA: No
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[16],	345.0,	240.0,	 75.0,	56.0,	41,	45,	44,	44,	Func_DisableCddaYes,	Func_ReturnFromSettingsFrame }, // Disable CDDA: Yes
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[17],	440.0,	240.0,	 75.0,	56.0,	42,	45,	43,	43,	Func_DisableCddaNo,		Func_ReturnFromSettingsFrame }, // Disable CDDA: No
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[47],	345.0,	310.0,	170.0,	56.0,	43,	 3,	-1,	-1,	Func_VolumeToggle,		Func_ReturnFromSettingsFrame }, // Volume: low/medium/loud/loudest
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[47],	345.0,	310.0,	170.0,	56.0,	43,	 3,	-1,	-1,	Func_VolumeToggle,		Func_ReturnFromSettingsFrame }, // Volume: Low/Medium/Loud/Loudest
 	//Buttons for Saves Tab (starts at button[46]) ..was[48]
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[13],	295.0,	100.0,	 55.0,	56.0,	 4,	50,	49,	47,	Func_MemcardSaveSD,		Func_ReturnFromSettingsFrame }, // Memcard Save: SD
 	{	NULL,	BTN_A_SEL,	FRAME_STRINGS[14],	360.0,	100.0,	 70.0,	56.0,	 4,	51,	46,	48,	Func_MemcardSaveUSB,	Func_ReturnFromSettingsFrame }, // Memcard Save: USB
@@ -315,14 +315,14 @@ struct TextBoxInfo
 { //	textBox	textBoxString		x		y		scale	centered
 	//TextBoxes for General Tab (starts at textBox[0])
 	{	NULL,	FRAME_STRINGS[5],	155.0,	128.0,	 1.0,	true }, // CPU Core: Pure Interp/Dynarec
-	{	NULL,	FRAME_STRINGS[6],	155.0,	198.0,	 1.0,	true }, // Bios: HLE/SD/USB/DVD
-	{	NULL,	FRAME_STRINGS[7],	155.0,	268.0,	 1.0,	true }, // Boot Thru Bios: Yes/No
-	{	NULL,	FRAME_STRINGS[9],	155.0,	408.0,	 1.0,	true }, // Save settings.cfg: SD/USB
+	{	NULL,	FRAME_STRINGS[6],	155.0,	198.0,	 1.0,	true }, // BIOS: HLE/SD/USB/DVD
+	{	NULL,	FRAME_STRINGS[7],	155.0,	268.0,	 1.0,	true }, // Boot thru BIOS: Yes/No
+	{	NULL,	FRAME_STRINGS[9],	155.0,	408.0,	 1.0,	true }, // Save settings: SD/USB
 	//TextBoxes for Video Tab (starts at textBox[4])
 	{	NULL,	FRAME_STRINGS[18],	190.0,	128.0,	 1.0,	true }, // Show FPS: On/Off
 	{	NULL,	FRAME_STRINGS[19],	190.0,	198.0,	 1.0,	true }, // Limit FPS: Auto/Off
-	{	NULL,	FRAME_STRINGS[20],	190.0,	268.0,	 1.0,	true }, // Frame Skip: On/Off
-	{	NULL,	FRAME_STRINGS[21],	130.0,	338.0,	 1.0,	true }, // ScreenMode: 4x3/16x9/Force16x9
+	{	NULL,	FRAME_STRINGS[20],	190.0,	268.0,	 1.0,	true }, // Frameskip: On/Off
+	{	NULL,	FRAME_STRINGS[21],	130.0,	338.0,	 1.0,	true }, // ScreenRatio: 4x3/16x9/Force16x9
 	{	NULL,	FRAME_STRINGS[22],	130.0,	408.0,	 1.0,	true }, // Dithering: None/Game Dependent/Always
 	{	NULL,	FRAME_STRINGS[23],	190.0,	478.0,	 1.0,	true }, // Scaling: None/2xSai
 	//TextBoxes for Input Tab (starts at textBox[10])
@@ -331,10 +331,10 @@ struct TextBoxInfo
 	{	NULL,	FRAME_STRINGS[40],	145.0,	338.0,	 1.0,	true }, // Save Button Configs: SD/USB
 	{	NULL,	FRAME_STRINGS[41],	145.0,	408.0,	 1.0,	true }, // Auto Load Slot: Default/1/2/3/4
 	//TextBoxes for Audio Tab (starts at textBox[14]) ..was[12]
-	{	NULL,	FRAME_STRINGS[43],	210.0,	128.0,	 1.0,	true }, // Disable Audio: Yes/No
-	{	NULL,	FRAME_STRINGS[44],	210.0,	198.0,	 1.0,	true }, // Disable XA Audio: Yes/No
-	{	NULL,	FRAME_STRINGS[45],	210.0,	268.0,	 1.0,	true }, // Disable CDDA Audio: Yes/No
-	{	NULL,	FRAME_STRINGS[46],	210.0,	338.0,	 1.0,	true }, // Volume: low/medium/loud/loudest
+	{	NULL,	FRAME_STRINGS[43],	210.0,	128.0,	 1.0,	true }, // Disable audio: Yes/No
+	{	NULL,	FRAME_STRINGS[44],	210.0,	198.0,	 1.0,	true }, // Disable XA audio: Yes/No
+	{	NULL,	FRAME_STRINGS[45],	210.0,	268.0,	 1.0,	true }, // Disable CDDA audio: Yes/No
+	{	NULL,	FRAME_STRINGS[46],	210.0,	338.0,	 1.0,	true }, // Volume: Low/Medium/Loud/Loudest
 	//TextBoxes for Saves Tab (starts at textBox[18]) ..was[16]
 	{	NULL,	FRAME_STRINGS[51],	150.0,	128.0,	 1.0,	true }, // Memcard Save Device: SD/USB/CardA/CardB
 	{	NULL,	FRAME_STRINGS[52],	150.0,	198.0,	 1.0,	true }, // Auto Save Memcards: Yes/No
@@ -345,8 +345,8 @@ SettingsFrame::SettingsFrame()
 		: activeSubmenu(SUBMENU_GENERAL)
 {
 	for (int i = 0; i < NUM_FRAME_BUTTONS; i++)
-		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString, 
-										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y, 
+		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString,
+										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y,
 										FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].height);
 
 	for (int i = 0; i < NUM_FRAME_BUTTONS; i++)
@@ -359,15 +359,15 @@ SettingsFrame::SettingsFrame()
 		if (FRAME_BUTTONS[i].clickedFunc) FRAME_BUTTONS[i].button->setClicked(FRAME_BUTTONS[i].clickedFunc);
 		if (FRAME_BUTTONS[i].returnFunc) FRAME_BUTTONS[i].button->setReturn(FRAME_BUTTONS[i].returnFunc);
 		add(FRAME_BUTTONS[i].button);
-		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x, 
-												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y, 
+		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x,
+												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y,
 												FRAME_BUTTONS[i].y+FRAME_BUTTONS[i].height);
 	}
 
 	for (int i = 0; i < NUM_FRAME_TEXTBOXES; i++)
 	{
-		FRAME_TEXTBOXES[i].textBox = new menu::TextBox(&FRAME_TEXTBOXES[i].textBoxString, 
-										FRAME_TEXTBOXES[i].x, FRAME_TEXTBOXES[i].y, 
+		FRAME_TEXTBOXES[i].textBox = new menu::TextBox(&FRAME_TEXTBOXES[i].textBoxString,
+										FRAME_TEXTBOXES[i].x, FRAME_TEXTBOXES[i].y,
 										FRAME_TEXTBOXES[i].scale, FRAME_TEXTBOXES[i].centered);
 		add(FRAME_TEXTBOXES[i].textBox);
 	}
@@ -551,7 +551,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 				if (currentButtonsDownGC & PAD_TRIGGER_R)
 				{
 					//move to next tab
-					if(activeSubmenu < SUBMENU_SAVES) 
+					if(activeSubmenu < SUBMENU_SAVES)
 					{
 						activateSubmenu(activeSubmenu+1);
 						menu::Focus::getInstance().clearPrimaryFocus();
@@ -561,7 +561,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 				else if (currentButtonsDownGC & PAD_TRIGGER_L)
 				{
 					//move to the previous tab
-					if(activeSubmenu > SUBMENU_GENERAL) 
+					if(activeSubmenu > SUBMENU_GENERAL)
 					{
 						activateSubmenu(activeSubmenu-1);
 						menu::Focus::getInstance().clearPrimaryFocus();
@@ -579,7 +579,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 					if (currentButtonsDownWii & WPAD_CLASSIC_BUTTON_FULL_R)
 					{
 						//move to next tab
-						if(activeSubmenu < SUBMENU_SAVES) 
+						if(activeSubmenu < SUBMENU_SAVES)
 						{
 							activateSubmenu(activeSubmenu+1);
 							menu::Focus::getInstance().clearPrimaryFocus();
@@ -589,7 +589,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 					else if (currentButtonsDownWii & WPAD_CLASSIC_BUTTON_FULL_L)
 					{
 						//move to the previous tab
-						if(activeSubmenu > SUBMENU_GENERAL) 
+						if(activeSubmenu > SUBMENU_GENERAL)
 						{
 							activateSubmenu(activeSubmenu-1);
 							menu::Focus::getInstance().clearPrimaryFocus();
@@ -602,7 +602,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 					if (currentButtonsDownWii & WPAD_BUTTON_PLUS)
 					{
 						//move to next tab
-						if(activeSubmenu < SUBMENU_SAVES) 
+						if(activeSubmenu < SUBMENU_SAVES)
 						{
 							activateSubmenu(activeSubmenu+1);
 							menu::Focus::getInstance().clearPrimaryFocus();
@@ -612,7 +612,7 @@ void SettingsFrame::drawChildren(menu::Graphics &gfx)
 					else if (currentButtonsDownWii & WPAD_BUTTON_MINUS)
 					{
 						//move to the previous tab
-						if(activeSubmenu > SUBMENU_GENERAL) 
+						if(activeSubmenu > SUBMENU_GENERAL)
 						{
 							activateSubmenu(activeSubmenu-1);
 							menu::Focus::getInstance().clearPrimaryFocus();
@@ -771,11 +771,11 @@ void Func_BiosSelectHLE()
 	}
 }
 
-int checkBiosExists(int testDevice) 
+int checkBiosExists(int testDevice)
 {
 	fileBrowser_file testFile;
 	memset(&testFile, 0, sizeof(fileBrowser_file));
-	
+
 	biosFile_dir = (testDevice == BIOSDEVICE_SD) ? &biosDir_libfat_Default : &biosDir_libfat_USB;
 	sprintf(&testFile.name[0], "%s/SCPH1001.BIN", &biosFile_dir->name[0]);
 	biosFile_readFile  = fileBrowser_libfat_readFile;
@@ -852,11 +852,11 @@ void Func_BootBiosYes()
 		menu::MessageBox::getInstance().setMessage("You must select a BIOS, not HLE");
 		return;
 	}*/
-	
+
 	for (int i = 11; i <= 12; i++)
 		FRAME_BUTTONS[i].button->setSelected(false);
 	FRAME_BUTTONS[11].button->setSelected(true);
-	
+
 	LoadCdBios = BOOTTHRUBIOS_YES;
 }
 
@@ -911,15 +911,15 @@ void Func_SaveSettingsSD()
 		return;
 	}
 	if(configFile_init(configFile_file)) {                //only if device initialized ok
-		FILE* f = fopen( "sd:/wiisxrx/settings.cfg", "wb" );  //attempt to open file
+		FILE* f = fopen( "sd:/wiisxrx/settingsRX.cfg", "wb" );  //attempt to open file
 		if(f) {
 			writeConfig(f);                                   //write out the config
 			fclose(f);
-			menu::MessageBox::getInstance().setMessage("Saved settings.cfg to SD");
+			menu::MessageBox::getInstance().setMessage("Saved settings to SD");
 			return;
 		}
 	}
-	menu::MessageBox::getInstance().setMessage("Error saving settings.cfg to SD");
+	menu::MessageBox::getInstance().setMessage("Error saving settings to SD");
 }
 
 void Func_SaveSettingsUSB()
@@ -933,15 +933,15 @@ void Func_SaveSettingsUSB()
 		return;
 	}
 	if(configFile_init(configFile_file)) {                //only if device initialized ok
-		FILE* f = fopen( "usb:/wiisxrx/settings.cfg", "wb" ); //attempt to open file
+		FILE* f = fopen( "usb:/wiisxrx/settingsRX.cfg", "wb" ); //attempt to open file
 		if(f) {
 			writeConfig(f);                                   //write out the config
 			fclose(f);
-			menu::MessageBox::getInstance().setMessage("Saved settings.cfg to USB");
+			menu::MessageBox::getInstance().setMessage("Saved settings to USB");
 			return;
 		}
 	}
-	menu::MessageBox::getInstance().setMessage("Error saving settings.cfg to USB");
+	menu::MessageBox::getInstance().setMessage("Error saving settings to USB");
 }
 
 void Func_ShowFpsOn()
