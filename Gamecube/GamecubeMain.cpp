@@ -225,7 +225,7 @@ void loadSettings(int argc, char *argv[])
 	if(argc && argv[0][0] == 'u') {  //assume USB
 		fileBrowser_file* configFile_file = &saveDir_libfat_USB;
 		if(configFile_init(configFile_file)) {                //only if device initialized ok
-			FILE* f = fopen( "usb:/wiisxrx/settings.cfg", "r" );  //attempt to open file
+			FILE* f = fopen( "usb:/wiisxrx/settingsRX.cfg", "r" );  //attempt to open file
 			if(f) {        //open ok, read it
 				readConfig(f);
 				fclose(f);
@@ -269,7 +269,7 @@ void loadSettings(int argc, char *argv[])
 	{ //assume SD
 		fileBrowser_file* configFile_file = &saveDir_libfat_Default;
 		if(configFile_init(configFile_file)) {                //only if device initialized ok
-			FILE* f = fopen( "sd:/wiisxrx/settings.cfg", "r" );  //attempt to open file
+			FILE* f = fopen( "sd:/wiisxrx/settingsRX.cfg", "r" );  //attempt to open file
 			if(f) {        //open ok, read it
 				readConfig(f);
 				fclose(f);
