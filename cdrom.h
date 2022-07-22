@@ -57,6 +57,7 @@ typedef struct {
 	unsigned char ResultTD[4];
 	unsigned char SetSector[4];
 	unsigned char SetSectorSeek[4];
+	unsigned char SetSectorPlay[4];
 	unsigned char Track;
 	int Play;
 	int CurTrack;
@@ -75,13 +76,24 @@ typedef struct {
 	int Seeked;
 
 	char Unused[4083];
+	
+	u8 LidCheck;
+	u8 FastForward;
+	u8 FastBackward;
+
+	u32 LeftVol, RightVol;
 } cdrStruct;
 
 cdrStruct cdr;
 
+void cdrDecodedBufferInterrupt();
+
 void cdrReset();
 void cdrInterrupt();
 void cdrReadInterrupt();
+void cdrRepplayInterrupt();
+void cdrLidSeekInterrupt();
+void cdrPlayInterrupt();
 unsigned char cdrRead0(void);
 unsigned char cdrRead1(void);
 unsigned char cdrRead2(void);
