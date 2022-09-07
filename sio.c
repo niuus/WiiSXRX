@@ -61,9 +61,9 @@ char Mcd1Data[MCD_SIZE], Mcd2Data[MCD_SIZE];
 // 4us * 8bits = ((PSXCLK / 1000000) * 32) / BIAS; (linuzappz)
 #define SIO_INT() { \
 	if (!Config.Sio) { \
-		psxRegs.interrupt|= 0x80; \
-		psxRegs.intCycle[7+1] = 200; /*270;*/ \
-		psxRegs.intCycle[7] = psxRegs.cycle; \
+		psxRegs.interrupt |= (1 << PSXINT_SIO); \
+		psxRegs.intCycle[PSXINT_SIO].cycle = 200; \
+		psxRegs.intCycle[PSXINT_SIO].sCycle = psxRegs.cycle; \
 	} \
 }
 
@@ -168,6 +168,9 @@ void sioWrite8(unsigned char value) {
 			return;
 	}
 
+    #ifdef DISP_DEBUG
+    //PRINT_LOG3("sioWrite8====%d=%d=%x", mcdst, rdwr, CtrlReg);
+    #endif // DISP_DEBUG*/
 	switch (mcdst) {
 		case 1:
 			SIO_INT();
@@ -235,7 +238,7 @@ void sioWrite8(unsigned char value) {
 			}
 			mcdst = 5;
 			return;
-		case 5:	
+		case 5:
 			parp++;
 			if (rdwr == 2) {
 				if (parp < 128) buf[parp+1] = value;
@@ -305,10 +308,10 @@ void sioWrite8(unsigned char value) {
 void sioWriteCtrl16(unsigned short value) {
 	CtrlReg = value & ~RESET_ERR;
 	if (value & RESET_ERR) StatReg &= ~IRQ;
-	if ((CtrlReg & SIO_RESET) || (!CtrlReg)) {
+	if ((CtrlReg & SIO_RESET) || !(CtrlReg & DTR)) {
 		padst = 0; mcdst = 0; parp = 0;
 		StatReg = TX_RDY | TX_EMPTY;
-		psxRegs.interrupt&=~0x80;
+		psxRegs.interrupt&=~(1 << PSXINT_SIO);
 	}
 }
 
@@ -317,9 +320,11 @@ void sioInterrupt() {
 	PAD_LOG("Sio Interrupt (CP0.Status = %x)\n", psxRegs.CP0.n.Status);
 #endif
 //	SysPrintf("Sio Interrupt\n");
-	StatReg|= IRQ;
-	psxHu32ref(0x1070)|= SWAPu32(0x80);
-	psxRegs.interrupt|= 0x80000000;
+    if (!(StatReg & IRQ)) {
+	    StatReg|= IRQ;
+	    psxHu32ref(0x1070)|= SWAPu32(0x80);
+	    psxRegs.interrupt|= 0x80000000;
+    }
 }
 
 //call me from menu, takes slot and save path as args
@@ -330,7 +335,7 @@ int LoadMcd(int mcd, fileBrowser_file *savepath) {
   fileBrowser_file saveFile;
 	memcpy(&saveFile, savepath, sizeof(fileBrowser_file));
 	memset(&saveFile.name[0],0,FILE_BROWSER_MAX_PATH_LEN);
-	
+
 	if(mcd == 1) {
 	  sprintf((char*)saveFile.name,"%s/%s.mcd",savepath->name,CdromId);
 	  data = &Mcd1Data[0];
@@ -362,15 +367,28 @@ int LoadMcds(fileBrowser_file *mcd1, fileBrowser_file *mcd2) {
   return 0;
 }
 
+// add xjsxjs197 start
+int SaveMcdByNum(int mcd) {
+    if (saveFile_dir)
+	{
+	    return SaveMcd(mcd, saveFile_dir);
+	}
+    else
+	{
+	    return -1;
+	}
+}
+// add xjsxjs197 end
+
 //call me from menu, takes slot and save path as args
 int SaveMcd(int mcd, fileBrowser_file *savepath) {
   bool ret = 0;
   char *data = NULL;
   fileBrowser_file saveFile;
-  
+
 	memcpy(&saveFile, savepath, sizeof(fileBrowser_file));
 	memset(&saveFile.name[0],0,FILE_BROWSER_MAX_PATH_LEN);
-	
+
 	if(mcd == 1) {
 	  sprintf((char*)saveFile.name,"%s/%s.mcd",savepath->name,CdromId);
 	  data = &Mcd1Data[0];
@@ -379,10 +397,10 @@ int SaveMcd(int mcd, fileBrowser_file *savepath) {
   	sprintf((char*)saveFile.name,"%s/slot2.mcd",savepath->name);
   	data = &Mcd2Data[0];
 	}
-	
+
   if(saveFile_writeFile(&saveFile, data, MCD_SIZE)==MCD_SIZE)
     ret = 1;
-  
+
   return ret;
 }
 
@@ -428,14 +446,14 @@ void ConvertMcd(char *mcd, char *data) {
 	/*FILE *f;
 	int i=0;
 	int s = MCD_SIZE;
-	
-	if (strstr(mcd, ".gme")) {		
+
+	if (strstr(mcd, ".gme")) {
 		f = fopen(mcd, "wb");
-		if (f != NULL) {		
+		if (f != NULL) {
 			fwrite(data-3904, 1, MCD_SIZE+3904, f);
 			fclose(f);
-		}		
-		f = fopen(mcd, "r+");		
+		}
+		f = fopen(mcd, "r+");
 		s = s + 3904;
 		fputc('1', f); s--;
 		fputc('2', f); s--;
@@ -450,7 +468,7 @@ void ConvertMcd(char *mcd, char *data) {
 		fputc('D', f); s--;
 		for(i=0;i<7;i++) {
 			fputc(0, f); s--;
-		}		
+		}
 		fputc(1, f); s--;
 		fputc(0, f); s--;
 		fputc(1, f); s--;
@@ -463,14 +481,14 @@ void ConvertMcd(char *mcd, char *data) {
 		fputc(0xff, f);
 		while (s-- > (MCD_SIZE+1)) fputc(0, f);
 		fclose(f);
-	} else if(strstr(mcd, ".mem") || strstr(mcd,".vgs")) {		
+	} else if(strstr(mcd, ".mem") || strstr(mcd,".vgs")) {
 		f = fopen(mcd, "wb");
-		if (f != NULL) {		
+		if (f != NULL) {
 			fwrite(data-64, 1, MCD_SIZE+64, f);
 			fclose(f);
-		}		
-		f = fopen(mcd, "r+");		
-		s = s + 64;				
+		}
+		f = fopen(mcd, "r+");
+		s = s + 64;
 		fputc('V', f); s--;
 		fputc('g', f); s--;
 		fputc('s', f); s--;
@@ -487,89 +505,96 @@ void ConvertMcd(char *mcd, char *data) {
 		fclose(f);
 	} else {
 		f = fopen(mcd, "wb");
-		if (f != NULL) {		
+		if (f != NULL) {
 			fwrite(data, 1, MCD_SIZE, f);
 			fclose(f);
 		}
 	}*/
 }
 
-void GetMcdBlockInfo(int mcd, int block, McdBlock *Info) {
-	char *data = NULL, *ptr, *str;
-	unsigned short clut[16];
-	int i, x;
-
-	memset(Info, 0, sizeof(McdBlock));
-
-	str = Info->Title;
-
-	if (mcd == 1) data = Mcd1Data;
-	if (mcd == 2) data = Mcd2Data;
-
-	ptr = data + block * 8192 + 2;
-
-	Info->IconCount = *ptr & 0x3;
-
-	ptr+= 2;
-
-	i=0;
-	memcpy(Info->sTitle, ptr, 48*2);
-
-	for (i=0; i < 48; i++) {
-		unsigned short c = *(ptr) << 8;
-		c|= *(ptr+1);
-		if (!c) break;
-
-		if (c >= 0x8281 && c <= 0x8298)
-			c = (c - 0x8281) + 'a';
-		else if (c >= 0x824F && c <= 0x827A)
-			c = (c - 0x824F) + '0';
-		else if (c == 0x8144) c = '.';
-		else if (c == 0x8146) c = ':';
-		else if (c == 0x8168) c = '"';
-		else if (c == 0x8169) c = '(';
-		else if (c == 0x816A) c = ')';
-		else if (c == 0x816D) c = '[';
-		else if (c == 0x816E) c = ']';
-		else if (c == 0x817C) c = '-';
-		else {
-			c = ' ';
-		}
-
-		str[i] = c;
-		ptr+=2;
-	}
-	str[i] = 0;
-
-	ptr = data + block * 8192 + 0x60; // icon palete data
-
-	for (i=0; i<16; i++) {
-		clut[i] = *((unsigned short*)ptr);
-		ptr+=2;
-	}
-
-	for (i=0; i<Info->IconCount; i++) {
-		short *icon = &Info->Icon[i*16*16];
-
-		ptr = data + block * 8192 + 128 + 128 * i; // icon data
-
-		for (x=0; x<16*16; x++) {
-			icon[x++] = clut[*ptr & 0xf];
-			icon[x]   = clut[*ptr >> 4];
-			ptr++;
-		}
-	}
-
-	ptr = data + block * 128;
-
-	Info->Flags = *ptr;
-
-	ptr+= 0xa;
-	strncpy(Info->ID, ptr, 12);
-	Info->ID[12] = 0;
-	ptr+= 12;
-	strncpy(Info->Name, ptr, 16);
-}
+//void GetMcdBlockInfo(int mcd, int block, McdBlock *Info) {
+//	char *data = NULL, *ptr, *str;
+//	unsigned short clut[16];
+//	int i, x;
+//
+//	memset(Info, 0, sizeof(McdBlock));
+//
+//	str = Info->Title;
+//
+//	if (mcd == 1) data = Mcd1Data;
+//	if (mcd == 2) data = Mcd2Data;
+//
+//	ptr = data + block * 8192 + 2;
+//
+//	Info->IconCount = *ptr & 0x3;
+//
+//	ptr+= 2;
+//
+//	i=0;
+//	memcpy(Info->sTitle, ptr, 48*2);
+//
+//	for (i=0; i < 48; i++) {
+//		unsigned short c = *(ptr) << 8;
+//		c|= *(ptr+1);
+//		if (!c) break;
+//
+//		// Convert ASCII characters to half-width
+//		if (c >= 0x8281 && c <= 0x829A)
+//			c = (c - 0x8281) + 'a';
+//		else if (c >= 0x824F && c <= 0x827A)
+//			c = (c - 0x824F) + '0';
+//		else if (c == 0x8140) c = ' ';
+//		else if (c == 0x8143) c = ',';
+//		else if (c == 0x8144) c = '.';
+//		else if (c == 0x8146) c = ':';
+//		else if (c == 0x8147) c = ';';
+//		else if (c == 0x8148) c = '?';
+//		else if (c == 0x8149) c = '!';
+//		else if (c == 0x815E) c = '/';
+//		else if (c == 0x8168) c = '"';
+//		else if (c == 0x8169) c = '(';
+//		else if (c == 0x816A) c = ')';
+//		else if (c == 0x816D) c = '[';
+//		else if (c == 0x816E) c = ']';
+//		else if (c == 0x817C) c = '-';
+//		else {
+//			c = ' ';
+//		}
+//
+//		str[i] = c;
+//		ptr+=2;
+//	}
+//	str[i] = 0;
+//
+//	ptr = data + block * 8192 + 0x60; // icon palete data
+//
+//	for (i=0; i<16; i++) {
+//		clut[i] = *((unsigned short*)ptr);
+//		ptr+=2;
+//	}
+//
+//	for (i=0; i<Info->IconCount; i++) {
+//		short *icon = &Info->Icon[i*16*16];
+//
+//		ptr = data + block * 8192 + 128 + 128 * i; // icon data
+//
+//		for (x=0; x<16*16; x++) {
+//			icon[x++] = clut[*ptr & 0xf];
+//			icon[x]   = clut[*ptr >> 4];
+//			ptr++;
+//		}
+//	}
+//
+//	ptr = data + block * 128;
+//
+//	Info->Flags = *ptr;
+//
+//	ptr+= 0xa;
+//	strncpy(Info->ID, ptr, 12);
+//	Info->ID[12] = 0;
+//	ptr+= 12;
+//	strncpy(Info->Name, ptr, 16);
+//}
 
 int sioFreeze(gzFile f, int Mode) {
 	char Unused[4096];

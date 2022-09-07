@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
  ***************************************************************************/
 
-/* 
+/*
 * Specficies which logs should be activated.
 * Ryan TODO: These should ALL be definable with configure flags.
 */
@@ -33,7 +33,7 @@ extern char *disRNameCP0[];
 char* disR3000AF(u32 code, u32 pc);
 
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
+	defined(PSXBIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
 extern FILE *emuLog;
 #endif
 
@@ -61,5 +61,34 @@ FILE *gteLog;
 	defined(PSXBIOS_LOG) || defined(PSXMEM_LOG) || defined(GTE_LOG)    || defined(PAD_LOG)
 #define EMU_LOG __Log
 #endif
+
+// add xjsxjs197 start
+#ifdef DISP_DEBUG
+    //extern void PEOPS_GPUdisplayText(char * pText);
+    extern char debug[256];
+
+    #define PRINT_LOG(msg) { \
+                sprintf(debug, msg);\
+                PEOPS_GPUdisplayText(debug); \
+            }
+    #define PRINT_LOG1(msg, val) { \
+                sprintf(debug, msg, val);\
+                PEOPS_GPUdisplayText(debug); \
+            }
+    #define PRINT_LOG2(msg, val1, val2) { \
+                sprintf(debug, msg, val1, val2);\
+                PEOPS_GPUdisplayText(debug); \
+            }
+    #define PRINT_LOG3(msg, val1, val2, val3) { \
+                sprintf(debug, msg, val1, val2, val3);\
+                PEOPS_GPUdisplayText(debug); \
+            }
+#else
+    #define PRINT_LOG(msg)
+    #define PRINT_LOG1(msg, val)
+    #define PRINT_LOG2(msg, val1, val2)
+    #define PRINT_LOG3(msg, val1, val2, val3)
+#endif
+// add xjsxjs197 end
 
 #endif /* __DEBUG_H__ */

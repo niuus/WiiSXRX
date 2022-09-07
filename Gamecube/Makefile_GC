@@ -23,7 +23,7 @@ GPU = Soft
 #---------------------------------------------------------------------------------
 TARGET		:=	CubeSXRX
 BUILD		:=	build
-SOURCES		:=	. ../cdrmooby28/ ./gc_input/ ./libgui/ ./menu/ ./fileBrowser/ .. ../ppc/ ../Peops$(GPU)GPU/ ../franspu/
+SOURCES		:=	. ./gc_input/ ./libgui/ ./menu/ ./fileBrowser/ .. ../ppc/ ../Peops$(GPU)GPU/ ../franspu/
 
 DATA		:=	data  
 
@@ -36,7 +36,7 @@ INCLUDES	:=
 CFLAGS	= -g -flto -Ofast -Wall $(MACHDEP) $(INCLUDE) -D__GAMECUBE__ -DHW_DOL -D__ppc__ \
 		  -D__GX__ -DEMBEDDED_FONTS \
 		  -DTHREADED_AUDIO -DRELEASE #-DSHOW_DEBUG -DPROFILE
-		  
+
 CXXFLAGS	=	$(CFLAGS)
 
 ASFLAGS := -DHW_DOL

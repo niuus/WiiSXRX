@@ -37,8 +37,11 @@ extern "C" {
 #include "../fileBrowser/fileBrowser-DVD.h"
 #include "../fileBrowser/fileBrowser-CARD.h"
 #include "../fileBrowser/fileBrowser-SMB.h"
-extern long Mooby2CDRgetTN(unsigned char *buffer);
+extern long ISOgetTN(unsigned char *buffer);
+extern char debugInfo[256];
 }
+
+extern "C" char * JoinString(char *s1, char *s2);
 
 void Func_PrevPage();
 void Func_NextPage();
@@ -318,7 +321,7 @@ void Func_Select9() { fileBrowserFrame_LoadFile((current_page*NUM_FILE_SLOTS) + 
 void Func_Select10() { fileBrowserFrame_LoadFile((current_page*NUM_FILE_SLOTS) + 9); }
 
 
-static char* filenameFromAbsPath(char* absPath)
+char* filenameFromAbsPath(char* absPath)
 {
 	char* filename = absPath;
 	// Here we want to extract from the absolute path
@@ -458,6 +461,23 @@ extern "C" {
 void newCD(fileBrowser_file *file);
 }
 
+// add xjsxjs197 start
+int ChkString(char * str1, char * str2, int len)
+{
+	int tmpIdx = 0;
+	while (str1[tmpIdx] == str2[tmpIdx])
+	{
+		tmpIdx++;
+		if (tmpIdx >= len)
+		{
+			return 1;
+		}
+	}
+
+	return 0;
+}
+// add xjsxjs197 end
+
 void fileBrowserFrame_LoadFile(int i)
 {
 	char feedback_string[256] = "Failed to load ISO";
@@ -486,14 +506,38 @@ void fileBrowserFrame_LoadFile(int i)
 			}
 
 			strcpy(feedback_string, "Loaded ");
-			strncat(feedback_string, filenameFromAbsPath(dir_entries[i].name), 36-7);
+			strcat(feedback_string, filenameFromAbsPath(dir_entries[i].name));
 
 			char RomInfo[512] = "";
 			char buffer [50];
 			strcat(RomInfo,feedback_string);
 			sprintf(buffer,"\nCD-ROM Label: %s\n",CdromLabel);
 			strcat(RomInfo,buffer);
+			// add xjsxjs197 start
+			Config.RCntFix = 0;
+			if (ChkString(CdromLabel, "SLUS01042", strlen("SLUS01042")) // PARASITE EVE 2(CD1)
+				|| ChkString(CdromLabel, "SLUS01055", strlen("SLUS01055")) // PARASITE EVE 2(CD2)
+				|| ChkString(CdromLabel, "SLPS02480", strlen("SLPS02480")) // PARASITE EVE II (2DISCS)
+				|| ChkString(CdromLabel, "SLPS02481", strlen("SLPS02481")) // PARASITE EVE II (2DISCS)
+                || ChkString(CdromLabel, "SLUS00447", strlen("SLUS00447")) // VANDAL HEARTS
+				|| ChkString(CdromLabel, "SLUS00940", strlen("SLUS00940"))) // VANDAL HEARTS II
+			{
+		        Config.RCntFix = 1;
+		    }
+			if (ChkString(CdromLabel, "Vandal Hearts", strlen("Vandal Hearts"))) {
+		        Config.RCntFix = 1;
+		    }
+			// add xjsxjs197 end
 			sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
+			strcat(RomInfo,buffer);
+			if (Config.RCntFix)
+            {
+                sprintf(buffer, "TIMING FIX: Yes\n");
+            }
+            else
+            {
+                sprintf(buffer, "TIMING FIX: No\n");
+            }
 			strcat(RomInfo,buffer);
 			sprintf(buffer,"CD size: %u Mb\n",isoFile.size/1024/1024);
 			strcat(RomInfo,buffer);
@@ -502,11 +546,10 @@ void fileBrowserFrame_LoadFile(int i)
 			sprintf(buffer,"BIOS: %s\n",(Config.HLE==BIOS_USER_DEFINED) ? "PSX":"HLE");
 			strcat(RomInfo,buffer);
 			unsigned char tracks[2];
-      Mooby2CDRgetTN(&tracks[0]);
-      sprintf(buffer,"Number of tracks %u\n", tracks[1]);
+            ISOgetTN(&tracks[0]);
+            sprintf(buffer,"Number of tracks %u\n", tracks[1]);
 			strcat(RomInfo,buffer);
-    		
-			
+
 			switch (autoSaveLoaded)
 			{
 			case NATIVESAVEDEVICE_NONE:

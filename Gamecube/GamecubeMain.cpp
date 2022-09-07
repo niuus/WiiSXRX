@@ -40,7 +40,11 @@
 #include "wiiSXconfig.h"
 #include "menu/MenuContext.h"
 
+extern char * GetGameBios(char * biosPath, char * fileName);
+extern char* filenameFromAbsPath(char* absPath);
 extern u32 __di_check_ahbprot(void);
+extern unsigned int cdrIsoMultidiskSelect;
+extern bool swapIso;
 
 extern "C" {
 #include "DEBUG.h"
@@ -51,7 +55,6 @@ extern "C" {
 #include "fileBrowser/fileBrowser-SMB.h"
 #include "gc_input/controller.h"
 }
-
 
 #ifdef WII
 unsigned int MALLOC_MEM2 = 0;
@@ -73,6 +76,7 @@ void SysCloseLibrary(void *lib);
 void SysUpdate();
 void SysRunGui();
 void SysMessage(char *fmt, ...);
+void LidInterrupt();
 }
 
 unsigned int* xfb[2] = { NULL, NULL };	/*** Framebuffers ***/
@@ -86,7 +90,7 @@ fileBrowser_file subFile;  //the SUB file
 fileBrowser_file *biosFile = NULL;  //BIOS file
 
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
+	defined(PSXBIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
 FILE *emuLog;
 #endif
 
@@ -225,6 +229,10 @@ void loadSettings(int argc, char *argv[])
 	if(argc && argv[0][0] == 'u') {  //assume USB
 		fileBrowser_file* configFile_file = &saveDir_libfat_USB;
 		if(configFile_init(configFile_file)) {                //only if device initialized ok
+            // add xjsxjs197 start
+            memset(Config.PatchesDir, '\0', sizeof(Config.PatchesDir));
+            strcpy(Config.PatchesDir, "usb:/wiisxrx/ppf/");
+            // add xjsxjs197 end
 			FILE* f = fopen( "usb:/wiisxrx/settingsRX.cfg", "r" );  //attempt to open file
 			if(f) {        //open ok, read it
 				readConfig(f);
@@ -269,6 +277,10 @@ void loadSettings(int argc, char *argv[])
 	{ //assume SD
 		fileBrowser_file* configFile_file = &saveDir_libfat_Default;
 		if(configFile_init(configFile_file)) {                //only if device initialized ok
+            // add xjsxjs197 start
+            memset(Config.PatchesDir, '\0', sizeof(Config.PatchesDir));
+            strcpy(Config.PatchesDir, "sd:/wiisxrx/ppf/");
+            // add xjsxjs197 end
 			FILE* f = fopen( "sd:/wiisxrx/settingsRX.cfg", "r" );  //attempt to open file
 			if(f) {        //open ok, read it
 				readConfig(f);
@@ -326,7 +338,7 @@ void loadSettings(int argc, char *argv[])
 	iVolume = volume;
 }
 
-void ScanPADSandReset(u32 dummy) 
+void ScanPADSandReset(u32 dummy)
 {
 //	PAD_ScanPads();
 	padNeedScan = wpadNeedScan = 1;
@@ -335,7 +347,7 @@ void ScanPADSandReset(u32 dummy)
 }
 
 #ifdef HW_RVL
-void ShutdownWii() 
+void ShutdownWii()
 {
 	shutdown = 1;
 	stop = 1;
@@ -387,11 +399,11 @@ bool SaneIOS(u32 ios)
         if (ES_GetNumTitles(&num_titles) < 0)
                 return false;
 
-        if(num_titles < 1) 
+        if(num_titles < 1)
                 return false;
 
         u64 *titles = (u64 *)memalign(32, num_titles * sizeof(u64) + 32);
-        
+
         if(!titles)
                 return false;
 
@@ -400,7 +412,7 @@ bool SaneIOS(u32 ios)
                 free(titles);
                 return false;
         }
-        
+
         u32 *tmdbuffer = (u32 *)memalign(32, MAX_SIGNED_TMD_SIZE);
 
         if(!tmdbuffer)
@@ -411,7 +423,7 @@ bool SaneIOS(u32 ios)
 
         for(u32 n=0; n < num_titles; n++)
         {
-                if((titles[n] & 0xFFFFFFFF) != ios) 
+                if((titles[n] & 0xFFFFFFFF) != ios)
                         continue;
 
                 if (ES_GetStoredTMDSize(titles[n], &tmd_size) < 0)
@@ -439,7 +451,7 @@ bool Autoboot;
 char AutobootROM[1024];
 char AutobootPath[1024];
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
 	/* INITIALIZE */
 #ifdef HW_RVL
@@ -456,7 +468,7 @@ int main(int argc, char *argv[])
 		memset(AutobootROM, 0, sizeof(AutobootROM));
 	}
         L2Enhance();
-        
+
         u32 ios = IOS_GetVersion();
 
         if(!SupportedIOS(ios))
@@ -472,6 +484,7 @@ int main(int argc, char *argv[])
 	control_info_init(); //Perform controller auto assignment at least once at startup.
 
 	loadSettings(argc, argv);
+
 	MenuContext *menu = new MenuContext(vmode);
 	VIDEO_SetPostRetraceCallback (ScanPADSandReset);
 
@@ -513,42 +526,53 @@ int main(int argc, char *argv[])
 
 // loadISO loads an ISO file as current media to read from.
 int loadISOSwap(fileBrowser_file* file) {
-  
+
   // Refresh file pointers
 	memset(&isoFile, 0, sizeof(fileBrowser_file));
 	memset(&cddaFile, 0, sizeof(fileBrowser_file));
 	memset(&subFile, 0, sizeof(fileBrowser_file));
-	
+
 	memcpy(&isoFile, file, sizeof(fileBrowser_file) );
-	
+
+    CdromId[0] = '\0';
+    CdromLabel[0] = '\0';
+    cdrIsoMultidiskSelect++;
+
+    CDR_close();
 	//might need to insert code here to trigger a lid open/close interrupt
 	if(CDR_open() < 0)
 		return -1;
+
 	CheckCdrom();
+
+	swapIso = true;
 	LoadCdrom();
+
+	LidInterrupt();
+
 	return 0;
 }
 
 
 // loadISO loads an ISO, resets the system and loads the save.
-int loadISO(fileBrowser_file* file) 
+int loadISO(fileBrowser_file* file)
 {
 	// Refresh file pointers
 	memset(&isoFile, 0, sizeof(fileBrowser_file));
 	memset(&cddaFile, 0, sizeof(fileBrowser_file));
 	memset(&subFile, 0, sizeof(fileBrowser_file));
-	
+
 	memcpy(&isoFile, file, sizeof(fileBrowser_file) );
-	
+
 	if(hasLoadedISO) {
-		SysClose();	
+		SysClose();
 		hasLoadedISO = FALSE;
 	}
 	if(SysInit() < 0)
 		return -1;
 	hasLoadedISO = TRUE;
 	SysReset();
-	
+
 	char *tempStr = &file->name[0];
 	if((strstr(tempStr,".EXE")!=NULL) || (strstr(tempStr,".exe")!=NULL)) {
 		Load(file);
@@ -557,7 +581,7 @@ int loadISO(fileBrowser_file* file)
 		CheckCdrom();
 		LoadCdrom();
 	}
-	
+
 	if(autoSave==AUTOSAVE_ENABLE) {
 		switch (nativeSaveDevice)
 		{
@@ -586,7 +610,7 @@ int loadISO(fileBrowser_file* file)
 		result += LoadMcd(1,saveFile_dir);
 		result += LoadMcd(2,saveFile_dir);
 		saveFile_deinit(saveFile_dir);
-		
+
 		switch (nativeSaveDevice)
 		{
 		case NATIVESAVEDEVICE_SD:
@@ -602,22 +626,22 @@ int loadISO(fileBrowser_file* file)
 			if (result) autoSaveLoaded = NATIVESAVEDEVICE_CARDB;
 			break;
 		}
-	}	
-	
+	}
+
 	return 0;
 }
 
 void setOption(char* key, char* valuePointer){
 	bool isString = valuePointer[0] == '"';
 	char value = 0;
-	
+
 	if(isString) {
 		char* p = valuePointer++;
 		while(*++p != '"');
 		*p = 0;
 	} else
 		value = atoi(valuePointer);
-	
+
 	for(unsigned int i=0; i<sizeof(OPTIONS)/sizeof(OPTIONS[0]); i++){
 		if(!strcmp(OPTIONS[i].key, key)){
 			if(isString) {
@@ -669,15 +693,15 @@ void go(void) {
 
 int SysInit() {
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
-	emuLog = fopen("/PSXISOS/emu.log", "w");
+	defined(PSXBIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
+	emuLog = fopen("sd:/wiisxrx/emu.log", "w");
 #endif
-	Config.Cpu = dynacore;  //cpu may have changed  
+	Config.Cpu = dynacore;  //cpu may have changed
 	psxInit();
 	LoadPlugins();
 	if(OpenPlugins() < 0)
 		return -1;
-  
+
 	//Init biosFile pointers and stuff
 	if(biosDevice != BIOSDEVICE_HLE) {
 		biosFile_dir = (biosDevice == BIOSDEVICE_SD) ? &biosDir_libfat_Default : &biosDir_libfat_USB;
@@ -710,18 +734,18 @@ void SysStartCPU() {
 	psxCpu->Execute();
 }
 
-void SysClose() 
+void SysClose()
 {
 	psxShutdown();
 	ClosePlugins();
 	ReleasePlugins();
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
+	defined(PSXBIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
 	if (emuLog != NULL) fclose(emuLog);
 #endif
 }
 
-void SysPrintf(const char *fmt, ...) 
+void SysPrintf(const char *fmt, ...)
 {
 #ifdef PRINTGECKO
 	va_list list;
@@ -734,13 +758,13 @@ void SysPrintf(const char *fmt, ...)
 	//if (Config.PsxOut) printf ("%s", msg);
 	DEBUG_print(msg, DBG_USBGECKO);
 #if defined (CPU_LOG) || defined(DMA_LOG) || defined(CDR_LOG) || defined(HW_LOG) || \
-	defined(BIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
+	defined(PSXBIOS_LOG) || defined(GTE_LOG) || defined(PAD_LOG)
 	fprintf(emuLog, "%s", msg);
 #endif
 #endif
 }
 
-void *SysLoadLibrary(char *lib) 
+void *SysLoadLibrary(char *lib)
 {
 	int i;
 	for(i=0; i<NUM_PLUGINS; i++)
@@ -749,7 +773,7 @@ void *SysLoadLibrary(char *lib)
 	return NULL;
 }
 
-void *SysLoadSym(void *lib, char *sym) 
+void *SysLoadSym(void *lib, char *sym)
 {
 	PluginTable* plugin = plugins + (int)lib;
 	int i;
@@ -760,7 +784,7 @@ void *SysLoadSym(void *lib, char *sym)
 }
 
 int framesdone = 0;
-void SysUpdate() 
+void SysUpdate()
 {
 	framesdone++;
 #ifdef PROFILE

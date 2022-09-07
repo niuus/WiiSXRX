@@ -3,7 +3,7 @@ ifndef ECHO
 ECHO = echo
 endif
 
-VERSION = beta2.7
+VERSION = beta2.6
 
 .PHONY:  all
 

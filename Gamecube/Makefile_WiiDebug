@@ -21,8 +21,8 @@ GPU = Soft
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	WiiSXRX
-BUILD		:=	build
+TARGET		:=	WiiSXRX_debug
+BUILD		:=	build_debug
 SOURCES		:=	. ./gc_input/ ./libgui/ ./menu/ ./fileBrowser/ .. ../ppc/ ../Peops$(GPU)GPU/ ../franspu/
 
 DATA		:=	data
@@ -35,8 +35,8 @@ INCLUDES	:=
 
 CFLAGS	= -g -flto -Ofast -Wall $(MACHDEP) $(INCLUDE) -D__GAMECUBE__ -DWII -DHW_RVL -D__ppc__ \
 		  -D__GX__ -DEMBEDDED_FONTS \
-		  -DTHREADED_AUDIO -D_GNU_SOURCE #-DRELEASE
-
+		  -DTHREADED_AUDIO -D_GNU_SOURCE #-DRELEASE -DSHOW_DEBUG -DDEBUGON -DPROFILE -DPRINTGECKO
+		  
 CXXFLAGS	=	$(CFLAGS)
 
 ASFLAGS := -DHW_RVL

@@ -30,7 +30,8 @@ static _CD CD; //Current CD struct
 static int isCDDAPlaying = 0;
 
 //from PeopsCdr104
-#define btoi(b)      ((b)/16*10 + (b)%16)
+//#define btoi(b)      ((b)/16*10 + (b)%16)
+#define btoi(b)		(((b) >> 4) * 10 + ((b) & 15)) /* BCD to u_char */
 __inline unsigned long time2addrB(unsigned char *time)
 {
  unsigned long addr;
@@ -84,7 +85,7 @@ long getTD(int track, unsigned char* buffer)
 		buffer[1] = CD.tl[track-1].start[1];
 		buffer[2] = CD.tl[track-1].start[2];
 	}
-	
+
 	sprintf(txtbuffer, "getTD %i: [%u][%u][%u]",track,buffer[0],buffer[1],buffer[2]);
   DEBUG_print(txtbuffer, DBG_CDR3);
 
@@ -256,7 +257,7 @@ void newCD(fileBrowser_file *file)
 {
 	const char* ext = file->name + strlen(file->name) - 4;
 	SysPrintf("Opening file with extension %s size: %d\n", ext, file->size);
-		
+
 	if(( !strcmp(ext, ".cue") ) || ( !strcmp(ext, ".CUE") )){
 		CD.type = Cue;
 		openCue(file);  //if we open a .cue, the isoFile global will be redirected
@@ -329,9 +330,9 @@ void seekSector(unsigned long addr)
 {
 	// calc byte to search for
 	CD.sector = addr * 2352;
-	
+
 	// is it cached?
-	if ((CD.sector >= CD.bufferPos) && (CD.sector < (CD.bufferPos + BUFFER_SIZE)) ) 
+	if ((CD.sector >= CD.bufferPos) && (CD.sector < (CD.bufferPos + BUFFER_SIZE)) )
 	{
 	    return;
 	}
@@ -407,17 +408,17 @@ long CDR__play(unsigned char *msf) {
 #ifdef SHOW_DEBUG
 	unsigned int byteSector = time2addr(msf);  //peops way
 	sprintf(txtbuffer,"CDR play %08X",byteSector);
-  DEBUG_print(txtbuffer, DBG_CDR1);  
+  DEBUG_print(txtbuffer, DBG_CDR1);
 #endif
   // Time will need to be updated in a thread.
   //isCDDAPlaying will need to made 0 on track end (threaded).
   isCDDAPlaying = 1;
-  return PSE_CDR_ERR_SUCCESS; 
+  return PSE_CDR_ERR_SUCCESS;
 }
-long CDR__stop(void) { 
+long CDR__stop(void) {
   DEBUG_print("CDR Stop", DBG_CDR1);
   isCDDAPlaying  = 0;
-  return PSE_CDR_ERR_SUCCESS; 
+  return PSE_CDR_ERR_SUCCESS;
 }
 
 
@@ -442,7 +443,7 @@ long CDR__stop(void) {
 // byte 2 - frame
 
 long CDR__getStatus(struct CdrStat *stat) {
-  DEBUG_print("CDR getStatus", DBG_CDR2);
+  //DEBUG_print("CDR getStatus", DBG_CDR2);
 
   stat->Status = 0;       // Ok so far
 

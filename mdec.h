@@ -14,11 +14,15 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02111-1307 USA.           *
  ***************************************************************************/
 
 #ifndef __MDEC_H__
 #define __MDEC_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "psxcommon.h"
 #include "r3000a.h"
@@ -28,11 +32,15 @@
 void mdecInit();
 void mdecWrite0(u32 data);
 void mdecWrite1(u32 data);
-u32  mdecRead0();
-u32  mdecRead1();
+u32 mdecRead0();
+u32 mdecRead1();
 void psxDma0(u32 madr, u32 bcr, u32 chcr);
 void psxDma1(u32 madr, u32 bcr, u32 chcr);
+void mdec0Interrupt();
 void mdec1Interrupt();
 int  mdecFreeze(gzFile f, int Mode);
 
-#endif /* __MDEC_H__ */
+#ifdef __cplusplus
+}
+#endif
+#endif

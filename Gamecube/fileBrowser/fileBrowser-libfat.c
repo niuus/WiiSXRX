@@ -198,11 +198,63 @@ void InitRemovalThread()
 #endif
 }
 
+// add xjsxjs197 start
+bool isCueFileExist(const char *filePath, const char *fileName) {
+    char cuename[FILE_BROWSER_MAX_PATH_LEN];
+    sprintf(cuename, "%s/%s", filePath, fileName);
+	cuename[FILE_BROWSER_MAX_PATH_LEN - 1] = '\0';
+	if (strlen(cuename) >= 4) {
+        FILE *fi;
+        char *trackPos = strstr(cuename, " (Track");
+        if (trackPos)
+        {
+            strcpy(trackPos, ".cue");
+        }
+        else
+        {
+            strcpy(cuename + strlen(cuename) - 4, ".cue");
+        }
+
+        if ((fi = fopen(cuename, "r")) == NULL) {
+		    return false;
+	    }
+	    else
+        {
+            fclose(fi);
+            return true;
+        }
+	}
+	else
+    {
+		return false;
+	}
+}
+
+bool isFileOk(const char *filePath, const char *fileName) {
+    if (strstr(fileName, ".cue") || strstr(fileName, ".CUE"))
+    {
+        return true;
+    }
+    else if (strstr(fileName, ".ccd")
+        || strstr(fileName, ".CCD")
+        || strstr(fileName, ".sub")
+        || strstr(fileName, ".SUB")) {
+        return false;
+    }
+    else if (isCueFileExist(filePath, fileName))
+    {
+        return false;
+    }
+
+    return true;
+}
+// add xjsxjs197 end
+
 int fileBrowser_libfat_readDir(fileBrowser_file* file, fileBrowser_file** dir){
 
   pauseRemovalThread();
 
-  DIR* dp = opendir( file->name );
+  DIR* dp = opendir(file->name );
 	if(!dp) return FILE_BROWSER_ERROR;
 	struct dirent * temp = NULL;
 
@@ -212,11 +264,15 @@ int fileBrowser_libfat_readDir(fileBrowser_file* file, fileBrowser_file** dir){
 	*dir = malloc( num_entries * sizeof(fileBrowser_file) );
 	// Read each entry of the directory
 	while( (temp = readdir(dp)) && (temp != NULL) ){
+        if (!isFileOk(file->name, temp->d_name)) {
+            continue;
+		}
 		// Make sure we have room for this one
 		if(i == num_entries){
 			++num_entries;
 			*dir = realloc( *dir, num_entries * sizeof(fileBrowser_file) );
 		}
+
 		sprintf((*dir)[i].name, "%s/%s", file->name, temp->d_name);
 		(*dir)[i].offset = 0;
 		(*dir)[i].size	 = 0; //TODO

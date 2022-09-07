@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 Ryan Schultz, PCSX-df Team, PCSX team              *
+ *   Copyright (C) 2010 by Blade_Arma                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -14,11 +14,15 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02111-1307 USA.           *
  ***************************************************************************/
 
 #ifndef __PSXCOUNTERS_H__
 #define __PSXCOUNTERS_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "psxcommon.h"
 #include "r3000a.h"
@@ -43,5 +47,8 @@ u32 psxRcntRcount(u32 index);
 int psxRcntFreeze(gzFile f, int Mode);
 
 void psxUpdateVSyncRate();
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __PSXCOUNTERS_H__ */

@@ -83,11 +83,11 @@ int LoadGPUplugin(char *GPUdll) {
 	void *drv;
 
 	hGPUDriver = SysLoadLibrary(GPUdll);
-	if (hGPUDriver == NULL) { 
+	if (hGPUDriver == NULL) {
 		GPU_configure = NULL;
-		SysPrintf ("Could Not Load GPU Plugin %s\n", GPUdll); return -1; 
+		SysPrintf ("Could Not Load GPU Plugin %s\n", GPUdll); return -1;
 	}
-//	SysPrintf ("hGPUDriver = %d\n", hGPUDriver); 
+//	SysPrintf ("hGPUDriver = %d\n", hGPUDriver);
 	drv = hGPUDriver;
 	LoadGpuSym1(init, "GPUinit");
 	LoadGpuSym1(shutdown, "GPUshutdown");
@@ -136,6 +136,11 @@ void CALLBACK CDR__about(void) {}
 	LoadSym(CDR_##dest, CDR##dest, name, 0);
 
 int LoadCDRplugin(char *CDRdll) {
+    if (true) {
+		cdrIsoInit();
+		return 0;
+	}
+
 	void *drv;
 
 	hCDRDriver = SysLoadLibrary(CDRdll);
@@ -205,7 +210,7 @@ int LoadSPUplugin(char *SPUdll) {
 	LoadSpuSym0(test, "SPUtest");
 	errval = 0;
 	LoadSpuSym1(writeRegister, "SPUwriteRegister");
-	LoadSpuSym1(readRegister, "SPUreadRegister");		
+	LoadSpuSym1(readRegister, "SPUreadRegister");
 	LoadSpuSym1(writeDMA, "SPUwriteDMA");
 	LoadSpuSym1(readDMA, "SPUreadDMA");
 	LoadSpuSym1(writeDMAMem, "SPUwriteDMAMem");
@@ -214,7 +219,9 @@ int LoadSPUplugin(char *SPUdll) {
 	LoadSpuSym1(freeze, "SPUfreeze");
 	LoadSpuSym1(async, "SPUasync");
 	LoadSpuSym1(registerCallback, "SPUregisterCallback");
+	LoadSpuSym1(registerScheduleCb, "SPUregisterScheduleCb");
 	LoadSpuSym1(registerCDDAVolume, "SPUregisterCDDAVolume");
+	LoadSpuSymN(playCDDAchannel, "SPUplayCDDAchannel");
 
 	return 0;
 }
@@ -357,7 +364,7 @@ unsigned char CALLBACK PAD2__startPoll(int pad) {
 	PadDataS padd;
 
 	PAD2_readPort2(&padd);
-	
+
 	return _PADstartPoll(&padd);
 }
 
@@ -509,7 +516,7 @@ void ReleasePlugins() {
 	SPU_shutdown();
 	PAD1_shutdown();
 	PAD2_shutdown();
-	if (Config.UseNet && hNETDriver != NULL) NET_shutdown(); 
+	if (Config.UseNet && hNETDriver != NULL) NET_shutdown();
 #endif
 
 	SysCloseLibrary(hCDRDriver); hCDRDriver = NULL;

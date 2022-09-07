@@ -39,7 +39,7 @@ extern "C" {
 #include "../fileBrowser/fileBrowser-CARD.h"
 extern int LoadMcd(int mcd, fileBrowser_file *savepath);
 extern int SaveMcd(int mcd, fileBrowser_file *savepath);
-extern long Mooby2CDRgetTN(unsigned char *buffer);
+extern long ISOgetTN(unsigned char *buffer);
 }
 
 void Func_ShowRomInfo();
@@ -141,9 +141,7 @@ CurrentRomFrame::~CurrentRomFrame()
 extern MenuContext *pMenuContext;
 extern char CdromId[10];
 extern char CdromLabel[33];
-extern "C" {
-long MoobyCDRgetTN(unsigned char *buffer);
-};
+extern char debugInfo[256];
 
 void Func_ShowRomInfo()
 {
@@ -153,6 +151,16 @@ void Func_ShowRomInfo()
 	sprintf(buffer,"CD-ROM Label: %s\n",CdromLabel);
   strcat(RomInfo,buffer);
   sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
+
+	strcat(RomInfo,buffer);
+  if (Config.RCntFix)
+  {
+    sprintf(buffer, "TIMING FIX: Yes\n");
+  }
+  else
+  {
+    sprintf(buffer, "TIMING FIX: No\n");
+  }
   strcat(RomInfo,buffer);
   sprintf(buffer,"CD Size: %u Mb\n",isoFile.size/1024/1024);
   strcat(RomInfo,buffer);
@@ -161,7 +169,7 @@ void Func_ShowRomInfo()
   sprintf(buffer,"BIOS: %s\n",(Config.HLE==BIOS_USER_DEFINED) ? "PSX":"HLE");
   strcat(RomInfo,buffer);
   unsigned char tracks[2];
-  Mooby2CDRgetTN(&tracks[0]);
+  ISOgetTN(&tracks[0]);
   sprintf(buffer,"Number of tracks %u\n", tracks[1]);
 	strcat(RomInfo,buffer);
 

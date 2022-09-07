@@ -164,9 +164,9 @@ void Func_Credits()
 {
 	char CreditsInfo[512] = "";
 #ifdef HW_RVL
-	sprintf(CreditsInfo,"WiiSX RX Beta 2.7\n");
+	sprintf(CreditsInfo,"WiiSX RX Beta 3.0\n");
 #else
-	sprintf(CreditsInfo,"CubeSX RX Beta 2.7\n");
+	sprintf(CreditsInfo,"CubeSX RX Beta 3.0\n");
 #endif
 	strcat(CreditsInfo,"www.github.com/niuus/WiiSXRX\n");
 	strcat(CreditsInfo,"WiiSX RX & logo: NiuuS\n");
@@ -175,7 +175,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"emu_kidid - general coding\n");
 	strcat(CreditsInfo,"sepp256 - graphics & menu\n");
 	strcat(CreditsInfo,"tehpola - audio\n");
-	strcat(CreditsInfo,"PCSX/PCSX-df/PCSX-r teams\n");
+	strcat(CreditsInfo,"PCSX/-df/-r/ReARMed teams\n");
 	strcat(CreditsInfo,"\n");
 
 	char wiiDetails[30];
@@ -196,7 +196,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"FIX94 - Wii U gamepad support\n");
 	strcat(CreditsInfo,"matguitarist - USB 2.0 support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
-	strcat(CreditsInfo,"Mystro256 - WiiSXR fork\n");
+	strcat(CreditsInfo,"Mystro256 (WiiSXR) xjsxjs197 (_2022)\n");
 	strcat(CreditsInfo,"\n");
 	strcat(CreditsInfo, wiiDetails);
 #endif
@@ -205,11 +205,15 @@ void Func_Credits()
 }
 
 extern char shutdown;
+extern "C" void SysClose();
 
 void Func_ExitToLoader()
 {
-	if(menu::MessageBox::getInstance().askMessage("Are you sure you want to exit to loader?"))
-		shutdown = 2;
+	if (menu::MessageBox::getInstance().askMessage("Are you sure you want to exit to loader?"))
+    {
+        shutdown = 2;
+        SysClose();
+    }
 }
 
 extern "C" {
