@@ -506,10 +506,6 @@ void SettingsFrame::activateSubmenu(int submenu)
 				FRAME_BUTTONS[i].button->setVisible(true);
 				FRAME_BUTTONS[i].button->setActive(true);
 			}
-			for (int i = 43; i <= 44; i++)	//disable CDDA buttons
-			{
-				FRAME_BUTTONS[i].button->setActive(false);
-			}
 			break;
 		case SUBMENU_SAVES:
 			setDefaultFocus(FRAME_BUTTONS[4].button);
@@ -1268,6 +1264,7 @@ void Func_DisableCddaYes()
 //	menu::MessageBox::getInstance().setMessage(txtbuffer);
 //	DEBUG_print(txtbuffer, DBG_CORE2);
 //	#endif // SHOW_DEBUG
+	menu::MessageBox::getInstance().setMessage("CDDA audio is not yet implemented");
 }
 
 void Func_DisableCddaNo()
@@ -1282,7 +1279,7 @@ void Func_DisableCddaNo()
 //	menu::MessageBox::getInstance().setMessage(txtbuffer);
 //	DEBUG_print(txtbuffer, DBG_CORE2);
 //	#endif // SHOW_DEBUG
-	//menu::MessageBox::getInstance().setMessage("CDDA audio is not implemented");
+	menu::MessageBox::getInstance().setMessage("CDDA audio is not yet implemented");
 }
 
 extern "C" void SetVolume(void);

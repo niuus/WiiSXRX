@@ -16,7 +16,7 @@ unsigned char spuBuffer[NUM_SPU_BUFFERS][7200] __attribute__((aligned(32)));
 unsigned int  whichBuffer = 0;
 
 // psx buffer / addresses
-unsigned short  regArea[10000];                        
+unsigned short  regArea[10000];
 unsigned short  spuMem[256*1024];
 unsigned char * spuMemC;
 unsigned char * pSpuBuffer;
@@ -35,7 +35,7 @@ typedef struct
 	unsigned long ulFreezeSize;
 	unsigned char cSPUPort[0x200];
 	//unsigned char cSPURam[0x80000];
-	xa_decode_t   xaS;     
+	xa_decode_t   xaS;
 } SPUFreeze_t;
 
 typedef struct
@@ -47,11 +47,11 @@ typedef struct
  unsigned long   dummy2;
  unsigned long   dummy3;
 
- SPUCHAN  s_chan[MAXCHAN];   
+ SPUCHAN  s_chan[MAXCHAN];
 
 } SPUOSSFreeze_t;
 
-// user settings          
+// user settings
 int	iUseXA=1;
 int	iSoundMuted=0;
 int	iDisStereo=0;
@@ -63,7 +63,7 @@ REVERBInfo      rvb;
 unsigned long   dwNoiseVal=1;                          // global noise generator
 unsigned short  spuCtrl=0;                             // some vars to store psx reg infos
 unsigned short  spuStat=0;
-unsigned short  spuIrq=0;             
+unsigned short  spuIrq=0;
 unsigned long   spuAddr=0xffffffff;                    // address into spu mem
 int             bEndThread=0;                          // thread handlers
 int             bSpuInit=0;
@@ -87,7 +87,7 @@ void StartSound(SPUCHAN * pChannel)
 	pChannel->s_2=0;
 	pChannel->iSBPos=28;
 	pChannel->bNew=0;                                     // init channel flags
-	pChannel->bStop=0;                                   
+	pChannel->bStop=0;
 	pChannel->bOn=1;
 	pChannel->SB[29]=0;                                   // init our interpolation helpers
 	pChannel->SB[30]=0;
@@ -114,7 +114,7 @@ void FModChangeFrequency(SPUCHAN * pChannel,int ns)
 	pChannel->sinc=(((NP/10)<<16)/4410);
 	if(!pChannel->sinc) pChannel->sinc=1;
 	iFMod[ns]=0;
-}                    
+}
 
 // noise handler... just produces some noise data
 int iGetNoiseVal(SPUCHAN * pChannel)
@@ -131,11 +131,11 @@ int iGetNoiseVal(SPUCHAN * pChannel)
 	// mmm... depending on the noise freq we allow bigger/smaller changes to the previous val
 	fa=pChannel->iOldNoise+((fa-pChannel->iOldNoise)/((0x001f-((spuCtrl&0x3f00)>>9))+1));
 	if(fa>32767L)  fa=32767L;
-	if(fa<-32767L) fa=-32767L;              
+	if(fa<-32767L) fa=-32767L;
 	pChannel->iOldNoise=fa;
 	pChannel->SB[29] = fa;                               // -> store noise val in "current sample" slot
 	return fa;
-}                                 
+}
 
 void StoreInterpolationVal(SPUCHAN * pChannel,int fa)
 {
@@ -148,7 +148,7 @@ void StoreInterpolationVal(SPUCHAN * pChannel,int fa)
 		else                                            // else adjust
 		{
 			if(fa>32767L)  fa=32767L;
-			if(fa<-32767L) fa=-32767L;              
+			if(fa<-32767L) fa=-32767L;
 		}
 		pChannel->SB[29]=fa;                           	// no interpolation
 	}
@@ -164,18 +164,18 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 	unsigned char * start;
 	int predict_nr,shift_factor,flags,s;
 	const int f[5][2] = {{0,0},{60,0},{115,-52},{98,-55},{122,-60}};
-	
+
 	memset(SSumL,0,NSSIZE*sizeof(int));
 	memset(SSumR,0,NSSIZE*sizeof(int));
-	
+
 	// main channel loop
 	for(ch=0;ch<MAXCHAN;ch++,pChannel++)              	// loop em all... we will collect 1 ms of sound of each playing channel
-	{    
+	{
 		if(pChannel->bNew) StartSound(pChannel);        // start new sound
 		if(!pChannel->bOn) continue;                    // channel not playing? next
 		if(pChannel->iActFreq!=pChannel->iUsedFreq)     // new psx frequency?
 			VoiceChangeFrequency(pChannel);
-		
+
 		ns=0;
 		while(ns<NSSIZE)                                // loop until 1 ms of data is reached
 		{
@@ -200,8 +200,8 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 					shift_factor=predict_nr&0xf;
 					predict_nr >>= 4;
 					flags=(int)*start;start++;
-					
-					for (i=0;i<28;start++)      
+
+					for (i=0;i<28;start++)
 					{
 						s=((((int)*start)&0xf)<<12);
 						if(s&0x8000) s|=0xffff0000;
@@ -211,27 +211,27 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 						s=((((int)*start) & 0xf0) << 8);
 						pChannel->SB[i++]=fa;
 						if(s&0x8000) s|=0xffff0000;
-						fa=(s>>shift_factor);              
+						fa=(s>>shift_factor);
 						fa=fa + ((s_1 * f[predict_nr][0])>>6) + ((s_2 * f[predict_nr][1])>>6);
 						s_2=s_1;s_1=fa;
 						pChannel->SB[i++]=fa;
-					}     
-					
+					}
+
 					// irq check
 					if((u32)irqCallback && (spuCtrl&0x40))         // some callback and irq active?
 					{
 						if((pSpuIrq >  start-16 &&              // irq address reached?
 								pSpuIrq <= start) ||
-								((flags&1) &&                        // special: irq on looping addr, when stop/loop flag is set 
+								((flags&1) &&                        // special: irq on looping addr, when stop/loop flag is set
 										(pSpuIrq >  pChannel->pLoop-16 &&
 												pSpuIrq <= pChannel->pLoop)))
 						{
 							pChannel->iIrqDone=1;                 // -> debug flag
 							irqCallback();                        // -> call main emu
-							
+
 						}
 					}
-					
+
 					// flag handler
 					if((flags&4) && (!pChannel->bIgnoreLoop))
 						pChannel->pLoop=start-16;                // loop address
@@ -243,46 +243,46 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 						else
 							start = pChannel->pLoop;
 					}
-					
+
 					pChannel->pCurr=start;                    // store values for next cycle
 					pChannel->s_1=s_1;
-					pChannel->s_2=s_2;      
+					pChannel->s_2=s_2;
 				}
-				
-				
-				
+
+
+
 				fa=pChannel->SB[pChannel->iSBPos++];        // get sample data
 				StoreInterpolationVal(pChannel,fa);         // store val for later interpolation
 				pChannel->spos -= 0x10000L;
 			}
-			
+
 			if(pChannel->bNoise)
 				fa=iGetNoiseVal(pChannel);               // get noise val
-			else 
+			else
 				fa=pChannel->SB[29];       		// get interpolation val
-			
+
 			pChannel->sval=(MixADSR(pChannel)*fa)>>10;   // mix adsr
-			
+
 			if(pChannel->bFMod==2)                        // fmod freq channel
 				iFMod[ns]=pChannel->sval;             // -> store 1T sample data, use that to do fmod on next channel
 			else                                          // no fmod freq channel
-			{                                          
+			{
 				SSumL[ns]+=(pChannel->sval*pChannel->iLeftVolume)>>14;
 				SSumR[ns]+=(pChannel->sval*pChannel->iRightVolume)>>14;
 			}
-			
+
 			// ok, go on until 1 ms data of this channel is collected
-			ns++;                                          
-			pChannel->spos += pChannel->sinc;             
-		}        
-		ENDX:   ;                                                      
+			ns++;
+			pChannel->spos += pChannel->sinc;
+		}
+		ENDX:   ;
 	}
-	
+
 	// here we have another 1 ms of sound data
-	
+
 	// Mix XA
 	if(XAPlay!=XAFeed || XARepeat) MixXA();
-	
+
 	if(iDisStereo) {
 		// Mono Mix
 		for(i=0;i<NSSIZE;i++) {
@@ -290,11 +290,11 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 			l = *SSumL++;
 			if(l < -32767) l = -32767;
 			else if(l > 32767) l = 32767;
-			
+
 			r = *SSumR++;
 			if(r < -32767) r = -32767;
 			else if(r > 32767) r = 32767;
-			
+
 			*pS++ = (l + r) / 2;
 		}
 	} else {
@@ -305,7 +305,7 @@ void SPU_async_1ms(SPUCHAN * pChannel,int *SSumL, int *SSumR, int *iFMod)
 			if(d < -32767) d = -32767;
 			else if(d > 32767) d = 32767;
 			*pS++ = d;
-			
+
 			d = *SSumR++;
 			if(d < -32767) d = -32767;
 			else if(d > 32767) d = 32767;
@@ -357,17 +357,17 @@ s32 FRAN_SPU_open(void)
 	int i;
 	if(bSPUIsOpen) return 0;                              // security for some stupid main emus
 	iUseXA=1;
-	spuIrq=0;                       
+	spuIrq=0;
 	spuAddr=0xffffffff;
 	bEndThread=0;
-	spuMemC=(unsigned char *)spuMem;      
+	spuMemC=(unsigned char *)spuMem;
 	pMixIrq=0;
 	pSpuIrq=0;
 	iSPUIRQWait=0;
 	memset((void *)s_chan,0,(MAXCHAN+1)*sizeof(SPUCHAN));
-	
+
 	SetupSound();                                         // setup sound (before init!)
-	
+
 	//Setup streams
 	pSpuBuffer = spuBuffer[whichBuffer];            // alloc mixing buffer
 	XAStart = (unsigned long *)memalign(32,44100*4);           // alloc xa buffer
@@ -382,15 +382,15 @@ s32 FRAN_SPU_open(void)
 		s_chan[i].pStart=spuMemC;
 		s_chan[i].pCurr=spuMemC;
 	}
-	
+
 	// Setup timers
 	memset(SSumR,0,NSSIZE*sizeof(int));                   // init some mixing buffers
 	memset(SSumL,0,NSSIZE*sizeof(int));
 	memset(iFMod,0,NSSIZE*sizeof(int));
 	pS=(short *)pSpuBuffer;                               // setup soundbuffer pointer
-	
+
 	bSPUIsOpen=1;
-	return PSE_SPU_ERR_SUCCESS;        
+	return PSE_SPU_ERR_SUCCESS;
 }
 
 // SPUCLOSE: called before shutdown
@@ -398,14 +398,14 @@ long FRAN_SPU_close(void)
 {
 	if(!bSPUIsOpen) return 0;                             // some security
 	bSPUIsOpen=0;                                         // no more open
-	
+
 	RemoveSound();                                        // no more sound handling
-	
+
 	// Remove streams
 	pSpuBuffer=NULL;
 	free(XAStart);                                        // free XA buffer
 	XAStart=0;
-	
+
 	return PSE_SPU_ERR_SUCCESS;
 }
 
@@ -418,20 +418,20 @@ long FRAN_SPU_shutdown(void)
 void LoadStateV5(SPUFreeze_t * pF)
 {
   int i;SPUOSSFreeze_t * pFO;
-  
+
   pFO=(SPUOSSFreeze_t *)(pF+1);
-  
+
   spuIrq   = pFO->spuIrq;
   if(pFO->pSpuIrq)  {
     pSpuIrq  = pFO->pSpuIrq+spuMemC;
-  }  
+  }
   else {
     pSpuIrq=0;
   }
-  
+
   for(i=0;i<MAXCHAN;i++) {
     memcpy((void *)&s_chan[i],(void *)&pFO->s_chan[i],sizeof(SPUCHAN));
-    
+
     s_chan[i].pStart+=(unsigned long)spuMemC;
     s_chan[i].pCurr+=(unsigned long)spuMemC;
     s_chan[i].pLoop+=(unsigned long)spuMemC;
@@ -444,7 +444,7 @@ void LoadStateV5(SPUFreeze_t * pF)
 void LoadStateUnknown(SPUFreeze_t * pF)
 {
   int i;
-  
+
   for(i=0;i<MAXCHAN;i++) {
     s_chan[i].bOn=0;
     s_chan[i].bNew=0;
@@ -457,14 +457,14 @@ void LoadStateUnknown(SPUFreeze_t * pF)
   }
 
   pSpuIrq=0;
-  
+
   for(i=0;i<0xc0;i++) {
     FRAN_SPU_writeRegister(0x1f801c00+i*2,regArea[i]);
   }
 }
 
 /*
-SPUFREEZE: Used for savestates 
+SPUFREEZE: Used for savestates
   ulFreezeMode types:
    Info mode == 2
    Save mode == 1
@@ -474,7 +474,7 @@ long FRAN_SPU_freeze(unsigned long ulFreezeMode,SPUFreeze_t * pF)
 {
   int i;SPUOSSFreeze_t * pFO;
   if(!pF) return 0;                                     // first check
-  
+
   if(ulFreezeMode) {                                      // info or save?
     if(ulFreezeMode==1) {
       memset(pF,0,sizeof(SPUFreeze_t)+sizeof(SPUOSSFreeze_t));
@@ -488,18 +488,18 @@ long FRAN_SPU_freeze(unsigned long ulFreezeMode,SPUFreeze_t * pF)
     }
     // Save State Mode
     memcpy(pF->cSPUPort,regArea,0x200);
-    
+
     // some xa
-    if(xapGlobal && XAPlay!=XAFeed) {                    
-      pF->xaS=*xapGlobal;     
+    if(xapGlobal && XAPlay!=XAFeed) {
+      pF->xaS=*xapGlobal;
     }
     else {
       memset(&pF->xaS,0,sizeof(xa_decode_t));           // or clean xa
     }
-   
+
     pFO=(SPUOSSFreeze_t *)(pF+1);                       // store special stuff
     pFO->spuIrq=spuIrq;
-   
+
     if(pSpuIrq) {
       pFO->pSpuIrq  = (unsigned long)pSpuIrq-(unsigned long)spuMemC;
     }
@@ -519,11 +519,11 @@ long FRAN_SPU_freeze(unsigned long ulFreezeMode,SPUFreeze_t * pF)
 
    return 1;
   }
-                                                       
- if(ulFreezeMode!=0) { 
+
+ if(ulFreezeMode!=0) {
    return 0;                         // bad mode? bye
  }
- 
+
   // Load State Mode
   //memcpy(spuMem,pF->cSPURam,0x80000);                   // get ram (done in Misc.c)
   memcpy(regArea,pF->cSPUPort,0x200);
@@ -548,7 +548,7 @@ long FRAN_SPU_freeze(unsigned long ulFreezeMode,SPUFreeze_t * pF)
   FRAN_SPU_writeRegister(H_SPUReverbAddr,regArea[(H_SPUReverbAddr-0xc00)>>1]);
   FRAN_SPU_writeRegister(H_SPUrvolL,regArea[(H_SPUrvolL-0xc00)>>1]);
   FRAN_SPU_writeRegister(H_SPUrvolR,regArea[(H_SPUrvolR-0xc00)>>1]);
- 
+
   FRAN_SPU_writeRegister(H_SPUctrl,(unsigned short)(regArea[(H_SPUctrl-0xc00)>>1]|0x4000));
   FRAN_SPU_writeRegister(H_SPUstat,regArea[(H_SPUstat-0xc00)>>1]);
   FRAN_SPU_writeRegister(H_CDLeft,regArea[(H_CDLeft-0xc00)>>1]);
@@ -569,11 +569,11 @@ long FRAN_SPU_freeze(unsigned long ulFreezeMode,SPUFreeze_t * pF)
 }
 
 void FRAN_SPU_setConfigFile(char *cfgfile) {
-	
+
 }
 
 void FRAN_SPU_About() {
-	
+
 }
 
 long FRAN_SPU_test() {
@@ -585,5 +585,5 @@ void FRAN_SPU_registerCallback(void (*callback)(void)) {
 }
 
 void FRAN_SPU_registerCDDAVolume(void (*CDDAVcallback)(unsigned short,unsigned short)) {
-	
+
 }

@@ -2,17 +2,15 @@
  <app version="2">
    <name>WiiSXRX</name>
    <coder>NiuuS</coder>
-   <version>3.0 Beta</version>
-   <release_date>202209071402</release_date>
+   <version>3.1 Beta</version>
+   <release_date>202210161552</release_date>
    <short_description>PSX Emulator for Wii</short_description>
    <long_description>
 Featuring:
-- PS1 / PS2 controller support through Wiimote adapter.
 - Gamecube controller support.
 - Wii U Pro controller support.
 - Wii U Gamepad controller support through VC injects.
 - Wii Classic Controller and Pro support.
-- 3rd party Wii Classic Controller and Pro support.
 - Classic Controllers support. (NES / SNES)
 
 * WiiSX/CubeSX is a PCSX port. The original team was:

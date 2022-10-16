@@ -10,13 +10,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define RRand(range) (random()%range)  
-#include <string.h> 
-#include <math.h>  
+#define RRand(range) (random()%range)
+#include <string.h>
+#include <math.h>
 
 #define DWORD unsigned long
-#define LOWORD(l)           ((unsigned short)(l)) 
-#define HIWORD(l)           ((unsigned short)(((unsigned long)(l) >> 16) & 0xFFFF)) 
+#define LOWORD(l)           ((unsigned short)(l))
+#define HIWORD(l)           ((unsigned short)(((unsigned long)(l) >> 16) & 0xFFFF))
 
 #define PSE_LT_SPU                  4
 #define PSE_SPU_ERR_SUCCESS         0
@@ -76,8 +76,8 @@ typedef struct
 	int            ReleaseModeExp;
 	unsigned long  ReleaseVal;
 	long           ReleaseTime;
-	long           ReleaseStartTime; 
-	long           ReleaseVol; 
+	long           ReleaseStartTime;
+	long           ReleaseVol;
 	long           lTime;
 	long           lVolume;
 } ADSRInfo;
@@ -106,17 +106,17 @@ typedef struct
 typedef struct
 {
 	int               bNew;                               // start flag
-	
+
 	int               iSBPos;                             // mixing stuff
 	int               spos;
 	int               sinc;
 	int               SB[32];                             // Pete added another 32 dwords in 1.6 ... prevents overflow issues with gaussian/cubic interpolation (thanx xodnizel!), and can be used for even better interpolations, eh? :)
 	int               sval;
-	
+
 	unsigned char *   pStart;                             // start ptr into sound mem
 	unsigned char *   pCurr;                              // current pos in sound mem
 	unsigned char *   pLoop;                              // loop ptr in sound mem
-	
+
 	int               bOn;                                // is channel active (sample playing?)
 	int               bStop;                              // is channel stopped (sample _can_ still be playing, ADSR Release phase)
 	int               iActFreq;                           // current psx pitch
@@ -130,10 +130,10 @@ typedef struct
 	int               s_2;
 	int               bNoise;                             // noise active flag
 	int               bFMod;                              // freq mod (0=off, 1=sound channel, 2=freq channel)
-	int               iOldNoise;                          // old noise val for this channel   
+	int               iOldNoise;                          // old noise val for this channel
 	ADSRInfo          ADSR;                               // active ADSR settings
 	ADSRInfoEx        ADSRX;                              // next ADSR settings (will be moved to active on sample start)
-	
+
 } SPUCHAN;
 
 ///////////////////////////////////////////////////////////
@@ -142,15 +142,15 @@ typedef struct
 {
 	int StartAddr;      // reverb area start addr in samples
 	int CurrAddr;       // reverb area curr addr in samples
-	
+
 	int VolLeft;
 	int VolRight;
 	int iLastRVBLeft;
 	int iLastRVBRight;
 	int iRVBLeft;
 	int iRVBRight;
-	
-	
+
+
 	int FB_SRC_A;       // (offset)
 	int FB_SRC_B;       // (offset)
 	int IIR_ALPHA;      // (coef.)
@@ -189,7 +189,7 @@ typedef struct
 // SPU.C globals
 ///////////////////////////////////////////////////////////
 
-extern unsigned short  regArea[];                        
+extern unsigned short  regArea[];
 extern unsigned short  spuMem[];
 extern unsigned char * spuMemC;
 extern unsigned char * pSpuBuffer;
@@ -211,7 +211,7 @@ extern unsigned short spuCtrl;
 extern unsigned short spuStat;
 extern unsigned short spuIrq;
 extern unsigned long  spuAddr;
-extern int      bEndThread; 
+extern int      bEndThread;
 extern int      bThreadEnded;
 extern int      bSpuInit;
 

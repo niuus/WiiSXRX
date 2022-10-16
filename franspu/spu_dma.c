@@ -19,7 +19,7 @@ void  FRAN_SPU_readDMAMem(unsigned short * pusPSXMem,int iSize)
 		spuAddr=(iSize<<1)-(0x7ffff-spuAddr+1);
 	} else {
 		memcpy(pusPSXMem,&spuMem[spuAddr>>1],iSize<<1);
-		spuAddr+=(iSize<<1);	
+		spuAddr+=(iSize<<1);
 	}
 }
 
@@ -27,7 +27,7 @@ void  FRAN_SPU_readDMAMem(unsigned short * pusPSXMem,int iSize)
 void  FRAN_SPU_writeDMA(unsigned short val)
 {
  	spuMem[spuAddr>>1] = HOST2LE16(val);
- 	spuAddr+=2;              
+ 	spuAddr+=2;
  	if(spuAddr>=0x80000) spuAddr=0;
 }
 
@@ -41,6 +41,6 @@ void  FRAN_SPU_writeDMAMem(unsigned short * pusPSXMem,int iSize)
 		spuAddr=(iSize<<1)-(0x7ffff-spuAddr+1);
   	} else {
   		memcpy(&spuMem[spuAddr>>1],pusPSXMem,iSize<<1);
-  		spuAddr+=(iSize<<1);	
+  		spuAddr+=(iSize<<1);
   	}
 }

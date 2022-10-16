@@ -1,5 +1,5 @@
 README : WiiSX RX / CubeSX RX
-Beta 2.6
+Beta 3.1
 
 LICENSE:
     This software is licensed under the GNU General Public License v2
@@ -96,6 +96,57 @@ CREDITS:
  * www.emulatemii.com and https://code.google.com/archive/p/pcsxgc/downloads
 
 RX CHANGE LOG:
+++ Beta 3.1 - 20221016:
+
+* Updates to CDrom plugin, compatibility raised.
+* CDrom speedup.
+* GTE updates.
+
+Thanks goes to the PCSX / PCSX-df / PCSX-r / PCSX-Revolution / PCSX-ReARMed teams, and xjsxjs197 code adaptations.
+
+3rd party Wii Classic Controller and Pro extended support from RX 2.7 is retained, as well as PS1 / PS2 controller support through the 3rd party Wiimote adapter.
+
+Experimental builds with PSX Multitap support also available. Compatible titles tested are included on a TXT inside the respective .zip
+
+Find a growing list of new playable and tested games on the second post of the official WiiSXRX thread, here:
+https://gbatemp.net/threads/wiisx-rx-a-new-fork.570252/
+
+
+++ Beta 3.0 - 20220912:
+
+Evo branch, lots of updates.
+
+* Slow, progressive merge and update to xjsxjs197's WiiSXRX fork. Code updated until commit a03f618a895fb526bef35808a698dc52e0dbb4e1 (Aug 26, 2022).
+
+* For now, discarded the "Languages" option, which tends to cause some minor random crashes on the UI, with certain actions.
+* When you open a directory with CUE+BIN, only the CUE will be shown. This condition is only true if the CUE and BIN tracks contain the same name, i.e.: "Mortal Kombat Trilogy (USA)"
+* CD-ROM plugin changed from CDR Mooby to CDR ISO (PCSX-df). Highly improved game compatibility, and Swap CD fix for many games.
+* Keeping FranSPU sound plugin (psx4all) over the dfsound plugin (pcsxr), for the moment. This will give different compatibility/results on some titles when compared to the fork, and a tiny speedup.
+* BIOS, MDEC decoder (FMV), R3000 CPU updates and fixes.
+
+Thanks goes to the PCSX / PCSX-df / PCSX-r / PCSX-Revolution / PCSX-ReARMed teams, and xjsxjs197 code adaptations.
+
+3rd party Wii Classic Controller and Pro extended support from RX 2.7 is retained, as well as PS1 / PS2 controller support through the 3rd party Wiimote adapter.
+
+Experimental builds with PSX Multitap support also available. Compatible titles tested are included on a TXT inside the respective .zip
+
+Find a growing list of new playable and tested games on the second post of the official WiiSXRX thread, here:
+https://gbatemp.net/threads/wiisx-rx-a-new-fork.570252/
+
+
+Beta 2.7 - 20220722:
+* Update CDrom
+Last minor update before changing around the compatibility.
+Makes some extra games boot with BIOS without the need to use HLE exclusively.
+(Resident Evil 2 - Dual Shock Ver., Pocket Fighter, etc.)
+* The settings file is now named settingsRX.cfg, so other forks don't overwrite it.
+* You can rename you current settings.cfg or just quickly create a new one inside WiiSXRX.
+* Readme updates
+
+Experimental builds with auto-enabled PS1 Multitap support added.
+Tested compatible games are listed on a TXT inside the zipped file.
+If it is not listed, then it's untested.
+
 Beta 2.6:
 * V-Sync is now activated. (thanks xjsxjs197!)
 * Adjust some button shortcuts for entering the Menu.

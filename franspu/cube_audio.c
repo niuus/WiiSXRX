@@ -22,7 +22,7 @@
 char audioEnabled;
 
 static const u32 freq = 44100;
-extern unsigned int iVolume; 
+extern unsigned int iVolume;
 static AESNDPB* voice = NULL;
 
 #define NUM_BUFFERS 4
@@ -30,6 +30,7 @@ static struct { void* buffer; u32 len; } buffers[NUM_BUFFERS];
 static u32 fill_buffer, play_buffer;
 
 static void aesnd_callback(AESNDPB* voice, u32 state);
+
 
 void SetVolume(void)
 {
@@ -70,11 +71,11 @@ unsigned long SoundGetBytesBuffered(void)
 	unsigned long bytes_buffered = 0, i = fill_buffer;
 	while(1) {
 		bytes_buffered += buffers[i].len;
-		
+
 		if(i == play_buffer) break;
 		i = (i + NUM_BUFFERS - 1) % NUM_BUFFERS;
 	}
-	
+
 	return bytes_buffered;
 }
 
@@ -94,11 +95,11 @@ static void aesnd_callback(AESNDPB* voice, u32 state){
 void SoundFeedStreamData(unsigned char* pSound,long lBytes)
 {
 	if(!audioEnabled) return;
-	
+
 	buffers[fill_buffer].buffer = pSound;
 	buffers[fill_buffer].len = lBytes;
 	fill_buffer = (fill_buffer + 1) % NUM_BUFFERS;
-	
+
 	AESND_SetVoiceStop(voice, false);
 }
 

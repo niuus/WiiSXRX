@@ -218,7 +218,7 @@ void loadSettings(int argc, char *argv[])
 	Config.PsxOut = 1;
 	Config.HLE = 1;
 	Config.Xa = 0;  //XA enabled
-	Config.Cdda = 1; //CDDA disabled
+	Config.Cdda = 0; //CDDA enabled
 	iVolume = volume; //Volume="medium" in PEOPSspu
 	Config.PsxAuto = 1; //Autodetect
 	LoadCdBios = BOOTTHRUBIOS_NO;

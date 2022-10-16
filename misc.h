@@ -14,7 +14,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02111-1307 USA.           *
  ***************************************************************************/
 
 #ifndef __MISC_H__
@@ -31,16 +31,16 @@
 
 typedef struct {
 	unsigned char id[8];
-    u32 text;                   
-    u32 data;                    
+    u32 text;
+    u32 data;
     u32 pc0;
-    u32 gp0;                     
+    u32 gp0;
     u32 t_addr;
     u32 t_size;
-    u32 d_addr;                  
-    u32 d_size;                  
-    u32 b_addr;                  
-    u32 b_size;                  
+    u32 d_addr;
+    u32 d_size;
+    u32 b_addr;
+    u32 b_size;
     u32 s_addr;
     u32 s_size;
     u32 SavedSP;
