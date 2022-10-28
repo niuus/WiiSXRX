@@ -27,7 +27,7 @@ void  FRAN_SPU_readDMAMem(unsigned short * pusPSXMem,int iSize)
 void  FRAN_SPU_writeDMA(unsigned short val)
 {
  	spuMem[spuAddr>>1] = HOST2LE16(val);
- 	spuAddr+=2;
+ 	spuAddr += 2;
  	if(spuAddr>=0x80000) spuAddr=0;
 }
 

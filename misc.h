@@ -20,6 +20,10 @@
 #ifndef __MISC_H__
 #define __MISC_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "psxcommon.h"
 #include "coff.h"
 #include "plugins.h"
@@ -51,6 +55,7 @@ typedef struct {
 } EXE_HEADER;
 
 char CdromId[10];
+char debugInfo[256];
 char CdromLabel[33];
 
 int LoadCdrom();
@@ -65,7 +70,13 @@ int CheckState();
 int SendPcsxInfo();
 int RecvPcsxInfo();
 
+void trim(char *str);
+u16 calcCrc(u8 *d, int len);
+
 extern char *LabelAuthors;
 extern char *LabelGreets;
 
-#endif /* __MISC_H__ */
+#ifdef __cplusplus
+}
+#endif
+#endif

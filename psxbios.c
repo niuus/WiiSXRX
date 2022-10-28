@@ -43,6 +43,7 @@ extern char mcd2Written;
 
 #include "psxbios.h"
 #include "psxhw.h"
+#include "gpu.h"
 
 //We try to emulate bios :) HELP US :P
 
@@ -1322,6 +1323,7 @@ void psxBios_FlushCache() { // 44
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s\n", biosA0n[0x44]);
 #endif
+    psxRegs.ICache_valid = FALSE;
 
 	pc0 = ra;
 }
@@ -1366,7 +1368,7 @@ void psxBios_mem2vram() { // 0x47
 
 void psxBios_SendGPU() { // 0x48
 	GPU_writeStatus(a0);
-	//gpuSyncPluginSR();
+	gpuSyncPluginSR();
 	pc0 = ra;
 }
 

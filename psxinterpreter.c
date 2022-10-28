@@ -267,7 +267,9 @@ void psxDelayTest(int reg, u32 bpc) {
 	u32 *code;
 	u32 tmp;
 
-	code = (u32 *)PSXM(bpc);
+	// Don't execute yet - just peek
+	code = Read_ICache(bpc, TRUE);
+
 	tmp = ((code == NULL) ? 0 : SWAP32(*code));
 	branch = 1;
 
@@ -291,7 +293,7 @@ __inline u32 psxBranchNoDelay(void) {
 	u32 *code;
 	u32 temp;
 
-	code = (u32 *)PSXM(psxRegs.pc);
+	code = Read_ICache(psxRegs.pc, TRUE);
 	psxRegs.code = ((code == NULL) ? 0 : SWAP32(*code));
 	switch (_Op_) {
 		case 0x00: // SPECIAL
@@ -359,7 +361,7 @@ __inline int psxDelayBranchExec(u32 tar) {
 
 	branch = 0;
 	psxRegs.pc = tar;
-	psxRegs.cycle++;
+	psxRegs.cycle += BIAS;
 	psxBranchTest();
 	return 1;
 }
@@ -385,7 +387,7 @@ __inline int psxDelayBranchTest(u32 tar1) {
 		return psxDelayBranchExec(tar2);
 	}
 	debugI();
-	psxRegs.cycle++;
+	psxRegs.cycle += BIAS;
 
 	/*
 	 * Got a branch at tar1:
@@ -398,7 +400,7 @@ __inline int psxDelayBranchTest(u32 tar1) {
 		return psxDelayBranchExec(tmp1);
 	}
 	debugI();
-	psxRegs.cycle++;
+	psxRegs.cycle += BIAS;
 
 	/*
 	 * Got a branch at tar2:
@@ -416,16 +418,19 @@ __inline void doBranch(u32 tar) {
 	branch2 = branch = 1;
 	branchPC = tar;
 
-	// check for branch in delay slot
+	// notaz: check for branch in delay slot
 	if (psxDelayBranchTest(tar))
 		return;
 
-	code = (u32 *)PSXM(psxRegs.pc);
+	// branch delay slot
+	code = Read_ICache(psxRegs.pc, TRUE);
+
 	psxRegs.code = ((code == NULL) ? 0 : SWAP32(*code));
 
 	debugI();
 
-	psxRegs.pc+= 4; psxRegs.cycle++;
+	psxRegs.pc += 4;
+	psxRegs.cycle += BIAS;
 
 	// check for load delay
 	tmp = psxRegs.code >> 26;
@@ -501,15 +506,29 @@ void psxSLTU() 	{ if (!_Rd_) return; _rRd_ = _u32(_rRs_) < _u32(_rRt_); }	// Rd 
 * Format:  OP rs, rt                                     *
 *********************************************************/
 void psxDIV() {
-	if (_i32(_rRt_) != 0) {
-		_i32(_rLo_) = _i32(_rRs_) / _i32(_rRt_);
-		_i32(_rHi_) = _i32(_rRs_) % _i32(_rRt_);
-	}
-	else {
-		_i32(_rLo_) = _i32(_rRs_) >= 0 ? 0xffffffff : 1;
-		_i32(_rHi_) = _i32(_rRs_);
-	}
+    if (!_i32(_rRt_)) {
+        _i32(_rHi_) = _i32(_rRs_);
+        if (_i32(_rRs_) & 0x80000000) {
+            _i32(_rLo_) = 1;
+        } else {
+            _i32(_rLo_) = 0xFFFFFFFF;
+        }
+/*
+ * Notaz said that this was "not needed" for ARM platforms and could slow it down so let's disable for ARM. 
+ * This fixes a crash issue that can happen when running Amidog's CPU test.
+ * (It still stays stuck to a black screen but at least it doesn't crash anymore)
+ */
+#if !defined(__arm__) && !defined(__aarch64__)
+    } else if (_i32(_rRs_) == 0x80000000 && _i32(_rRt_) == 0xFFFFFFFF) {
+        _i32(_rLo_) = 0x80000000;
+        _i32(_rHi_) = 0;
+#endif
+    } else {
+        _i32(_rLo_) = _i32(_rRs_) / _i32(_rRt_);
+        _i32(_rHi_) = _i32(_rRs_) % _i32(_rRt_);
+    }
 }
+
 
 void psxDIVU() {
 	if (_rRt_ != 0) {
@@ -920,6 +939,7 @@ static int intInit() {
 }
 
 static void intReset() {
+	psxRegs.ICache_valid = FALSE;
 }
 
 static void intExecute() {
@@ -950,12 +970,14 @@ static void intShutdown() {
 
 // interpreter execution
 inline void execI() {
-	u32 *code = (u32 *)PSXM(psxRegs.pc);
+	u32 *code = Read_ICache(psxRegs.pc, FALSE);
 	psxRegs.code = ((code == NULL) ? 0 : SWAP32(*code));
 
 	debugI();
 
-	psxRegs.pc+= 4; psxRegs.cycle++;
+	psxRegs.pc += 4;
+	psxRegs.cycle += BIAS;
+
 	psxBSC[psxRegs.code >> 26]();
 
 }

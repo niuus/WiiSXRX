@@ -31,7 +31,6 @@ static u32 fill_buffer, play_buffer;
 
 static void aesnd_callback(AESNDPB* voice, u32 state);
 
-
 void SetVolume(void)
 {
 	// iVolume goes 1 (loudest) - 4 (lowest); volume goes 255-64

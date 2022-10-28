@@ -180,14 +180,14 @@ int msf2SectS[] = {
 // 1x = 75 sectors per second
 // PSXCLK = 1 sec in the ps
 // so (PSXCLK / 75) = cdr read time (linuzappz)
-#define cdReadTime         (PSXCLK / 75) / 2  // OK
-#define playAdpcmTime      (PSXCLK * 930 / 4 / 44100) / 2  // OK
-#define WaitTime1st        (0x800)
+#define cdReadTime         (PSXCLK / 75 / 2)  // OK
+#define WaitTime1st        (0x800 >> 1)
 #define WaitTime1stInit    (0x13cce >> 1)
-#define WaitTime1stRead    (PSXCLK / 75)   // OK
-#define WaitTime2ndGetID   (0x4a00)  // OK
+#define WaitTime1stRead    cdReadTime   // OK
+#define WaitTime2ndGetID   (0x4a00 >> 1)  // OK
 #define WaitTime2ndPause   (cdReadTime * 3) // OK
 
+#define SeekTime           50000
 
 enum drive_state {
 	DRIVESTATE_STANDBY = 0,
@@ -528,28 +528,7 @@ static void AddIrqQueue(unsigned short irq, unsigned long ecycle) {
 	CDR_INT(ecycle);
 }
 
-static void cdrPlayDataEnd()
-{
-    #ifdef DISP_DEBUG
-	sprintf(txtbuffer, "cdrPlayDataEnd cdr.Mode & MODE_AUTOPAUSE %d \n", cdr.Mode & MODE_AUTOPAUSE);
-    DEBUG_print(txtbuffer, DBG_CDR1);
-    #endif // DISP_DEBUG
-	//if (cdr.Mode & MODE_AUTOPAUSE)
-    {
-		cdr.Stat = DataEnd;
-        SetResultSize(1);
-		cdr.StatP |= STATUS_ROTATING;
-		cdr.StatP &= ~STATUS_SEEK;
-		cdr.Result[0] = cdr.StatP;
-		cdr.Seeked = SEEK_DONE;
-		psxHu32ref(0x1070) |= SWAP32((u32)0x4);
-		psxRegs.interrupt|= 0x80000000;
-
-		StopCdda();
-	}
-}
-
-static void cdrPlayInterrupt_Autopause()
+static void cdrPlayInterrupt_Autopause(s16* cddaBuf)
 {
 	u32 abs_lev_max = 0;
 	bool abs_lev_chselect;
@@ -573,7 +552,7 @@ static void cdrPlayInterrupt_Autopause()
         #ifdef SHOW_DEBUG
         //DEBUG_print("Autopause CDR_readCDDA ===", DBG_CDR1);
         #endif // DISP_DEBUG
-		//CDR_readCDDA(cdr.SetSectorPlay[0], cdr.SetSectorPlay[1], cdr.SetSectorPlay[2], (u8 *)read_buf);
+		//CDR_readCDDA(cdr.SetSectorPlay[0], cdr.SetSectorPlay[1], cdr.SetSectorPlay[2], (u8 *)cddaBuf);
 		cdr.Result[0] = cdr.StatP;
 		cdr.Result[1] = cdr.subq.Track;
 		cdr.Result[2] = cdr.subq.Index;
@@ -583,7 +562,7 @@ static void cdrPlayInterrupt_Autopause()
 		/* 8 is a hack. For accuracy, it should be 588. */
 		for (i = 0; i < 8; i++)
 		{
-			abs_lev_max = MAX_VALUE(abs_lev_max, abs(read_buf[i * 2 + abs_lev_chselect]));
+			abs_lev_max = MAX_VALUE(abs_lev_max, abs(cddaBuf[i * 2 + abs_lev_chselect]));
 		}
 		abs_lev_max = MIN_VALUE(abs_lev_max, 32767);
 		abs_lev_max |= abs_lev_chselect << 15;
@@ -612,17 +591,23 @@ static void cdrPlayInterrupt_Autopause()
 }
 
 // called by playthread
-static void cdrPlayCddaData(int timePlus, int isEnd)
+static void cdrPlayCddaData(int timePlus, int isEnd, s16* cddaBuf)
 {
 	if (!cdr.Play) return;
 
-	if (isEnd == 1) {
+	if (*(u32 *)cdr.SetSectorPlay >= *(u32 *)cdr.SetSectorEnd) {
+        #ifdef SHOW_DEBUG
+        sprintf(txtbuffer, "cdrPlayCddaData End");
+        DEBUG_print(txtbuffer, DBG_CDR4);
+        #endif // DISP_DEBUG
 		StopCdda();
 		cdr.TrackChanged = TRUE;
 	}
 
 	if (!cdr.Irq && !cdr.Stat && (cdr.Mode & (MODE_AUTOPAUSE | MODE_REPORT)))
-		cdrPlayInterrupt_Autopause();
+		cdrPlayInterrupt_Autopause(cddaBuf);
+
+    if (!cdr.Play) return;
 
 	cdr.SetSectorPlay[2] += timePlus;
 	if (cdr.SetSectorPlay[2] >= 75) {
@@ -673,7 +658,12 @@ void cdrPlayInterrupt()
 	CDR_LOG( "CDDA - %d:%d:%d\n",
 		cdr.SetSectorPlay[0], cdr.SetSectorPlay[1], cdr.SetSectorPlay[2] );
 
-	if (memcmp(cdr.SetSectorPlay, cdr.SetSectorEnd, 3) == 0) {
+	//if (memcmp(cdr.SetSectorPlay, cdr.SetSectorEnd, 3) == 0) {
+	if (*(u32 *)cdr.SetSectorPlay >= *(u32 *)cdr.SetSectorEnd) {
+        #ifdef SHOW_DEBUG
+        sprintf(txtbuffer, "cdrom check playCDDA End");
+        DEBUG_print(txtbuffer, DBG_CDR4);
+        #endif // DISP_DEBUG
 		StopCdda();
 		cdr.TrackChanged = TRUE;
 	}
@@ -682,9 +672,9 @@ void cdrPlayInterrupt()
 	//}
 
 	if (!cdr.Irq && !cdr.Stat && (cdr.Mode & (MODE_AUTOPAUSE|MODE_REPORT)))
-		cdrPlayInterrupt_Autopause();
+		cdrPlayInterrupt_Autopause(read_buf);
 
-	//if (!cdr.Play) return;
+	if (!cdr.Play) return;
 	//#ifdef DISP_DEBUG
     //PRINT_LOG2("Bef CDR_readCDDA==Muted Mode %d %d", cdr.Muted, cdr.Mode);
     //#endif // DISP_DEBUG
@@ -722,7 +712,8 @@ void cdrPlayInterrupt()
 	}
 	else
 	{
-		CDRMISC_INT(cdReadTime);
+		//CDRMISC_INT(cdReadTime);
+		CDRMISC_INT((cdr.Mode & MODE_SPEED) ? (cdReadTime / 2) : cdReadTime);
 	}
 
 	// update for CdlGetlocP/autopause
@@ -833,7 +824,8 @@ void cdrInterrupt() {
 			cdr.FastForward = 0;
 
 			if (cdr.SetlocPending) {
-				memcpy(cdr.SetSectorPlay, cdr.SetSector, 4);
+				//memcpy(cdr.SetSectorPlay, cdr.SetSector, 4);
+				*((u32*)cdr.SetSectorPlay) = *((u32*)cdr.SetSector);
 				cdr.SetlocPending = 0;
 				cdr.m_locationChanged = TRUE;
 			}
@@ -1028,12 +1020,14 @@ void cdrInterrupt() {
 
 		case CdlGetlocL:
 			SetResultSize(8);
-			memcpy(cdr.Result, cdr.Transfer, 8);
+			//memcpy(cdr.Result, cdr.Transfer, 8);
+			*(long long int *)(&cdr.Result) = *(long long int *)(&cdr.Transfer);
 			break;
 
 		case CdlGetlocP:
 			SetResultSize(8);
-			memcpy(&cdr.Result, &cdr.subq, 8);
+			//memcpy(&cdr.Result, &cdr.subq, 8);
+			*(long long int *)(&cdr.Result) = *(long long int *)(&cdr.subq);
 			if (!cdr.Play && !cdr.Reading)
 				cdr.Result[1] = 0; // HACK?
 			break;
@@ -1096,7 +1090,12 @@ void cdrInterrupt() {
 			Rockman X5 = 0.5-4x
 			- fix capcom logo
 			*/
-			CDRMISC_INT(cdr.Seeked == SEEK_DONE ? 0x800 : cdReadTime * 4);
+			#ifdef SHOW_DEBUG
+			sprintf(txtbuffer, "%s SeekedType %d \n", CmdName[Irq], cdr.Seeked);
+            DEBUG_print(txtbuffer, DBG_PROFILE_IDLE);
+            writeLogFile(txtbuffer);
+            #endif // DISP_DEBUG
+			CDRMISC_INT(cdr.Seeked == SEEK_DONE ? 0x800 : SeekTime);
 			cdr.Seeked = SEEK_PENDING;
 			start_rotating = 1;
 			break;
@@ -1195,16 +1194,19 @@ void cdrInterrupt() {
 				* It seems that 3386880 * 5 is too much for Driver's titlescreen and it starts skipping.
 				* However, 1000000 is not enough for Worms Pinball to reliably boot.
 				*/
-				if(seekTime > 3386880 * 2) seekTime = 3386880 * 2;
-				memcpy(cdr.SetSectorPlay, cdr.SetSector, 4);
+				//if(seekTime > 3386880 * 2) seekTime = 3386880 * 2;
+				if (seekTime > 500000) seekTime = 500000;
+				//seekTime = SeekTime;
+				//memcpy(cdr.SetSectorPlay, cdr.SetSector, 4);
+				*((u32*)cdr.SetSectorPlay) = *((u32*)cdr.SetSector);
 				cdr.SetlocPending = 0;
 				cdr.m_locationChanged = TRUE;
 			}
 			Find_CurTrack(cdr.SetSectorPlay);
 
         	#ifdef SHOW_DEBUG
-            sprintf(txtbuffer, "READ_ACK Mode %d CurTrack %d \n", cdr.Mode & MODE_CDDA, cdr.CurTrack);
-            DEBUG_print(txtbuffer, DBG_PROFILE_IDLE);
+            sprintf(txtbuffer, "READ_ACK Mode %d Track %d seekTime %ld\n", cdr.Mode & MODE_CDDA, cdr.CurTrack, seekTime);
+            DEBUG_print(txtbuffer, DBG_PROFILE_GFX);
             writeLogFile(txtbuffer);
             #endif // DISP_DEBUG
 			if ((cdr.Mode & MODE_CDDA) && cdr.CurTrack > 1)
@@ -1252,7 +1254,7 @@ void cdrInterrupt() {
 			*/
 			cdr.StatP |= STATUS_READ;
 			cdr.StatP &= ~STATUS_SEEK;
-			CDREAD_INT(((cdr.Mode & 0x80) ? (WaitTime1stRead) : WaitTime1stRead * 2) + seekTime);
+			CDREAD_INT(((cdr.Mode & 0x80) ? (WaitTime1stRead) : WaitTime1stRead * 2) + (seekTime >> 1));
 
 			cdr.Result[0] = cdr.StatP;
 			start_rotating = 1;
@@ -1589,8 +1591,22 @@ void cdrWrite1(unsigned char rt) {
 	switch (cdr.Cmd) {
 	case CdlReadN:
 	case CdlReadS:
+	    StopCdda();
+		StopReading();
+		break;
+
 	case CdlPause:
 		StopCdda();
+		if (cdr.StatP & STATUS_SEEK)
+        {
+            // call CompleteSeek
+            #ifdef SHOW_DEBUG
+            sprintf(txtbuffer, "CDROM Pause command while seeking\n");
+            DEBUG_print(txtbuffer, DBG_CORE3);
+            writeLogFile(txtbuffer);
+            #endif // DISP_DEBUG
+            CDRMISC_INT((cdr.Mode & MODE_SPEED) ? cdReadTime / 2 : cdReadTime);
+        }
 		StopReading();
 		break;
 
@@ -1819,8 +1835,8 @@ void cdrReset() {
 	cdr.AttenuatorRightToRight = 0x80;
 	getCdInfo();
 
-	p_cdrPlayDataEnd = cdrPlayDataEnd;
 	p_cdrPlayCddaData = cdrPlayCddaData;
+	p_cdrAttenuate = cdrAttenuate;
 }
 
 int cdrFreeze(gzFile f, int Mode) {

@@ -1,7 +1,7 @@
 /**
  * WiiSX - wiiSXconfig.h
  * Copyright (C) 2007, 2008, 2009, 2010 sepp256
- * 
+ *
  * External declaration and enumeration of config variables
  *
  * WiiSX homepage: http://www.emulatemii.com

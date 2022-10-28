@@ -52,5 +52,6 @@ void gteRTPT();
 void gteGPF();
 void gteGPL();
 void gteNCCT();
+u32 DIVIDE_INT(u32 numerator, u32 denominator);
 
 #endif /* __GTE_H__ */

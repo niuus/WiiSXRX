@@ -73,7 +73,10 @@ void psxShutdown() {
 	psxMemShutdown();
 	psxBiosShutdown();
 
-	psxCpu->Shutdown();
+    if (psxCpu && psxCpu->Shutdown)
+    {
+        psxCpu->Shutdown();
+    }
 }
 
 void psxException(u32 code, u32 bd) {
@@ -151,6 +154,7 @@ void psxException(u32 code, u32 bd) {
 	// upd xjsxjs197 end
 }
 
+extern u32 psxNextCounter, psxNextsCounter;
 void psxBranchTest() {
 
 	if ((psxRegs.cycle - psxNextsCounter) >= psxNextCounter)
@@ -228,6 +232,12 @@ void psxBranchTest() {
 				cdrLidSeekInterrupt();
 			}
 		}
+		if (psxRegs.interrupt & (1 << PSXINT_SPU_UPDATE)) { // scheduled spu update
+			if ((psxRegs.cycle - psxRegs.intCycle[PSXINT_SPU_UPDATE].sCycle) >= psxRegs.intCycle[PSXINT_SPU_UPDATE].cycle) {
+				psxRegs.interrupt &= ~(1 << PSXINT_SPU_UPDATE);
+				spuUpdate();
+			}
+		}
 
 		//if (psxRegs.interrupt & 0x80000000) {
 		//	psxRegs.interrupt&=~0x80000000;
@@ -244,11 +254,18 @@ inline void psxTestHWInts() {
 	if (*((u32*)psxHAddr(0x1070)) & *((u32*)psxHAddr(0x1074))) {
     // upd xjsxjs197 end
 		if ((psxRegs.CP0.n.Status & 0x401) == 0x401) {
+            u32 opcode;
+
+			// Crash Bandicoot 2: Don't run exceptions when GTE in pipeline
+			opcode = SWAP32(*Read_ICache(psxRegs.pc, TRUE));
+			if( ((opcode >> 24) & 0xfe) != 0x4a ) {
+			    psxException(0x400, 0);
+			}
 #ifdef PSXCPU_LOG
 			PSXCPU_LOG("Interrupt: %x %x\n", psxHu32(0x1070), psxHu32(0x1074));
 #endif
 //			SysPrintf("Interrupt (%x): %x %x\n", psxRegs.cycle, psxHu32(0x1070), psxHu32(0x1074));
-			psxException(0x400, 0);
+			//psxException(0x400, 0);
 		}
 	}
 }

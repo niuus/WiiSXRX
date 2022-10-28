@@ -42,6 +42,16 @@ void MixXA(void)
 			(*ssumr++)+=(((short)((XALastVal>>16)&0xffff)) * rightvol)/32768;
 		}
 	}
+    // add xjsxjs197 start
+    /*for(i = 0; i < NSSIZE && CDDAPlay != CDDAFeed && (CDDAPlay != CDDAEnd - 1 || CDDAFeed != CDDAStart); i++)
+    {
+        v = *CDDAPlay++;
+        if (CDDAPlay == CDDAEnd) CDDAPlay = CDDAStart;
+
+        (*ssuml++) += (((int)(short)(v & 0xffff)) * leftvol) >> 15;
+        (*ssumr++) += (((int)(short)((v >> 16) & 0xffff)) * rightvol) >> 15;
+    }*/
+	// add xjsxjs197 end
 }
 
 // FEED XA
@@ -121,4 +131,43 @@ void FeedXA(xa_decode_t *xap)
 			spos += sinc;
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////
+// FEED CDDA
+////////////////////////////////////////////////////////////////////////
+int FeedCDDA(unsigned char *pcm, int nBytes)
+{
+    int space;
+    space = ((CDDAPlay - CDDAFeed -1) << 2) & (CDDA_BUFFER_SIZE - 1);
+    if (space < nBytes)
+    {
+        return 0x7761; // rearmed_wait
+    }
+
+    while (nBytes > 0)
+    {
+        if (CDDAFeed == CDDAEnd)
+        {
+            CDDAFeed = CDDAStart;
+        }
+
+        space = ((CDDAPlay - CDDAFeed - 1) << 2) & (CDDA_BUFFER_SIZE - 1);
+        if (CDDAFeed + (space >> 2) > CDDAEnd)
+        {
+            space = (CDDAEnd - CDDAFeed) << 2;
+        }
+
+        if (space > nBytes)
+        {
+            space = nBytes;
+        }
+
+        memcpy(CDDAFeed, pcm, space);
+        CDDAFeed += space >> 2;
+        nBytes -= space;
+        pcm += space;
+    }
+
+    return 0x676f; // rearmed_go
 }

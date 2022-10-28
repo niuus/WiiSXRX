@@ -29,10 +29,14 @@
 #define FONT_LO   (MCD2_HI)
 #define FONT_HI   (FONT_LO + FONT_SIZE)
 
-// We want 256KB for fontFont
-#define FONTWORK_SIZE (128*KB)
+// We want 20MB for fontFont
+#define FONTWORK_SIZE (20*MB)
 #define FONTWORK_LO   (FONT_HI)
 #define FONTWORK_HI   (FONTWORK_LO + FONTWORK_SIZE)
 
+// We want 20MB for the recompiled blocks
+#define RECMEM2_SIZE (20*MB)
+#define RECMEM2_LO   (FONTWORK_HI)
+#define RECMEM2_HI   (RECMEM2_LO + RECMEM2_SIZE)
 
 #endif

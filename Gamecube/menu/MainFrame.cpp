@@ -101,8 +101,8 @@ MainFrame::MainFrame()
 	add(inputStatusBar);
 
 	for (int i = 0; i < NUM_MAIN_BUTTONS; i++)
-		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString, 
-										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y, 
+		FRAME_BUTTONS[i].button = new menu::Button(FRAME_BUTTONS[i].buttonStyle, &FRAME_BUTTONS[i].buttonString,
+										FRAME_BUTTONS[i].x, FRAME_BUTTONS[i].y,
 										FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].height);
 
 	for (int i = 0; i < NUM_MAIN_BUTTONS; i++)
@@ -115,8 +115,8 @@ MainFrame::MainFrame()
 		if (FRAME_BUTTONS[i].clickedFunc) FRAME_BUTTONS[i].button->setClicked(FRAME_BUTTONS[i].clickedFunc);
 		if (FRAME_BUTTONS[i].returnFunc) FRAME_BUTTONS[i].button->setReturn(FRAME_BUTTONS[i].returnFunc);
 		add(FRAME_BUTTONS[i].button);
-		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x, 
-												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y, 
+		menu::Cursor::getInstance().addComponent(this, FRAME_BUTTONS[i].button, FRAME_BUTTONS[i].x,
+												FRAME_BUTTONS[i].x+FRAME_BUTTONS[i].width, FRAME_BUTTONS[i].y,
 												FRAME_BUTTONS[i].y+FRAME_BUTTONS[i].height);
 	}
 	setDefaultFocus(FRAME_BUTTONS[0].button);
@@ -164,9 +164,9 @@ void Func_Credits()
 {
 	char CreditsInfo[512] = "";
 #ifdef HW_RVL
-	sprintf(CreditsInfo,"WiiSX RX Beta 3.1\n");
+	sprintf(CreditsInfo,"WiiSX RX Beta 3.2-FS\n");
 #else
-	sprintf(CreditsInfo,"CubeSX RX Beta 3.1\n");
+	sprintf(CreditsInfo,"CubeSX RX Beta 3.2-FS\n");
 #endif
 	strcat(CreditsInfo,"www.github.com/niuus/WiiSXRX\n");
 	strcat(CreditsInfo,"WiiSX RX & logo: NiuuS\n");
@@ -175,7 +175,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"emu_kidid - general coding\n");
 	strcat(CreditsInfo,"sepp256 - graphics & menu\n");
 	strcat(CreditsInfo,"tehpola - audio\n");
-	strcat(CreditsInfo,"PCSX/-df/-r/ReARMed teams\n");
+	strcat(CreditsInfo,"PCSX/-df/-r/-Revolution/ReARMed\n");
 	strcat(CreditsInfo,"\n");
 
 	char wiiDetails[30];
@@ -196,7 +196,7 @@ void Func_Credits()
 	strcat(CreditsInfo,"FIX94 - Wii U gamepad support\n");
 	strcat(CreditsInfo,"matguitarist - USB 2.0 support\n");
 	strcat(CreditsInfo,"Daxtsu - libwupc support\n");
-	strcat(CreditsInfo,"Mystro256 (WiiSXR) xjsxjs197 (_2022)\n");
+	strcat(CreditsInfo,"Mystro256 (WiiSXR) xjsxjs197 (WiiStation)\n");
 	strcat(CreditsInfo,"\n");
 	strcat(CreditsInfo, wiiDetails);
 #endif
@@ -212,7 +212,10 @@ void Func_ExitToLoader()
 	if (menu::MessageBox::getInstance().askMessage("Are you sure you want to exit to loader?"))
     {
         shutdown = 2;
-        SysClose();
+        if (hasLoadedISO)
+        {
+            SysClose();
+        }
     }
 }
 
@@ -225,7 +228,7 @@ extern "C" {
 extern int SaveMcd(int mcd, fileBrowser_file *savepath);
 void pauseAudio(void);  void pauseInput(void);
 void resumeAudio(void); void resumeInput(void);
-void go(void); 
+void go(void);
 }
 
 //void control_info_init();
@@ -243,7 +246,7 @@ void Func_PlayGame()
 		menu::MessageBox::getInstance().setMessage("Please load a CD first");
 		return;
 	}
-	
+
 	//Wait until 'A' button released before play/resume game
 	menu::Cursor::getInstance().setFreezeAction(true);
 	menu::Focus::getInstance().setFreezeAction(true);
@@ -322,7 +325,7 @@ void Func_PlayGame()
       result += SaveMcd(1,saveFile_dir);
       result += SaveMcd(2,saveFile_dir);
       saveFile_deinit(saveFile_dir);
-    	if (result>=amountSaves) {  //saved all of them ok	
+    	if (result>=amountSaves) {  //saved all of them ok
     		switch (nativeSaveDevice)
     		{
     			case NATIVESAVEDEVICE_SD:
@@ -343,7 +346,7 @@ void Func_PlayGame()
   	  else		{
   	    menu::MessageBox::getInstance().setMessage("Failed to save game"); //one or more failed to save
 	    }
-      
+
     }
   }
 #ifdef HW_RVL

@@ -296,4 +296,3 @@ unsigned short FRAN_SPU_readRegister(unsigned long reg)
 
  	return regArea[(r-0xc00)>>1];
 }
-

@@ -48,6 +48,22 @@ extern int iFMod[NSSIZE];
 
 extern int bSPUIsOpen;
 
+// add xjsxjs197 start
+enum ADSR_State {
+    ADSR_ATTACK = 0,
+    ADSR_DECAY = 1,
+    ADSR_SUSTAIN = 2,
+    ADSR_RELEASE = 3,
+};
+
+unsigned int  * CDDAFeed;
+unsigned int  * CDDAPlay;
+unsigned int  * CDDAStart;
+unsigned int  * CDDAEnd;
+
+#define CDDA_BUFFER_SIZE (16384 * sizeof(uint32_t)) // must be power of 2
+#define XA_BUFFER_SIZE (44100 << 1)
+// add xjsxjs197 end
 
 // byteswappings
 
@@ -367,5 +383,8 @@ extern int MixADSR(SPUCHAN *ch);
 extern unsigned long SoundGetBytesBuffered(void);
 extern void FeedXA(xa_decode_t *xap);
 extern void MixXA(void);
+// add xjsxjs197 start
+extern int  FeedCDDA(unsigned char *pcm, int nBytes);
+// add xjsxjs197 end
 
 #endif
