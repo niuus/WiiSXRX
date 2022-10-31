@@ -1134,7 +1134,6 @@ static void recNULL() {
 * Format:  table[something....]                          *
 *********************************************************/
 
-//REC_SYS(SPECIAL);
 static void recSPECIAL() {
     #ifdef SHOW_DEBUG
     printFunctionLog();
@@ -1197,11 +1196,13 @@ static void recADDIU()  {
 	}
 }
 
+//REC_FUNC(ADDIU);
 static void recADDI()  {
 // Rt = Rs + Im
 	recADDIU();
 }
 
+//REC_FUNC(SLTI);
 //CR0:	SIGN      | POSITIVE | ZERO  | SOVERFLOW | SOVERFLOW | OVERFLOW | CARRY
 static void recSLTI() {
 // Rt = Rs < Im (signed)
@@ -1226,6 +1227,7 @@ static void recSLTI() {
 	}
 }
 
+//REC_FUNC(SLTIU);
 static void recSLTIU() {
 // Rt = Rs < Im (unsigned)
 	#ifdef SHOW_DEBUG
@@ -1245,6 +1247,7 @@ static void recSLTIU() {
 	}
 }
 
+//REC_FUNC(ANDI);
 static void recANDI() {
 // Rt = Rs And Im
     if (!_Rt_) return;
@@ -1256,6 +1259,7 @@ static void recANDI() {
     }
 }
 
+//REC_FUNC(ORI);
 static void recORI() {
 // Rt = Rs Or Im
 	#ifdef SHOW_DEBUG
@@ -1274,6 +1278,7 @@ static void recORI() {
 	}
 }
 
+//REC_FUNC(XORI);
 static void recXORI() {
 // Rt = Rs Xor Im
     #ifdef SHOW_DEBUG
@@ -1316,7 +1321,7 @@ static void recLUI()  {
 * Register arithmetic                                    *
 * Format:  OP rd, rs, rt                                 *
 *********************************************************/
-
+//REC_FUNC(ADDU);
 static void recADDU() {
 // Rd = Rs + Rt
 	#ifdef SHOW_DEBUG
@@ -2228,12 +2233,24 @@ static void recLHU() {
 	}
 }
 
+//REC_FUNC(LW);
+void psxLW();
 static void recLW() {
 // Rt = mem[Rs + Im] (unsigned)
 
 	#ifdef SHOW_DEBUG
     printFunctionLog();
     #endif // SHOW_DEBUG
+	if (Config.pR3000Fix == 2)
+    	{
+        	iFlushRegs(0);
+        	LIW(PutHWRegSpecial(ARG1), (u32)psxRegs.code);
+        	STW(GetHWRegSpecial(ARG1), OFFSET(&psxRegs, &psxRegs.code), GetHWRegSpecial(PSXREGS));
+        	LIW(PutHWRegSpecial(PSXPC), (u32)pc);
+        	FlushAllHWReg();
+        	CALLFunc((u32)psxLW);
+        	return;
+    	}
 	if (IsConst(_Rs_)) {
 		u32 addr = iRegs[_Rs_].k + _Imm_;
 		int t = addr >> 16;
@@ -2514,11 +2531,23 @@ static void recSRL() {
     }
 }
 
+void psxSRA();
 static void recSRA() {
 // Rd = Rt >> Sa
     #ifdef SHOW_DEBUG
     printFunctionLog();
     #endif // SHOW_DEBUG
+    if (Config.pR3000Fix == 3)
+    {
+        iFlushRegs(0);
+        LIW(PutHWRegSpecial(ARG1), (u32)psxRegs.code);
+        STW(GetHWRegSpecial(ARG1), OFFSET(&psxRegs, &psxRegs.code), GetHWRegSpecial(PSXREGS));
+        LIW(PutHWRegSpecial(PSXPC), (u32)pc);
+        FlushAllHWReg();
+        CALLFunc((u32)psxSRA);
+        return;
+    }
+
     if (!_Rd_) return;
 
     if (IsConst(_Rt_)) {
@@ -2803,6 +2832,7 @@ static void recJAL() {
 	iJump(_Target_ * 4 + (pc & 0xf0000000));
 }
 
+void psxJR();
 static void recJR() {
 // jr Rs
 
@@ -2813,8 +2843,22 @@ static void recJR() {
 		iJump(iRegs[_Rs_].k);
 		//LIW(PutHWRegSpecial(TARGET), iRegs[_Rs_].k);
 	} else {
-		MR(PutHWRegSpecial(TARGET), GetHWReg32(_Rs_));
-		SetBranch();
+		if (Config.pR3000Fix == 1)
+        {
+            iFlushRegs(0);
+            LIW(PutHWRegSpecial(ARG1), (u32)psxRegs.code);
+            STW(GetHWRegSpecial(ARG1), OFFSET(&psxRegs, &psxRegs.code), GetHWRegSpecial(PSXREGS));
+            LIW(PutHWRegSpecial(PSXPC), (u32)pc);
+            FlushAllHWReg();
+            CALLFunc((u32)psxJR);
+            branch = 2;
+            iRet();
+        }
+        else
+        {
+            MR(PutHWRegSpecial(TARGET), GetHWReg32(_Rs_));
+		    SetBranch();
+        }
 	}
 }
 
