@@ -625,10 +625,12 @@ void fileBrowserFrame_LoadFile(int i)
 			if (Config.RCntFix)
             		{
                 		sprintf(buffer, "RCnt2 auto fixed\n");
+				strcat(RomInfo,buffer);
             		}
             		if (dwEmuFixes)
             		{
                 		sprintf(buffer, "GPU 'Fake Busy States' hacked\n");
+				strcat(RomInfo,buffer);
             		}
 			if (dwActFixes)
 			{
@@ -640,6 +642,7 @@ void fileBrowserFrame_LoadFile(int i)
 			if (Config.pR3000Fix)
             		{
                 		sprintf(buffer, "pR3000 auto fixed\n");
+				strcat(RomInfo,buffer);
 			}
 			// add xjsxjs197 end
 			strcat(RomInfo,buffer);
