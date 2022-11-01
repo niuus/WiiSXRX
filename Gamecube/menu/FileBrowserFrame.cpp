@@ -480,6 +480,8 @@ int ChkString(char * str1, char * str2, int len)
 
 // hack for emulating "gpu busy" in some games
 extern unsigned long dwEmuFixes;
+// For special game correction
+extern unsigned long dwActFixes;
 
 static void CheckGameAutoFix(void){
 	Config.RCntFix = 0;
@@ -519,9 +521,7 @@ static void CheckGameAutoFix(void){
 	|| ChkString(CdromId, "SLPS02780", strlen("SLPS02780"))){ // PARASITE EVE II [SQUARESOFT MILLENNIUM COLLECTION] - [ 2 DISCS ]
 		Config.RCntFix = 1;
 	}
-}
 
-static void CheckGameGPUBusyAutoFix(void){
 	dwEmuFixes = 0;
 	if (ChkString(CdromId, "SLUS00964", strlen("SLUS00964")) // Hot Wheels - Turbo Racing [NTSC-U]
 	|| ChkString(CdromId, "SLES02198", strlen("SLES02198")) // Hot Wheels - Turbo Racing [PAL]
@@ -541,6 +541,15 @@ static void CheckGameGPUBusyAutoFix(void){
 	|| ChkString(CdromId, "SLUS00859", strlen("SLUS00859")) // The Dukes of Hazzard: Racing for Home [NTSC-U]
 	|| ChkString(CdromId, "SLES02343", strlen("SLES02343"))){ // The Dukes of Hazzard: Racing for Home [PAL]
 		dwEmuFixes = 0x0001;
+	}
+
+	dwActFixes = 0;
+	if (ChkString(CdromId, "SLUS00297", strlen("SLUS00297")) // Star Wars - Dark Forces [NTSC-U]
+	|| ChkString(CdromId, "SLPS00685", strlen("SLPS00685")) // Star Wars - Dark Forces [NTSC-J]
+	|| ChkString(CdromId, "SLES00585", strlen("SLES00585")) // Star Wars - Dark Forces [PAL]
+	|| ChkString(CdromId, "SLES00640", strlen("SLES00640")) // Star Wars - Dark Forces [Italy]
+	|| ChkString(CdromId, "SLPS00646", strlen("SLPS00646"))){ // Star Wars - Dark Forces [Spain]
+		dwActFixes |= 0x100;
 	}
 }
 
@@ -587,8 +596,7 @@ void fileBrowserFrame_LoadFile(int i)
 			if(Autoboot){
 				// saulfabreg: autoFix functions work fine but not in autoboot mode...
 				// let's fix this :)
-				CheckGameAutoFix(); // for system timing autoFix (Vandal Hearts, Parasite Eve II, etc.)
-				CheckGameGPUBusyAutoFix(); // for GPU 'Fake Busy States' autoFix (Hot Wheels Turbo Racing, etc.)
+				CheckGameAutoFix(); // for per-game autoFix (Vandal Hearts, Parasite Eve II, Hot Wheels Turbo Racing, etc.)
 				CheckGameR3000AutoFix(); // for pR3000A autoFix (EA Sports Supercross 2000, etc.)
 
 				// FIXME: The MessageBox is a hacky way to fix input not responding.
@@ -618,11 +626,15 @@ void fileBrowserFrame_LoadFile(int i)
             		{
                 		sprintf(buffer, "RCnt2 auto fixed\n");
             		}
-			CheckGameGPUBusyAutoFix();
             		if (dwEmuFixes)
             		{
                 		sprintf(buffer, "GPU 'Fake Busy States' hacked\n");
             		}
+			if (dwActFixes)
+			{
+				sprintf(buffer, "Special game auto fixed\n");
+				strcat(RomInfo,buffer);
+			}
 			// auto recJR => psxJR for some game
 			CheckGameR3000AutoFix();
 			if (Config.pR3000Fix)
