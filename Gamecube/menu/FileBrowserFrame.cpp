@@ -587,6 +587,9 @@ void fileBrowserFrame_LoadFile(int i)
 			if(Autoboot){
 				// saulfabreg: autoFix functions work fine but not in autoboot mode...
 				// let's fix this :)
+				CheckGameAutoFix(); // for system timing autoFix (Vandal Hearts, Parasite Eve II, etc.)
+				CheckGameGPUBusyAutoFix(); // for GPU 'Fake Busy States' autoFix (Hot Wheels Turbo Racing, etc.)
+				CheckGameR3000AutoFix(); // for pR3000A autoFix (EA Sports Supercross 2000, etc.)
 
 				// FIXME: The MessageBox is a hacky way to fix input not responding.
 				// No time to improve this...
