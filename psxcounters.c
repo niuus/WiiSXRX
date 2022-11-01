@@ -509,7 +509,8 @@ u32 psxRcntRcount( u32 index )
         {
             if( rcnts[index].counterState == CountToTarget )
             {
-                count /= BIAS;
+                //count /= BIAS;
+                count = count >> 1;
             }
         }
     }
