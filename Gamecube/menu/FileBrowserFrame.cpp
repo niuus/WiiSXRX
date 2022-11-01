@@ -617,11 +617,13 @@ void fileBrowserFrame_LoadFile(int i)
 			strcat(RomInfo,feedback_string);
 			sprintf(buffer,"\nCD-ROM Label: %s\n",CdromLabel);
 			strcat(RomInfo,buffer);
+			// add xjsxjs197 start
+			CheckGameAutoFix();
+			// add xjsxjs197 end
 			sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
 			strcat(RomInfo,buffer);
 			// add xjsxjs197 start
 			// check timing fix
-			CheckGameAutoFix();
 			if (Config.RCntFix)
             		{
                 		sprintf(buffer, "RCnt2 auto fixed\n");
@@ -645,7 +647,6 @@ void fileBrowserFrame_LoadFile(int i)
 				strcat(RomInfo,buffer);
 			}
 			// add xjsxjs197 end
-			strcat(RomInfo,buffer);
 			sprintf(buffer,"CD size: %u Mb\n",isoFile.size/1024/1024);
 			strcat(RomInfo,buffer);
 			sprintf(buffer,"Region: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
