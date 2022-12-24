@@ -136,7 +136,9 @@ void Gui::draw()
 					*(volatile unsigned int*)0x80001808 == HBC_HAXX)
 					rld();
 				else // Wii channel support
+				#ifdef WII
 					Playlog_Exit(); // write playlog time on the Wii Message Board
+				#endif
 					SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Return to the Wii System Menu
 #endif
 			}
