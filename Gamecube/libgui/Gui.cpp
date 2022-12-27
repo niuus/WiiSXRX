@@ -31,6 +31,7 @@ extern "C" {
 #include "../gc_input/controller.h"
 #ifdef WII
 #include <di/di.h>
+#include "../wmb/WMBPlaylog.h"
 #endif 
 }
 
@@ -134,8 +135,11 @@ void Gui::draw()
 				if(*(volatile unsigned int*)0x80001804 == HBC_STUB &&
 					*(volatile unsigned int*)0x80001808 == HBC_HAXX)
 					rld();
-				else
-					SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
+				else // Wii channel support
+				#ifdef WII
+					Playlog_Exit(); // write playlog time on the Wii Message Board
+				#endif
+					SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Return to the Wii System Menu
 #endif
 			}
 		}
