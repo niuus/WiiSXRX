@@ -25,6 +25,7 @@
 #include "mdec.h"
 #include "cdrom.h"
 #include "gpu.h"
+#include "Gamecube/DEBUG.h"
 
 // add xjsxjs197 start
 u32 tmpVal;
@@ -204,6 +205,9 @@ u16 psxHwRead16(u32 add) {
 	return hard;
 }
 
+// hack for emulating "gpu busy" in some games
+extern unsigned long dwEmuFixes;
+
 u32 psxHwRead32(u32 add) {
 	u32 hard;
 
@@ -240,9 +244,25 @@ u32 psxHwRead32(u32 add) {
 #endif
 			return hard;
 		case 0x1f801814:
-			//hard = GPU_readStatus();
-			gpuSyncPluginSR();
-			hard = SWAP32(HW_GPU_STATUS);
+			// hack for emulating "gpu busy" in some games
+		    if (dwEmuFixes)
+            {
+                hard = GPU_readStatus();
+                if( (hard & GPUSTATUS_IDLE) == 0 )
+                {
+                    #ifdef SHOW_DEBUG
+                    sprintf(txtbuffer, "Read GPU_STATUS Fake Busy \n");
+                    DEBUG_print(txtbuffer, DBG_CORE2);
+                    writeLogFile(txtbuffer);
+                    #endif // DISP_DEBUG
+                    hard &= ~GPUSTATUS_READYFORVRAM;
+                }
+            }
+            else
+            {
+                gpuSyncPluginSR();
+                hard = SWAP32(HW_GPU_STATUS);
+            }
 			if (hSyncCount < 240 && (hard & PSXGPU_ILACE_BITS) != PSXGPU_ILACE_BITS)
 				hard |= PSXGPU_LCF & (psxRegs.cycle << 20);
 #ifdef PSXHW_LOG
@@ -528,7 +548,7 @@ void psxHwWrite16(u32 add, u16 value) {
 	} \
 }*/
 #define DmaExec(char, bcr, madr, n) { \
-	if (LOAD_SWAP32p(psxHAddr(char)) & 0x01000000) return; \
+	/*if (LOAD_SWAP32p(psxHAddr(char)) & 0x01000000) return;*/ \
 	STORE_SWAP32p(psxHAddr(char), value); \
  \
     tmpVal = LOAD_SWAP32p(psxHAddr(char)); \

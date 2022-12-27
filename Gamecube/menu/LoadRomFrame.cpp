@@ -36,8 +36,8 @@ extern "C" {
 }
 
 void Func_LoadFromSD();
-void Func_LoadFromDVD();
 void Func_LoadFromUSB();
+void Func_LoadFromDVD();
 void Func_LoadFromSamba();
 void Func_ReturnFromLoadRomFrame();
 
@@ -47,8 +47,8 @@ void Func_ReturnFromLoadRomFrame();
 
 static char FRAME_STRINGS[4][25] =
 	{ "Load from SD",
-	  "Load from DVD",
 	  "Load from USB",
+	  "Load from DVD",
 	  "Load from Samba"};
 
 struct ButtonInfo
@@ -69,8 +69,8 @@ struct ButtonInfo
 } FRAME_BUTTONS[NUM_FRAME_BUTTONS] =
 { //	button	buttonStyle	buttonString		x		y		width	height	Up	Dwn	Lft	Rt	clickFunc			returnFunc
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	150.0,	100.0,	340.0,	56.0,	 3,	 1,	-1,	-1,	Func_LoadFromSD,	Func_ReturnFromLoadRomFrame }, // Load From SD
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	150.0,	180.0,	340.0,	56.0,	 0,	 2,	-1,	-1,	Func_LoadFromDVD,	Func_ReturnFromLoadRomFrame }, // Load From DVD
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[2],	150.0,	260.0,	340.0,	56.0,	 1,	 3,	-1,	-1,	Func_LoadFromUSB,	Func_ReturnFromLoadRomFrame }, // Load From USB
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	150.0,	180.0,	340.0,	56.0,	 0,	 2,	-1,	-1,	Func_LoadFromUSB,	Func_ReturnFromLoadRomFrame }, // Load From USB
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[2],	150.0,	260.0,	340.0,	56.0,	 1,	 3,	-1,	-1,	Func_LoadFromDVD,	Func_ReturnFromLoadRomFrame }, // Load From DVD
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[3],	150.0,	340.0,	340.0,	56.0,	 2,	 0,	-1,	-1,	Func_LoadFromSamba,	Func_ReturnFromLoadRomFrame }, // Load From Samba
 };
 
@@ -149,25 +149,6 @@ void Func_LoadFromSD()
 	}
 }
 
-void Func_LoadFromDVD()
-{
-	// Deinit any existing romFile state
-	if(isoFile_deinit) isoFile_deinit( &isoFile );
-	// Change all the romFile pointers
-	isoFile_topLevel = &topLevel_DVD;
-	isoFile_readDir  = fileBrowser_DVD_readDir;
-	isoFile_open     = fileBrowser_DVD_open;
-	isoFile_readFile = fileBrowser_DVD_readFile;
-	isoFile_seekFile = fileBrowser_DVD_seekFile;
-	isoFile_init     = fileBrowser_DVD_init;
-	isoFile_deinit   = fileBrowser_DVD_deinit;
-	// Make sure the romFile system is ready before we browse the filesystem
-	isoFile_init( isoFile_topLevel );
-
-	pMenuContext->setActiveFrame(MenuContext::FRAME_FILEBROWSER,loadRomMode);
-	fileBrowserFrame_OpenDirectory(isoFile_topLevel);
-}
-
 void Func_LoadFromUSB()
 {
 #ifdef WII
@@ -197,6 +178,25 @@ void Func_LoadFromUSB()
 #else
 	menu::MessageBox::getInstance().setMessage("Available only for Wii");
 #endif
+}
+
+void Func_LoadFromDVD()
+{
+	// Deinit any existing romFile state
+	if(isoFile_deinit) isoFile_deinit( &isoFile );
+	// Change all the romFile pointers
+	isoFile_topLevel = &topLevel_DVD;
+	isoFile_readDir  = fileBrowser_DVD_readDir;
+	isoFile_open     = fileBrowser_DVD_open;
+	isoFile_readFile = fileBrowser_DVD_readFile;
+	isoFile_seekFile = fileBrowser_DVD_seekFile;
+	isoFile_init     = fileBrowser_DVD_init;
+	isoFile_deinit   = fileBrowser_DVD_deinit;
+	// Make sure the romFile system is ready before we browse the filesystem
+	isoFile_init( isoFile_topLevel );
+
+	pMenuContext->setActiveFrame(MenuContext::FRAME_FILEBROWSER,loadRomMode);
+	fileBrowserFrame_OpenDirectory(isoFile_topLevel);
 }
 
 void Func_LoadFromSamba()

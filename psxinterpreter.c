@@ -514,7 +514,7 @@ void psxDIV() {
             _i32(_rLo_) = 0xFFFFFFFF;
         }
 /*
- * Notaz said that this was "not needed" for ARM platforms and could slow it down so let's disable for ARM. 
+ * Notaz said that this was "not needed" for ARM platforms and could slow it down so let's disable for ARM.
  * This fixes a crash issue that can happen when running Amidog's CPU test.
  * (It still stays stuck to a black screen but at least it doesn't crash anymore)
  */

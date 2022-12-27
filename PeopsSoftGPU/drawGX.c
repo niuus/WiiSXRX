@@ -170,7 +170,7 @@ void DoClearFrontBuffer(void)                          // CLEAR DX BUFFER
 	//Write menu/debug text on screen
 	if(showFPSonScreen && (ulKeybits&KEY_SHOWFPS))
 	{
-	    GXColor fontColor = {150,255,150,255};
+	    GXColor fontColor = {255,0,0,255};
         IplFont_drawInit(fontColor);
 		IplFont_drawString(10,35,szDispBuf, 1.0, false);
 		int i = 0;
@@ -460,7 +460,7 @@ void GX_Flip(short width, short height, u8 * buffer, int pitch)
 	//Write menu/debug text on screen
 	if (showFPSonScreen && (ulKeybits&KEY_SHOWFPS))
     {
-        GXColor fontColor = {150,255,150,255};
+        GXColor fontColor = {255,0,0,255};
 	    IplFont_drawInit(fontColor);
 		IplFont_drawString(10,35,szDispBuf, 1.0, false);
 		int i = 0;

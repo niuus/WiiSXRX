@@ -165,21 +165,12 @@
 extern void asm_rtps(register s32 *cp2c, register s32 *cp2d);
 extern void asm_rtpt(register s32 *cp2c, register s32 *cp2d);
 
-bool needFlushCache = false;
-
-#define StoreToCache() { \
-	DCTouchRange(psxRegs.CP2D.r, 32 * 4); \
-	DCTouchRange(psxRegs.CP2C.r, 32 * 4); \
-	needFlushCache = true; \
+#define _LIMX(negv, posv, flagb) { \
+	if (x < (negv)) { x = (negv); gteFLAG |= (1<<flagb); } else \
+	if (x > (posv)) { x = (posv); gteFLAG |= (1<<flagb); } return (x); \
 }
 
-#define FlushCache() { \
-    if (needFlushCache) { \
-	    DCFlushRange(psxRegs.CP2D.r, 32 * 4); \
-	    DCFlushRange(psxRegs.CP2C.r, 32 * 4); \
-	    needFlushCache = false; \
-    } \
-}
+__inline s32 LIM(s32 x) { _LIMX(0, 0x1f, 0); }
 
 __inline u32 MFC2(int reg) {
 	switch(reg) {
@@ -278,13 +269,11 @@ static inline void CTC2(u32 value, int reg) {
 
 void gteMFC2() {
 	if (!_Rt_) return;
-	//FlushCache();
 	psxRegs.GPR.r[_Rt_] = MFC2(_Rd_);
 }
 
 void gteCFC2() {
 	if (!_Rt_) return;
-	//FlushCache();
 	psxRegs.GPR.r[_Rt_] = psxRegs.CP2C.r[_Rd_];
 }
 
@@ -293,7 +282,6 @@ void gteMTC2() {
 }
 
 void gteCTC2() {
-	//psxRegs.CP2C.r[_Rd_] = psxRegs.GPR.r[_Rt_];
 	CTC2(psxRegs.GPR.r[_Rt_], _Rd_);
 }
 
@@ -335,6 +323,13 @@ __inline float NC_OVERFLOW3(float x) {
 	return x;
 }*/
 
+__inline s32 FNC_OVERFLOW(s64 x) {
+	if (x< (s64)0xffffffff80000000LL) {gteFLAG |= (1 << 31) | (1 << 16);}
+	else if (x> 2147483647) {gteFLAG |= (1 << 31) | (1 << 15);}
+
+	return (s32)x;
+}
+
 __inline s32 FNC_OVERFLOW1(s64 x) {
 	if (x< (s64)0xffffffff80000000LL) {gteFLAG |= 1<<29;}
 	else if (x> 2147483647) {gteFLAG |= 1<<26;}
@@ -362,11 +357,6 @@ __inline s32 FNC_OVERFLOW3(s64 x) {
 
 	return (s32)x;
 }*/
-
-#define _LIMX(negv, posv, flagb) { \
-	if (x < (negv)) { x = (negv); gteFLAG |= (1<<flagb); } else \
-	if (x > (posv)) { x = (posv); gteFLAG |= (1<<flagb); } return (x); \
-}
 
 __inline float limA1S(float x) { _LIMX(-32768.0, 32767.0, 24); }
 __inline float limA2S(float x) { _LIMX(-32768.0, 32767.0, 23); }
@@ -441,13 +431,13 @@ __inline s32 FlimG2(s64 x) {
 }
 
 #define MAC2IR() { \
-	if (gteMAC1 < (long)(-32768)) { gteIR1=(long)(-32768); gteFLAG|=1<<24;} \
+	if (gteMAC1 < (long)(-32768)) { gteIR1=(long)(-32768); gteFLAG|=(1 << 31) | 1<<24;} \
 	else \
-	if (gteMAC1 > (long)( 32767)) { gteIR1=(long)( 32767); gteFLAG|=1<<24;} \
+	if (gteMAC1 > (long)( 32767)) { gteIR1=(long)( 32767); gteFLAG|=(1 << 31) | 1<<24;} \
 	else gteIR1=(long)gteMAC1; \
-	if (gteMAC2 < (long)(-32768)) { gteIR2=(long)(-32768); gteFLAG|=1<<23;} \
+	if (gteMAC2 < (long)(-32768)) { gteIR2=(long)(-32768); gteFLAG|=(1 << 31) | 1<<23;} \
 	else \
-	if (gteMAC2 > (long)( 32767)) { gteIR2=(long)( 32767); gteFLAG|=1<<23;} \
+	if (gteMAC2 > (long)( 32767)) { gteIR2=(long)( 32767); gteFLAG|=(1 << 31) | 1<<23;} \
 	else gteIR2=(long)gteMAC2; \
 	if (gteMAC3 < (long)(-32768)) { gteIR3=(long)(-32768); gteFLAG|=1<<22;} \
 	else \
@@ -519,8 +509,9 @@ printf("zero %x, %x\n", gteMAC0, gteIR0); \
 */
 #define GTE_RTPS2(vn) { \
     tmp = DIVIDE_INT(gteH, gteSZ##vn); \
-	if (tmp == 0x1ffff) { \
+	if (tmp > 0x1ffff) { \
 		gteFLAG |= 1<<17; \
+		tmp = 0x1ffff; \
 	} \
  \
 	gteSX##vn = FlimG1((gteOFX + (((s64)((s64)gteIR1 << 16) * tmp) >> 16)) >> 16); \
@@ -529,7 +520,7 @@ printf("zero %x, %x\n", gteMAC0, gteIR0); \
 
 #define GTE_RTPS3() { \
 	FDSZ = (s64)((s64)gteDQB + (((s64)((s64)gteDQA << 8) * tmp) >> 8)); \
-	gteMAC0 = FDSZ; \
+	gteMAC0 = FNC_OVERFLOW(FDSZ); \
 	gteIR0  = FlimE(FDSZ >> 12); \
 }
 //#endif
@@ -539,8 +530,6 @@ printf("zero %x, %x\n", gteMAC0, gteIR0); \
 //	gteIR0  = FlimE(((gteDQB >> 24) + (gteDQA >> 8) * DSZ) * 4096.0);
 
 void gteRTPS() {
-    //StoreToCache();
-
 	s64 FDSZ;
 	u32 tmp;
 #ifdef GTE_DUMP
@@ -585,7 +574,7 @@ void gteRTPS() {
 	gteFLAG = 0;
 
 	GTE_RTPS1(0);
-    /*asm_rtps((s32*)psxRegs.CP2C.r, (s32*)psxRegs.CP2D.r);
+    /*asm_rtps((s32*)regs->CP2C.r, (s32*)regs->CP2D.r);
     #ifdef DISP_DEBUG
 	PRINT_LOG("asm_rtps======");
     #endif // DISP_DEBUG*/
@@ -643,7 +632,6 @@ void gteRTPS() {
 }
 
 void gteRTPT() {
-    //StoreToCache();
 	s64 FDSZ;
 	u32 tmp;
 #ifdef GTE_DUMP
@@ -687,7 +675,7 @@ void gteRTPT() {
 	}
 #endif
 
-    /*asm_rtpt((s32*)psxRegs.CP2C.r, (s32*)psxRegs.CP2D.r);
+    /*asm_rtpt((s32*)regs->CP2C.r, (s32*)regs->CP2D.r);
     #ifdef DISP_DEBUG
 	//PRINT_LOG("======asm_rtpt");
     #endif // DISP_DEBUG*/
@@ -705,6 +693,7 @@ void gteRTPT() {
 
 	gteIR1 = FlimA1S(gteMAC1);
 	gteIR2 = FlimA2S(gteMAC2);
+	gteIR3 = FlimA3S(gteMAC3);
 	GTE_RTPS2(0);
 	#ifdef DISP_DEBUG
 	//PRINT_LOG1("FDSZ=====%llu=", FDSZ);
@@ -717,6 +706,7 @@ void gteRTPT() {
 
 	gteIR1 = FlimA1S(gteMAC1);
 	gteIR2 = FlimA2S(gteMAC2);
+	gteIR3 = FlimA3S(gteMAC3);
 	GTE_RTPS2(1);
 
 	GTE_RTPS1(2);
@@ -923,9 +913,9 @@ void gteAVSZ3() {
 
 	gteFLAG = 0;
 
-	gteMAC0 = ((gteSZ0 + gteSZ1 + gteSZ2) * (gteZSF3)) >> 12;
+	gteMAC0 = FNC_OVERFLOW(((s64)(gteSZ0 + gteSZ1 + gteSZ2) * (gteZSF3)));
 
-	gteOTZ = FlimC(gteMAC0);
+	gteOTZ = FlimC(gteMAC0 >> 12);
 
 	SUM_FLAG
 
@@ -963,9 +953,9 @@ void gteAVSZ4() {
 
 	gteFLAG = 0;
 
-	gteMAC0 = ((gteSZx + gteSZ0 + gteSZ1 + gteSZ2) * (gteZSF4))>> 12;
+	gteMAC0 = FNC_OVERFLOW(((s64)(gteSZx + gteSZ0 + gteSZ1 + gteSZ2) * (gteZSF4)));
 
-	gteOTZ = FlimC(gteMAC0);
+	gteOTZ = FlimC(gteMAC0 >> 12);
 
 	SUM_FLAG
 
@@ -2272,13 +2262,15 @@ void gteCC() {
 
 	gteFLAG = 0;
 
-	RR0 = FNC_OVERFLOW1(gteRBK + ((gteLR1*gteIR1 + gteLR2*gteIR2 + gteLR3*gteIR3) >> 12));
-	GG0 = FNC_OVERFLOW2(gteGBK + ((gteLG1*gteIR1 + gteLG2*gteIR2 + gteLG3*gteIR3) >> 12));
-	BB0 = FNC_OVERFLOW3(gteBBK + ((gteLB1*gteIR1 + gteLB2*gteIR2 + gteLB3*gteIR3) >> 12));
+	gteMAC1 = FNC_OVERFLOW1(gteRBK + ((gteLR1*gteIR1 + gteLR2*gteIR2 + gteLR3*gteIR3) >> 12));
+	gteMAC2 = FNC_OVERFLOW2(gteGBK + ((gteLG1*gteIR1 + gteLG2*gteIR2 + gteLG3*gteIR3) >> 12));
+	gteMAC3 = FNC_OVERFLOW3(gteBBK + ((gteLB1*gteIR1 + gteLB2*gteIR2 + gteLB3*gteIR3) >> 12));
 
-	gteMAC1 = (gteR * RR0) >> 8;
-	gteMAC2 = (gteG * GG0) >> 8;
-	gteMAC3 = (gteB * BB0) >> 8;
+	MAC2IR1();
+
+	gteMAC1 = ((s32)gteR * gteIR1) >> 8;
+	gteMAC2 = ((s32)gteG * gteIR2) >> 8;
+	gteMAC3 = ((s32)gteB * gteIR3) >> 8;
 
 	MAC2IR1();
 
@@ -2440,13 +2432,27 @@ void gteCDP() { //test opcode
 
 	gteFLAG = 0;
 
-	RR0 = NC_OVERFLOW1(gteRBK + (gteLR1*gteIR1 +gteLR2*gteIR2 + gteLR3*gteIR3));
-	GG0 = NC_OVERFLOW2(gteGBK + (gteLG1*gteIR1 +gteLG2*gteIR2 + gteLG3*gteIR3));
-	BB0 = NC_OVERFLOW3(gteBBK + (gteLB1*gteIR1 +gteLB2*gteIR2 + gteLB3*gteIR3));
+	gteMAC1 = FNC_OVERFLOW1((s64)gteRBK + ((s32)(gteLR1*gteIR1 +gteLR2*gteIR2 + gteLR3*gteIR3) >> 12));
+	gteMAC2 = FNC_OVERFLOW2((s64)gteGBK + ((s32)(gteLG1*gteIR1 +gteLG2*gteIR2 + gteLG3*gteIR3) >> 12));
+	gteMAC3 = FNC_OVERFLOW3((s64)gteBBK + ((s32)(gteLB1*gteIR1 +gteLB2*gteIR2 + gteLB3*gteIR3) >> 12));
 
-	gteMAC1 = gteR*RR0 + gteIR0*limA1S(gteRFC-gteR*RR0);
-	gteMAC2 = gteG*GG0 + gteIR0*limA2S(gteGFC-gteG*GG0);
-	gteMAC3 = gteB*BB0 + gteIR0*limA3S(gteBFC-gteB*BB0);
+	MAC2IR1();
+
+//	gteMAC1 = gteR*gteIR1 + gteIR0*FlimA1S(gteRFC-gteR*gteIR1);
+//	gteMAC2 = gteG*gteIR2 + gteIR0*FlimA2S(gteGFC-gteG*gteIR2);
+//	gteMAC3 = gteB*gteIR3 + gteIR0*FlimA3S(gteBFC-gteB*gteIR3);
+	gteMAC1 = (((s32)gteR << 4) * gteIR1);
+	gteMAC2 = (((s32)gteG << 4) * gteIR2);
+	gteMAC3 = (((s32)gteB << 4) * gteIR3);
+	//gteMAC1 = (gteMAC1 + gteIR0 * (gteRFC - gteMAC1)) >> 12;
+	//gteMAC2 = (gteMAC2 + gteIR0 * (gteGFC - gteMAC2)) >> 12;
+	//gteMAC3 = (gteMAC3 + gteIR0 * (gteBFC - gteMAC3)) >> 12;
+	gteMAC1 = (gteMAC1 + ((gteIR0 * FlimA1S(FNC_OVERFLOW1(((s64)gteRFC) - (gteMAC1 >> 8)))) >> 4)) >> 12;
+	gteMAC2 = (gteMAC2 + ((gteIR0 * FlimA2S(FNC_OVERFLOW2(((s64)gteGFC) - (gteMAC2 >> 8)))) >> 4)) >> 12;
+	gteMAC3 = (gteMAC3 + ((gteIR0 * FlimA3S(FNC_OVERFLOW3(((s64)gteBFC) - (gteMAC3 >> 8)))) >> 4)) >> 12;
+//	gteMAC1 = (((gteR << 4) * gteIR1) + (gteIR0 * FlimA1S(FNC_OVERFLOW1((s64)gteRFC - ((gteR * gteIR1) >> 8))))) >> 12;
+//	gteMAC2 = (((gteG << 4) * gteIR2) + (gteIR0 * FlimA2S(FNC_OVERFLOW2((s64)gteGFC - ((gteG * gteIR2) >> 8))))) >> 12;
+//	gteMAC3 = (((gteB << 4) * gteIR3) + (gteIR0 * FlimA3S(FNC_OVERFLOW3((s64)gteBFC - ((gteB * gteIR3) >> 8))))) >> 12;
 
 /*	RR0 = FNC_OVERFLOW1(gteRBK + (gteLR1*gteIR1 +gteLR2*gteIR2 + gteLR3*gteIR3));
 	GG0 = FNC_OVERFLOW2(gteGBK + (gteLG1*gteIR1 +gteLG2*gteIR2 + gteLG3*gteIR3));

@@ -43,6 +43,11 @@ extern char debugInfo[256];
 
 extern "C" char * JoinString(char *s1, char *s2);
 
+int PerGameFix_timing;		// variable to check for Timing autofix (RCnt2)
+int PerGameFix_GPUbusy;		// variable to check for GPU 'Fake Busy States' autofix (dwEmuFixes)
+int PerGameFix_specialCorrect; // variable to check for Special Correction autofix (dwActFixes)
+int PerGameFix_pR3000A;		// variable to check for pR3000A autofix
+
 void Func_PrevPage();
 void Func_NextPage();
 void Func_ReturnFromFileBrowserFrame();
@@ -478,9 +483,127 @@ int ChkString(char * str1, char * str2, int len)
 }
 // add xjsxjs197 end
 
+// hack for emulating "gpu busy" in some games
+extern unsigned long dwEmuFixes;
+// For special game correction
+extern unsigned long dwActFixes;
+
+static void CheckGameAutoFix(void){
+	Config.RCntFix = 0;
+	if (ChkString(CdromId, "SLUS01042", strlen("SLUS01042")) // Parasite Eve II (U)(CD1)
+		|| ChkString(CdromId, "SLUS01055", strlen("SLUS01055")) // Parasite Eve II (U)(CD2)
+		|| ChkString(CdromId, "SCPS45467", strlen("SCPS45467")) // Parasite Eve II (J) [Hong Kong] (CD1)
+		|| ChkString(CdromId, "SCPS45468", strlen("SCPS45468")) // Parasite Eve II (J) [Hong Kong] (CD2)
+		|| ChkString(CdromId, "SLPS02480", strlen("SLPS02480")) // Parasite Eve II (J)(CD1)
+		|| ChkString(CdromId, "SLPS02481", strlen("SLPS02481")) // Parasite Eve II (J)(CD2)
+		|| ChkString(CdromId, "SLPS91479", strlen("SLPS91479")) // Parasite Eve II (J) [PSOne Books] (CD1)
+		|| ChkString(CdromId, "SLPS91480", strlen("SLPS91480")) // Parasite Eve II (J) [PSOne Books] (CD2)
+		|| ChkString(CdromId, "SLPS02779", strlen("SLPS02779")) // Parasite Eve II (J) [Square Millenium Collection] (CD1)
+		|| ChkString(CdromId, "SLPS02780", strlen("SLPS02780")) // Parasite Eve II (J) [Square Millenium Collection] (CD2)
+		|| ChkString(CdromId, "SLES02558", strlen("SLES02558")) // Parasite Eve II (E)(CD1)
+		|| ChkString(CdromId, "SLES12558", strlen("SLES12558")) // Parasite Eve II (E)(CD2)
+		|| ChkString(CdromId, "SLES02559", strlen("SLES02559")) // Parasite Eve II (E) [France] (CD1)
+		|| ChkString(CdromId, "SLES12559", strlen("SLES12559")) // Parasite Eve II (E) [France] (CD2)
+		|| ChkString(CdromId, "SLES02560", strlen("SLES02560")) // Parasite Eve II (E) [Germany] (CD1)
+		|| ChkString(CdromId, "SLES12560", strlen("SLES12560")) // Parasite Eve II (E) [Germany] (CD2)
+		|| ChkString(CdromId, "SLES02561", strlen("SLES02561")) // Parasite Eve II (E) [Spain] (CD1)
+		|| ChkString(CdromId, "SLES12561", strlen("SLES12561")) // Parasite Eve II (E) [Spain] (CD2)
+		|| ChkString(CdromId, "SLES02562", strlen("SLES02562")) // Parasite Eve II (E) [Italy] (CD1)
+		|| ChkString(CdromId, "SLES12562", strlen("SLES12562")) // Parasite Eve II (E) [Italy] (CD2)
+		|| ChkString(CdromId, "SLUS00447", strlen("SLUS00447")) // Vandal Hearts (U)
+		|| ChkString(CdromId, "SCPS45183", strlen("SCPS45183")) // Vandal Hearts - Ushinawareta Kodai Bunmei (J)
+		|| ChkString(CdromId, "SLPM86007", strlen("SLPM86007")) // Vandal Hearts - Ushinawareta Kodai Bunmei (J)
+		|| ChkString(CdromId, "SLPM86067", strlen("SLPM86067")) // Vandal Hearts - Ushinawareta Kodai Bunmei (J) [PlayStation The Best]
+		|| ChkString(CdromId, "SLPM87278", strlen("SLPM87278")) // Vandal Hearts - Ushinawareta Kodai Bunmei (J) [PSOne Books]
+		|| ChkString(CdromId, "SLES00204", strlen("SLES00204")) // Vandal Hearts (E)
+		|| ChkString(CdromId, "SLUS00940", strlen("SLUS00940")) // Vandal Hearts II (U)
+		|| ChkString(CdromId, "SCPS45415", strlen("SCPS45415")) // Vandal Hearts II - Tenjou no Mon (J)
+		|| ChkString(CdromId, "SLPM86251", strlen("SLPM86251")) // Vandal Hearts II - Tenjou no Mon (J)
+		|| ChkString(CdromId, "SLPM86504", strlen("SLPM86504")) // Vandal Hearts II - Tenjou no Mon (J) [Konami The Best]
+		|| ChkString(CdromId, "SLPM87279", strlen("SLPM87279")) // Vandal Hearts II - Tenjou no Mon (J) [PSOne Books]
+		|| ChkString(CdromId, "SLES02469", strlen("SLES02469")) // Vandal Hearts II (E)
+		|| ChkString(CdromId, "SLES02496", strlen("SLES02496")) // Vandal Hearts II (E)
+		|| ChkString(CdromId, "SLES02497", strlen("SLES02497"))) // Vandal Hearts II (E)
+	{
+		Config.RCntFix = 1;
+		PerGameFix_timing = 1;
+	}
+
+	dwEmuFixes = 0;
+	if (ChkString(CdromId, "SLUS00520", strlen("SLUS00520")) // FIFA - Road to World Cup '98 (U)
+		|| ChkString(CdromId, "SLPS01383", strlen("SLPS01383")) // FIFA - Road to World Cup '98 (J)
+		|| ChkString(CdromId, "SLPS91150", strlen("SLPS91150")) // FIFA - Road to World Cup '98 (J) [PlayStation The Best]
+		|| ChkString(CdromId, "SLES00914", strlen("SLES00914")) // FIFA - Road to World Cup '98 (E)
+		|| ChkString(CdromId, "SLES00915", strlen("SLES00915")) // FIFA - Road to World Cup '98 (E) [France]
+		|| ChkString(CdromId, "SLES00916", strlen("SLES00916")) // FIFA - Road to World Cup '98 (E) [Germany]
+		|| ChkString(CdromId, "SLES00917", strlen("SLES00917")) // FIFA - Road to World Cup '98 (E) [Italy]
+		|| ChkString(CdromId, "SLES00918", strlen("SLES00918")) // FIFA - Road to World Cup '98 (E) [Spain]
+		|| ChkString(CdromId, "SLUS00964", strlen("SLUS00964")) // Hot Wheels - Turbo Racing (U)
+		|| ChkString(CdromId, "SLES02198", strlen("SLES02198")) // Hot Wheels - Turbo Racing (E)
+		|| ChkString(CdromId, "SLPS01158", strlen("SLPS01158")) // Ishin no Arashi (J)
+		|| ChkString(CdromId, "SLPM86235", strlen("SLPM86235")) // Ishin no Arashi (J) [Koei The Best]
+		|| ChkString(CdromId, "SLPM86861", strlen("SLPM86861")) // Ishin no Arashi (J) [Koei Teiban Series]
+		|| ChkString(CdromId, "SLUS00859", strlen("SLUS00859")) // The Dukes of Hazzard: Racing for Home (U)
+		|| ChkString(CdromId, "SLES02343", strlen("SLES02343")) // The Dukes of Hazzard: Racing for Home (E)
+		|| ChkString(CdromId, "SLPS01919", strlen("SLPS01919")) // To Heart (J) (CD1)
+		|| ChkString(CdromId, "SLPS01920", strlen("SLPS01920"))) // To Heart (J) (CD2)
+	{
+		dwEmuFixes = 0x0001;
+		PerGameFix_GPUbusy = 1;
+	}
+
+	dwActFixes = 0;
+	if (ChkString(CdromId, "SLUS00297", strlen("SLUS00297")) // Star Wars - Dark Forces (U)
+		|| ChkString(CdromId, "SLPS00685", strlen("SLPS00685")) // Star Wars - Dark Forces (J)
+		|| ChkString(CdromId, "SLES00585", strlen("SLES00585")) // Star Wars - Dark Forces (E)
+		|| ChkString(CdromId, "SLES00640", strlen("SLES00640")) // Star Wars - Dark Forces (E) [Italy]
+		|| ChkString(CdromId, "SLPS00646", strlen("SLPS00646"))) // Star Wars - Dark Forces (E) [Spain]
+	{
+		dwActFixes |= 0x100;
+		PerGameFix_specialCorrect = 1;
+	}
+}
+
+static void CheckGameR3000AutoFix(void){
+	Config.pR3000Fix = 0;
+	if (ChkString(CdromId, "SLUS00239", strlen("SLUS00239")) // Alone in the Dark 2 - One-Eyed Jack's Revenge (U)
+		|| ChkString(CdromId, "SLPS00141", strlen("SLPS00141")) // Alone in the Dark 2 (J)
+		|| ChkString(CdromId, "SLES00037", strlen("SLES00037")) // Alone in the Dark 2 - Jack is Back (E)
+		|| ChkString(CdromId, "SLUS00590", strlen("SLUS00590")) // Need for Speed - V-Rally (U)
+		|| ChkString(CdromId, "SLPS01149", strlen("SLPS01149")) // V-Rally - Championship Edition (J)
+		|| ChkString(CdromId, "SLPS91099", strlen("SLPS91099")) // V-Rally - Championship Edition (J) [Playstation the Best]
+		|| ChkString(CdromId, "SLPS91430", strlen("SLPS91430")) // V-Rally - Championship Edition (J) [PSOne Books]
+		|| ChkString(CdromId, "SLES00250", strlen("SLES00250"))) // V-Rally '97 - Championship Edition (E)
+	{
+		Config.pR3000Fix = 1;
+		PerGameFix_pR3000A = 1;
+	}
+
+	if (ChkString(CdromId, "SLUS01005", strlen("SLUS01005")) // EA Sports Supercross 2000 (U)
+		|| ChkString(CdromId, "SLES02373", strlen("SLES02373"))) // EA Sports Supercross 2000 (E)
+	{
+		Config.pR3000Fix = 2;
+		PerGameFix_pR3000A = 1;
+	}
+
+	if (ChkString(CdromId, "SLUS00964", strlen("SLUS00964")) // Hot Wheels - Turbo Racing (U)
+		|| ChkString(CdromId, "SLES02198", strlen("SLES02198"))) // Hot Wheels - Turbo Racing (E)
+	{
+		Config.pR3000Fix = 3;
+		PerGameFix_pR3000A = 1;
+	}
+
+		if (ChkString(CdromId, "SLUS00219", strlen("SLUS00219")) // Blast Chamber (U)
+		|| ChkString(CdromId, "SLES00476", strlen("SLES00476"))) // Blast Chamber (E)
+	{
+		Config.pR3000Fix = 4;
+		PerGameFix_pR3000A = 1;
+	}
+}
+
 void fileBrowserFrame_LoadFile(int i)
 {
-	char feedback_string[256] = "Failed to load ISO";
+	char feedback_string[256] = "Failed to load CD";
 	if(dir_entries[i].attr & FILE_BROWSER_ATTR_DIR){
 		// Here we are 'recursing' into a subdirectory
 		// We have to do a little dance here to avoid a dangling pointer
@@ -495,6 +618,13 @@ void fileBrowserFrame_LoadFile(int i)
 
 		if(!ret){	// If the read succeeded.
 			if(Autoboot){
+				// saulfabreg: autoFix functions work fine but not in autoboot mode, this fixes it.
+				CheckGameAutoFix(); // per-game autoFix (Parasite Eve II, etc.)
+				CheckGameR3000AutoFix(); // pR3000A autoFix (Supercross 2000, etc.)
+				// Switches for painting textured quads as 2 triangles (small glitches, but better shading!)
+				// This function has been automatically started in soft.c and dwActFixes have been determined in gpu code, so need to set it here
+            	dwActFixes |= 0x200;
+
 				// FIXME: The MessageBox is a hacky way to fix input not responding.
 				// No time to improve this...
 				menu::MessageBox::getInstance().setMessage("Autobooting game...");
@@ -513,32 +643,38 @@ void fileBrowserFrame_LoadFile(int i)
 			strcat(RomInfo,feedback_string);
 			sprintf(buffer,"\nCD-ROM Label: %s\n",CdromLabel);
 			strcat(RomInfo,buffer);
-			// add xjsxjs197 start
-			Config.RCntFix = 0;
-			if (ChkString(CdromLabel, "SLUS01042", strlen("SLUS01042")) // PARASITE EVE 2(CD1)
-				|| ChkString(CdromLabel, "SLUS01055", strlen("SLUS01055")) // PARASITE EVE 2(CD2)
-				|| ChkString(CdromLabel, "SLPS02480", strlen("SLPS02480")) // PARASITE EVE II (2DISCS)
-				|| ChkString(CdromLabel, "SLPS02481", strlen("SLPS02481")) // PARASITE EVE II (2DISCS)
-                || ChkString(CdromLabel, "SLUS00447", strlen("SLUS00447")) // VANDAL HEARTS
-				|| ChkString(CdromLabel, "SLUS00940", strlen("SLUS00940"))) // VANDAL HEARTS II
-			{
-		        Config.RCntFix = 1;
-		    }
-			if (ChkString(CdromLabel, "Vandal Hearts", strlen("Vandal Hearts"))) {
-		        Config.RCntFix = 1;
-		    }
-			// add xjsxjs197 end
 			sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
 			strcat(RomInfo,buffer);
+
+			// add xjsxjs197 start
+			CheckGameAutoFix();
 			if (Config.RCntFix)
-            {
-                sprintf(buffer, "TIMING FIX: Yes\n");
-            }
-            else
-            {
-                sprintf(buffer, "TIMING FIX: No\n");
-            }
-			strcat(RomInfo,buffer);
+			{
+				sprintf(buffer, "RCnt2 autofix\n");
+				strcat(RomInfo,buffer);
+			}
+			if (dwEmuFixes)
+			{
+				sprintf(buffer, "GPU 'Fake Busy States' hack\n");
+				strcat(RomInfo,buffer);
+			}
+			if (dwActFixes)
+			{
+				sprintf(buffer, "Special Correction autofix\n");
+				strcat(RomInfo,buffer);
+			}
+			// Switches for painting textured quads as 2 triangles (small glitches, but better shading!)
+			// This function has been automatically started in soft.c and dwActFixes have been determined in gpu code, so need to set it here
+			dwActFixes |= 0x200;
+			// auto recJR => psxJR for some game
+			CheckGameR3000AutoFix();
+			if (Config.pR3000Fix)
+			{
+				sprintf(buffer, "pR3000 autofix\n");
+				strcat(RomInfo,buffer);
+			}
+			// add xjsxjs197 end
+
 			sprintf(buffer,"CD size: %u Mb\n",isoFile.size/1024/1024);
 			strcat(RomInfo,buffer);
 			sprintf(buffer,"Region: %s\n",(!Config.PsxType) ? "NTSC":"PAL");

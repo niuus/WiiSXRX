@@ -2,9 +2,9 @@
  <app version="2">
    <name>WiiSXRX</name>
    <coder>NiuuS</coder>
-   <version>3.2 Beta</version>
-   <release_date>202210272212</release_date>
-   <short_description>PSX Emulator for Wii</short_description>
+   <version>3.3 Beta</version>
+   <release_date>20221227023822</release_date>
+   <short_description>PSX Emulator for Wii (-FS build)</short_description>
    <long_description>
 Featuring:
 - PS1 / PS2 controller support through Wiimote adapter.

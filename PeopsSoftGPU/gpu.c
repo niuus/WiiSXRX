@@ -446,10 +446,10 @@ long PEOPS_GPUinit()                                // GPU INIT
  PSXDisplay.DrawOffset.y = 0;
  PSXDisplay.DisplayMode.x= 320;
  PSXDisplay.DisplayMode.y= 240;
- PreviousPSXDisplay.DisplayMode.x= 320;
- PreviousPSXDisplay.DisplayMode.y= 240;
  rc0Index                = 1;
  dispHeight              = 240;
+ PreviousPSXDisplay.DisplayMode.x= 320;
+ PreviousPSXDisplay.DisplayMode.y= 240;
  PSXDisplay.Disabled     = FALSE;
  PreviousPSXDisplay.Range.x0 =0;
  PreviousPSXDisplay.Range.y0 =0;
@@ -543,7 +543,7 @@ void updateDisplay(void)                               // UPDATE DISPLAY
    return;                                             // -> and bye
   }
 
- // if(dwActFixes&32)                                     // pc fps calculation fix
+// if(dwActFixes&32)                                     // pc fps calculation fix
 //  {
 //   if(UseFrameLimit) PCFrameCap();                     // -> brake
 //   if(UseFrameSkip || ulKeybits&KEY_SHOWFPS)
@@ -571,7 +571,7 @@ void updateDisplay(void)                               // UPDATE DISPLAY
  if(UseFrameSkip)                                      // skip ?
   {
    if(!bSkipNextFrame) DoBufferSwap();                 // -> to skip or not to skip
-   //   if(dwActFixes&0xa0)                                 // -> pc fps calculation fix/old skipping fix
+//   if(dwActFixes&0xa0)                                 // -> pc fps calculation fix/old skipping fix
 //    {
 //     if((fps_skip < fFrameRateHz) && !(bSkipNextFrame))  // -> skip max one in a row
 //         {bSkipNextFrame = TRUE; fps_skip=fFrameRateHz;}
@@ -786,7 +786,7 @@ void PEOPS_GPUupdateLace(void)
   }
  else                                                  // non-interlaced?
   {
-   //   if(dwActFixes&64)                                   // lazy screen update fix
+//   if(dwActFixes&64)                                   // lazy screen update fix
 //    {
 //     if(bDoLazyUpdate && !UseFrameSkip)
 //      updateDisplay();
@@ -808,7 +808,7 @@ void PEOPS_GPUupdateLace(void)
 
 unsigned long PEOPS_GPUreadStatus(void)
 {
- // if(dwActFixes&1)
+// if(dwActFixes&1)
 //  {
 //   static int iNumRead=0;                              // odd/even hack
 //   if((iNumRead++)==2)
@@ -1005,7 +1005,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
     PSXDisplay.DisplayModeNew.x =
      sDispWidths[(gdata & 0x03) | ((gdata & 0x40) >> 4)];
 
-	switch (PSXDisplay.DisplayModeNew.x)
+    switch (PSXDisplay.DisplayModeNew.x)
     {
         case 256:
             rc0Index = 0;
@@ -1032,7 +1032,7 @@ void PEOPS_GPUwriteStatus(unsigned long gdata)
     else            PSXDisplay.Double=1;
 
     PSXDisplay.DisplayModeNew.y = PSXDisplay.Height*PSXDisplay.Double;
-	dispHeight = PSXDisplay.DisplayModeNew.y;
+    dispHeight = PSXDisplay.DisplayModeNew.y;
 
     ChangeDispOffsetsY();
 
@@ -1439,8 +1439,8 @@ ENDVRAM:
        gpuDataC=gpuDataP=0;
        primFunc[gpuCommand]((unsigned char *)gpuDataM);
 
-//       if(dwEmuFixes&0x0001 || dwActFixes&0x0400)      // hack for emulating "gpu busy" in some games
-//        iFakePrimBusy=4;
+       if(dwEmuFixes&0x0001 || dwActFixes&0x0400)      // hack for emulating "gpu busy" in some games
+        iFakePrimBusy=4;
       }
     }
   }

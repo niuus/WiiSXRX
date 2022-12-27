@@ -1,5 +1,5 @@
 README : WiiSX RX / CubeSX RX
-Beta 3.2
+Beta 3.3
 
 LICENSE:
     This software is licensed under the GNU General Public License v2
@@ -29,57 +29,57 @@ QUICK USAGE:
 Controls:
  * While the Gamecube pad is compatible, a Wii Classic Controller, Wii Classic Controller Pro, or Wii U Pro Controller is recommended.
  * The Wii U Gamepad is also compatible, but only when doing Wii U injections (no, you can't use it on vWii).
- * Controls are now fully configurable so any button on your controller can be mapped
- * The controller configuration screen presents each PSX button and allows you to toggle through sources
- * There are 4 configuration slots for each type of controller
+ * Controls are fully configurable so any button on your controller can be mapped.
+ * The controller configuration screen presents each PSX button and allows you to toggle through sources.
+ * There are 4 configuration slots for each type of controller:
    * To load a different, previously saved configuration, select the slot, and click 'Load'
    * After configuring the controls as desired, select the slot, and click 'Save'
-   * After saving different configurations to the slots, be sure to save your configs in the input tab of the settings frame
- * Clicking 'Next Pad' will cycle through the PSX controllers assigned
- * There is an option to invert the Y axis of the PSX's analog sticks; by default this is 'Normal Y'
- * The 'Menu Combo' configuration allows you to select a button combination to return to the menu
+   * After saving different configurations to the slots, be sure to save your configs in the input tab of the Settings frame.
+ * Clicking 'Next Pad' will cycle through the PSX controllers assigned.
+ * There is an option to invert the Y axis of the PSX's analog sticks; by default this is 'Normal Y'.
+ * The 'Menu Combo' configuration allows you to select a button combination to return to the menu.
 
 Settings:
- * General
-   * Select CPU core: choose whether to play games with pure interpreter
-		(better compatibility) or dynarec (better speed)
+ * GENERAL
+   * Select CPU core: choose whether to play games with pure
+   interpreter (better compatibility) or dynarec (better speed).
    * Select BIOS: choose your own dumped BIOS file source. HLE is for the embedded open source BIOS,
    which will change compatibility, so change between them if a game doesn't run at all with the commercial PSX BIOS.
    Remember to put your own PSX BIOS file (Model SCPH1001 recommended) into the BIOS folder on your drive,
    or you won't be able to select it here and use it. No, different BIOS models DO NOT CHANGE compatibility.
-   * Boot through BIOS: boot the games with the Sony PlayStation screen, if you're using an external PSX BIOS only
-   * Execute BIOS: boot the PSX BIOS only
-   * Save settings: save all of these settings either SD or USB (to be loaded automatically next time)
- * Video
-   * Show FPS: display the framerate in the top-left corner of the screen
+   * Boot through BIOS: boot the games with the Sony PlayStation screen, if you're using an external PSX BIOS.
+   * Execute BIOS: boot the PSX BIOS only.
+   * Save settings: save all of these settings either SD or USB (to be loaded automatically next time).
+ * VIDEO
+   * Show FPS: display the framerate in the top-left corner of the screen.
    * Limit FPS: limit the framerate to 59.94 (60 Hz NTSC games) or 50 (50Hz PAL games) when using Auto.
-   Off will make it go as far as the console's CPU can push the framerate
-   * Frameskip: allows the emulator to skip some frames to maintain full speed on some games
-   * Screen Ratio: select the aspect ratio of the display; 'Force 16:9' will pillar-box the in-game display
+   Off will make it go as far as the console's CPU can push the framerate.
+   * Frameskip: allows the emulator to skip some frames to maintain full speed on some games.
+   * Screen Ratio: select the aspect ratio of the display; 'Force 16:9' will pillar-box the in-game display.
    * Dithering: set the original PSX console behavior, depending on whether you want to use the feature or not.
-   It will create some extra workload on the CPU so turn it to None, Default or Always at your discretion
- * Input
-   * Configure Input: select controllers to use in game
-   * Configure Buttons: enter the controller configuration screen described above
-   * Save button configs: save all of the controller configuration slots to SD or USB
-   * Auto Load slot: Select which slot to automatically be loaded for each type of controller
- * Audio
-   * Disable audio: select to mute the sound completely
-   * Disable XA: select to mute XA music or sounds
-   * Disable CDDA: select to mute CD music (Red Book format)
-   * Volume: choose to lower or boost the produced sound
- * Saves
-   * Memcard Save device: Choose where to load and save native game saves
+   It will create some extra workload on the CPU, so turn it to None, Default or Always at your discretion.
+ * INPUT
+   * Configure Input: select controllers to use in game.
+   * Configure Buttons: enter the controller configuration screen described above.
+   * Save button configs: save all of the controller configuration slots to SD or USB.
+   * Auto Load slot: Select which slot to automatically be loaded for each type of controller.
+ * AUDIO
+   * Disable audio: select to mute the sound completely.
+   * Disable XA: select to mute XA music or sounds.
+   * Disable CDDA: select to mute CD music (Red Book format).
+   * Volume: choose to lower or boost the produced sound.
+ * SAVES
+   * Memcard Save device: Choose where to load and save native game saves.
    * Auto Save Memcards: When enabled, the emulator will automatically load
-	 saves from the selected device on game load and save when returning to the menu or
-	 turning off the console
-   * Save States device: Choose where to load and save save states
-   * Copy Saves: Not yet implemented
-   * Delete Saves: Not yet implemented
+	 saves from the selected device on game load, and save when returning to
+	 the menu or pressing the power button on the console.
+   * Save States device: Choose where to load and save save states.
+   * Copy Saves: Not yet implemented.
+   * Delete Saves: Not yet implemented.
 
 REPORTING ISSUES:
  Report emulator issues to https://github.com/niuus/wiisxrx/issues
- Do not report individual game bugs.
+ DO NOT report individual game bugs.
 
 CODE:
  Source code can be found here https://github.com/niuus/wiisxrx/
@@ -117,14 +117,15 @@ CREDITS:
      ( http://sourceforge.net/projects/devkitpro )
  * www.emulatemii.com and https://code.google.com/archive/p/pcsxgc/downloads
 
-RX CHANGE LOG:
-++ Beta 3.2 - 20221027:
 
-* CDDA is now available for use. Check the details below about the two new builds.
-* Reduced loading time.
-* Updates to CDrom plugin and new timer, compatibility rise.
-* CDrom speedup.
+RX CHANGELOG FOR THIS BUILD:
+++ Beta 3.3 - 20221226:
+
+* gteAVSZ3, gteAVSZ4, gteRTPS, and gteRTPT updates.
 * GTE updates.
+* Updates to CDrom plugin and new timer, compatibility rise.
+* Autofixes for RCnt, dwEmu, pR3000, HWTR
+* Cosmetic and QoL updates.
 
 ------------------------------------------------------------------------------
 READ CAREFULLY:
@@ -149,6 +150,15 @@ Experimental builds with PSX Multitap support also available. Compatible titles 
 Find a growing list of new playable and tested games on the second post of the official WiiSXRX thread, here:
 https://gbatemp.net/threads/wiisx-rx-a-new-fork.570252/
 
+
+FULL RX CHANGELOG:
+++ Beta 3.2 - 20221027:
+
+* CDDA is now available for use. Check the details below about the two new builds.
+* Reduced loading time.
+* Updates to CDrom plugin and new timer, compatibility rise.
+* CDrom speedup.
+* GTE updates.
 
 ++ Beta 3.1 - 20221016:
 

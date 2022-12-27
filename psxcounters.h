@@ -58,5 +58,4 @@ s32 psxRcntFreeze(gzFile f, s32 Mode);
 #ifdef __cplusplus
 }
 #endif
-
 #endif

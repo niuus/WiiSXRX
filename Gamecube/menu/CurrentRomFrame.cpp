@@ -42,9 +42,14 @@ extern int SaveMcd(int mcd, fileBrowser_file *savepath);
 extern long ISOgetTN(unsigned char *buffer);
 }
 
+extern int PerGameFix_timing;		// variable to check for Timing autofix (RCnt2)
+extern int PerGameFix_GPUbusy;		// variable to check for GPU 'Fake Busy States' autofix (dwEmuFixes)
+extern int PerGameFix_specialCorrect; // variable to check for Special Correction autofix (dwActFixes)
+extern int PerGameFix_pR3000A;		// variable to check for pR3000A autofix
+
 void Func_ShowRomInfo();
-void Func_ResetROM();
 void Func_SwapCD();
+void Func_ResetROM();
 void Func_LoadSave();
 void Func_SaveGame();
 void Func_LoadState();
@@ -57,7 +62,7 @@ void Func_ReturnFromCurrentRomFrame();
 #define FRAME_STRINGS currentRomFrameStrings
 
 /* Button Layout:
- * [Restart Game] [Swap CD]
+ * [Swap CD] [Restart Game]
  * [Load MemCard] [Save MemCard]
  * [Show CD Info]
  * [Load State] [Slot "x"]
@@ -91,11 +96,11 @@ struct ButtonInfo
 	ButtonFunc		returnFunc;
 } FRAME_BUTTONS[NUM_FRAME_BUTTONS] =
 { //	button	buttonStyle	buttonString		x		y		width	height	Up	Dwn	Lft	Rt	clickFunc			returnFunc
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	100.0,	 60.0,	210.0,	56.0,	 6,	 2,	 1,	 1,	Func_ResetROM,		Func_ReturnFromCurrentRomFrame }, // Reset ROM
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	330.0,	 60.0,	210.0,	56.0,	 7,	 3,	 0,	 0,	Func_SwapCD,		Func_ReturnFromCurrentRomFrame }, // Swap CD
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[1],	100.0,	 60.0,	210.0,	56.0,	 6,	 2,	 1,	 1,	Func_SwapCD,		Func_ReturnFromCurrentRomFrame }, // Swap CD
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[0],	330.0,	 60.0,	210.0,	56.0,	 7,	 3,	 0,	 0,	Func_ResetROM,		Func_ReturnFromCurrentRomFrame }, // Reset ROM
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[2],	100.0,	120.0,	210.0,	56.0,	 0,	 4,	 3,	 3,	Func_LoadSave,		Func_ReturnFromCurrentRomFrame }, // Load MemCards
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[3],	330.0,	120.0,	210.0,	56.0,	 1,	 4,	 2,	 2,	Func_SaveGame,		Func_ReturnFromCurrentRomFrame }, // Save MemCards
-	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[4],	150.0,	180.0,	340.0,	56.0,	 2,	 5,	-1,	-1,	Func_ShowRomInfo,	Func_ReturnFromCurrentRomFrame }, // Show ISO Info
+	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[4],	150.0,	180.0,	340.0,	56.0,	 2,	 5,	-1,	-1,	Func_ShowRomInfo,	Func_ReturnFromCurrentRomFrame }, // Show CD Info
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[5],	150.0,	240.0,	220.0,	56.0,	 4,	 6,	 7,	 7,	Func_LoadState,		Func_ReturnFromCurrentRomFrame }, // Load State
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[6],	150.0,	300.0,	220.0,	56.0,	 5,	 0,	 7,	 7,	Func_SaveState,		Func_ReturnFromCurrentRomFrame }, // Save State
 	{	NULL,	BTN_A_NRM,	FRAME_STRINGS[7],	390.0,	270.0,	100.0,	56.0,	 4,	 1,	 5,	 5,	Func_StateCycle,	Func_ReturnFromCurrentRomFrame }, // Cycle State
@@ -148,21 +153,49 @@ void Func_ShowRomInfo()
 	char RomInfo[256] = "";
 	char buffer [50];
 
-	sprintf(buffer,"CD-ROM Label: %s\n",CdromLabel);
+  sprintf(buffer,"CD-ROM Label: %s\n",CdromLabel);
   strcat(RomInfo,buffer);
   sprintf(buffer,"CD-ROM ID: %s\n", CdromId);
-
-	strcat(RomInfo,buffer);
-  if (Config.RCntFix)
-  {
-    sprintf(buffer, "TIMING FIX: Yes\n");
-  }
-  else
-  {
-    sprintf(buffer, "TIMING FIX: No\n");
-  }
   strcat(RomInfo,buffer);
-  sprintf(buffer,"CD Size: %u Mb\n",isoFile.size/1024/1024);
+
+	if (Config.RCntFix)
+	{
+		sprintf(buffer, "RCnt2 autofix: Yes\n");
+	}
+	else
+	{
+		sprintf(buffer, "RCnt2 autofix: No\n");
+	}
+  strcat(RomInfo,buffer);
+	if (PerGameFix_GPUbusy)
+	{
+		sprintf(buffer, "GPU 'Fake Busy States' hack: Yes\n");
+	}
+	else
+	{
+		sprintf(buffer, "GPU 'Fake Busy States' hack: No\n");
+	}
+  strcat(RomInfo,buffer);
+	if (PerGameFix_specialCorrect)
+	{
+		sprintf(buffer, "Special Correction autofix: Yes\n");
+	}
+	else
+	{
+		sprintf(buffer, "Special Correction autofix: No\n");
+	}
+  strcat(RomInfo,buffer);
+	if (Config.pR3000Fix)
+	{
+		sprintf(buffer, "pR3000 autofix: Yes\n");
+	}
+	else
+	{
+		sprintf(buffer, "pR3000 autofix: No\n");
+	}
+  strcat(RomInfo,buffer);
+
+  sprintf(buffer,"CD size: %u Mb\n",isoFile.size/1024/1024);
   strcat(RomInfo,buffer);
   sprintf(buffer,"Region: %s\n",(!Config.PsxType) ? "NTSC":"PAL");
   strcat(RomInfo,buffer);
@@ -188,17 +221,6 @@ void LoadCdrom();
 
 void Func_SetPlayGame();
 
-void Func_ResetROM()
-{
-  SysClose();
-	SysInit ();
-	CheckCdrom();
-  SysReset();
-	LoadCdrom();
-	menu::MessageBox::getInstance().setMessage("Game restarted");
-	Func_SetPlayGame();
-}
-
 void Func_SwapCD()
 {
 	//Call Filebrowser with "Swap CD"
@@ -211,11 +233,22 @@ extern "C" int LoadState();
 extern "C" int SaveState();
 extern "C" void savestates_select_slot(unsigned int s);
 
+void Func_ResetROM()
+{
+  SysClose();
+	SysInit ();
+	CheckCdrom();
+  SysReset();
+	LoadCdrom();
+	menu::MessageBox::getInstance().setMessage("Game restarted");
+	Func_SetPlayGame();
+}
+
 void Func_LoadSave()
 {
 	if(!hasLoadedISO)
 	{
-		menu::MessageBox::getInstance().setMessage("Please load a ISO first");
+		menu::MessageBox::getInstance().setMessage("Please load a CD first");
 		return;
 	}
 

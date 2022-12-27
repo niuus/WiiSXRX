@@ -36,7 +36,7 @@
 extern "C" {
 #ifdef WII
 #include <di/di.h>
-#endif 
+#endif
 /*#include "../gc_memory/memory.h"
 #include "../gc_memory/Saves.h"
 #include "../main/plugin.h"
@@ -164,9 +164,9 @@ void Func_Credits()
 {
 	char CreditsInfo[512] = "";
 #ifdef HW_RVL
-	sprintf(CreditsInfo,"WiiSX RX Beta 3.2-FS\n");
+	sprintf(CreditsInfo,"WiiSX RX Beta 3.3-FS\n");
 #else
-	sprintf(CreditsInfo,"CubeSX RX Beta 3.2-FS\n");
+	sprintf(CreditsInfo,"CubeSX RX Beta 3.3-FS\n");
 #endif
 	strcat(CreditsInfo,"www.github.com/niuus/WiiSXRX\n");
 	strcat(CreditsInfo,"WiiSX RX & logo: NiuuS\n");

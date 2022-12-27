@@ -31,35 +31,35 @@ extern "C" {
 
 struct psxCP2Regs;
 
-void gteMFC2();
-void gteCFC2();
-void gteMTC2();
-void gteCTC2();
-void gteLWC2();
-void gteSWC2();
+void gteMFC2_R();
+void gteCFC2_R();
+void gteMTC2_R();
+void gteCTC2_R();
+void gteLWC2_R();
+void gteSWC2_R();
 
-void gteRTPS();
-void gteOP();
-void gteNCLIP();
-void gteDPCS();
-void gteINTPL();
-void gteMVMVA();
-void gteNCDS();
-void gteNCDT();
-void gteCDP();
-void gteNCCS();
-void gteCC();
-void gteNCS();
-void gteNCT();
-void gteSQR();
-void gteDCPL();
-void gteDPCT();
-void gteAVSZ3();
-void gteAVSZ4();
-void gteRTPT();
-void gteGPF();
-void gteGPL();
-void gteNCCT();
+void gteRTPS_R();
+void gteOP_R();
+void gteNCLIP_R();
+void gteDPCS_R();
+void gteINTPL_R();
+void gteMVMVA_R();
+void gteNCDS_R();
+void gteNCDT_R();
+void gteCDP_R();
+void gteNCCS_R();
+void gteCC_R();
+void gteNCS_R();
+void gteNCT_R();
+void gteSQR_R();
+void gteDCPL_R();
+void gteDPCT_R();
+void gteAVSZ3_R();
+void gteAVSZ4_R();
+void gteRTPT_R();
+void gteGPF_R();
+void gteGPL_R();
+void gteNCCT_R();
 
 #ifdef __cplusplus
 }
