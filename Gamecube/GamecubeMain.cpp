@@ -192,7 +192,7 @@ void loadSettings(int argc, char *argv[])
 	printToSD        = 0; // Disable SD logging
 	frameLimit		 = 1; // Auto limit FPS
 	frameSkip		 = 0; // Disable frame skipping
-	UseDithering		 = 1; // Default dithering (set to 0 (disabled) in PEOPSgpu)
+	useDithering		 = 1; // Default dithering (set to 0 (disabled) in PEOPSgpu)
 	saveEnabled      = 0; // Don't save game
 	nativeSaveDevice = 0; // SD
 	saveStateDevice	 = 0; // SD
