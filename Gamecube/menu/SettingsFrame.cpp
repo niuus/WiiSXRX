@@ -1027,6 +1027,7 @@ void Func_DitheringNone()
 		FRAME_BUTTONS[i].button->setSelected(false);
 	FRAME_BUTTONS[25].button->setSelected(true);
 	iUseDither = USEDITHER_NONE;
+	useDithering = iUseDither;
 	GPUsetframelimit(0);
 }
 
@@ -1036,6 +1037,7 @@ void Func_DitheringDefault()
 		FRAME_BUTTONS[i].button->setSelected(false);
 	FRAME_BUTTONS[26].button->setSelected(true);
 	iUseDither = USEDITHER_DEFAULT;
+	useDithering = iUseDither;
 	GPUsetframelimit(0);
 }
 
@@ -1045,6 +1047,7 @@ void Func_DitheringAlways()
 		FRAME_BUTTONS[i].button->setSelected(false);
 	FRAME_BUTTONS[27].button->setSelected(true);
 	iUseDither = USEDITHER_ALWAYS;
+	useDithering = iUseDither;
 	GPUsetframelimit(0);
 }
 
